@@ -1,81 +1,133 @@
 {% extends 'base.html' %}
 
-{% block title %}Configuracion | Gestion Escolar{% endblock %}
+{% block title %}Configuracion de Negocio | Gestion Escolar{% endblock %}
 
 {% block content %}
-<section class="card">
-    <div class="section-head">
-        <h1>Configuracion de la empresa/colegio</h1>
-    </div>
+<section class="hero">
+    <p class="eyebrow">Administracion del sistema</p>
+    <h1>Configuracion Institucional y de Negocio</h1>
+</section>
 
-    {% if school_instance and school_instance.logo %}
-        <div style="margin-bottom: 12px;">
-            <p class="muted">Logo actual</p>
-            <img src="{{ school_instance.logo.url }}" alt="Logo del colegio" style="max-height:90px; border:1px solid #d7e1ee; border-radius:8px; padding:6px; background:#fff;">
+<div class="form-grid" style="grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 24px; align-items: start;">
+    
+    <!-- Configuracion de Identidad -->
+    <section class="card">
+        <div class="section-head">
+            <h2>Identidad y Contacto</h2>
         </div>
-    {% endif %}
-
-    <form method="post" enctype="multipart/form-data" class="form-grid">
-        {% csrf_token %}
-        {% for field in school_form %}
-            <div>
-                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-                {{ field }}
-                {% if field.errors %}
-                    <div class="field-errors">
-                        {% for error in field.errors %}
-                            <div>{{ error }}</div>
-                        {% endfor %}
-                    </div>
-                {% endif %}
+        
+        {% if school_instance and school_instance.logo %}
+            <div style="margin-bottom: 20px; text-align: center;">
+                <p class="muted" style="font-size: 0.8em; margin-bottom: 8px;">Logo Institucional</p>
+                <img src="{{ school_instance.logo.url }}" alt="Logo del colegio" style="max-height:100px; border-radius:12px; padding:8px; background:#f8fafc; border: 1px solid #e2e8f0;">
             </div>
-        {% endfor %}
-        <div class="action-row">
-            <button type="submit" class="btn btn-primary">Guardar configuracion</button>
-        </div>
-    </form>
-</section>
+        {% endif %}
 
-<section class="card">
-    <div class="section-head">
-        <h1>Resumen institucional</h1>
-    </div>
-
-    {% if active_year %}
-        <p><strong>Anio activo:</strong> {{ active_year.year }} - {{ active_year.school.name }}</p>
-    {% else %}
-        <p class="muted">No existe anio academico activo.</p>
-    {% endif %}
-
-    <h2 style="margin-top:18px;">Sedes registradas</h2>
-    <div class="table-wrap">
-        <table>
-            <thead>
-                <tr>
-                    <th>Nombre</th>
-                    <th>Telefono</th>
-                    <th>Email</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for school in schools %}
-                    <tr>
-                        <td>{{ school.name }}</td>
-                        <td>{{ school.phone }}</td>
-                        <td>{{ school.email }}</td>
-                    </tr>
-                {% empty %}
-                    <tr><td colspan="3">No hay colegios registrados.</td></tr>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <input type="hidden" name="identity_config" value="1">
+            
+            <div class="form-grid" style="grid-template-columns: 1fr;">
+                {% for field in identity_form %}
+                    <div>
+                        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                        {{ field }}
+                        {% if field.errors %}
+                            <div class="field-errors">{% for error in field.errors %}<div>{{ error }}</div>{% endfor %}</div>
+                        {% endif %}
+                    </div>
                 {% endfor %}
-            </tbody>
-        </table>
-    </div>
-</section>
+            </div>
+            
+            <div class="action-row" style="margin-top: 20px;">
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Actualizar Identidad</button>
+            </div>
+        </form>
+    </section>
 
-<section class="card">
+    <!-- Configuracion de Precios de Negocio -->
+    <section class="card" style="border-top: 4px solid var(--primary-color);">
+        <div class="section-head">
+            <h2>Costos y Pensiones</h2>
+            <p class="muted">Configuracion general del negocio para el año actual</p>
+        </div>
+
+        <form method="post">
+            {% csrf_token %}
+            <input type="hidden" name="business_config" value="1">
+            
+            <div class="form-grid" style="grid-template-columns: 1fr;">
+                {% for field in business_form %}
+                    <div class="stat-input">
+                        <label for="{{ field.id_for_label }}" style="font-weight: 600;">{{ field.label }}</label>
+                        <div style="position: relative;">
+                            <span style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #64748b; font-weight: bold;">S/</span>
+                            {{ field }}
+                        </div>
+                        {% if field.errors %}
+                            <div class="field-errors">{% for error in field.errors %}<div>{{ error }}</div>{% endfor %}</div>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+
+            <div class="action-row" style="margin-top: 24px;">
+                <button type="submit" class="btn btn-primary" style="width: 100%; background: var(--primary-color);">Guardar Costos del Negocio</button>
+            </div>
+        </form>
+
+        <div style="margin-top: 32px; padding-top: 20px; border-top: 1px dashed #e2e8f0;">
+             <div class="section-head">
+                <h3>Precios de Libros por Curso</h3>
+                <p class="muted">Costo del material bibliografico por materia</p>
+            </div>
+            
+            <form method="post">
+                {% csrf_token %}
+                <input type="hidden" name="course_config" value="1">
+                {{ course_formset.management_form }}
+                
+                <div class="table-wrap" style="max-height: 400px; overflow-y: auto;">
+                    <table class="table-sm">
+                        <thead>
+                            <tr>
+                                <th>Curso</th>
+                                <th style="width: 150px;">Precio Libro (S/)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for form in course_formset %}
+                                <tr>
+                                    <td>
+                                        {{ form.id }}
+                                        <span style="font-weight: 500;">{{ form.instance.name }}</span>
+                                    </td>
+                                    <td>
+                                        <div style="position: relative;">
+                                            <span style="position: absolute; left: 8px; top: 50%; transform: translateY(-50%); font-size: 0.85em; color: #94a3b8;">S/</span>
+                                            {{ form.book_price }}
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="action-row" style="margin-top: 16px;">
+                    <button type="submit" class="btn btn-subtle" style="width: 100%;">Actualizar Precios de Libros</button>
+                </div>
+            </form>
+        </div>
+    </section>
+</div>
+
+<section class="card" style="margin-top: 24px;">
     <div class="section-head">
-        <h2>Periodos academicos</h2>
+        <h2>Estructura Academica</h2>
+        <p class="muted">Periodos y calendario escolar</p>
     </div>
+    
     <div class="table-wrap">
         <table>
             <thead>
@@ -90,10 +142,10 @@
             <tbody>
                 {% for period in periods %}
                     <tr>
-                        <td>{{ period.name }}</td>
+                        <td><strong>{{ period.name }}</strong></td>
                         <td>{{ period.academic_year.year }}</td>
-                        <td>{{ period.start_date }}</td>
-                        <td>{{ period.end_date }}</td>
+                        <td>{{ period.start_date|date:"d M, Y" }}</td>
+                        <td>{{ period.end_date|date:"d M, Y" }}</td>
                         <td>
                             {% if period.is_active %}
                                 <span class="status-pill attendance-present">Activo</span>
@@ -109,4 +161,40 @@
         </table>
     </div>
 </section>
+
+<style>
+    .table-sm th, .table-sm td {
+        padding: 8px 12px;
+        font-size: 0.9em;
+    }
+    .form-control-sm {
+        height: 32px;
+        padding: 4px 8px 4px 24px !important;
+        font-size: 0.9em;
+        width: 100%;
+        border: 1px solid #e2e8f0;
+        border-radius: 6px;
+    }
+    .stat-input {
+        background: #f8fafc;
+        padding: 16px;
+        border-radius: 12px;
+        border: 1px solid #e2e8f0;
+    }
+    .stat-price-input {
+        padding-left: 35px !important;
+        font-size: 1.1em !important;
+        color: var(--primary-color) !important;
+        font-weight: bold !important;
+        width: 100%;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        height: 45px;
+    }
+    h3 {
+        font-size: 1.1em;
+        margin: 0;
+        color: #1e293b;
+    }
+</style>
 {% endblock %}

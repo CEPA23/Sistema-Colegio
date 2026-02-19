@@ -38,6 +38,7 @@ class Fee(models.Model):
     enrollment = models.ForeignKey(Enrollment, on_delete=models.CASCADE)
     concept = models.CharField(max_length=30, choices=CONCEPT_CHOICES)
     pension_month = models.PositiveSmallIntegerField(choices=MONTH_CHOICES, null=True, blank=True)
+    course = models.ForeignKey('academic.Course', on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Curso (para libros)")
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     due_date = models.DateField()
 

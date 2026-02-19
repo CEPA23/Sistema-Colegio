@@ -28,7 +28,27 @@
             </select>
         </div>
         <div>
-            <label for="month">Mes (solo pension)</label>
+            <label for="section">Seccion</label>
+            <select id="section" name="section">
+                <option value="">Todas</option>
+                {% for sec in sections %}
+                    <option value="{{ sec.id }}" {% if section_id == sec.id|stringformat:'s' %}selected{% endif %}>
+                        {{ sec.grade.name }} - {{ sec.name }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div>
+            <label for="concept">Concepto</label>
+            <select id="concept" name="concept">
+                <option value="">Todos</option>
+                {% for value, label in concept_choices %}
+                    <option value="{{ value }}" {% if concept == value %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div>
+            <label for="month">Mes (pension)</label>
             <select id="month" name="month">
                 <option value="">Todos</option>
                 {% for value, label in month_choices %}
@@ -39,7 +59,7 @@
         <div class="action-row">
             <button type="submit" class="btn btn-primary">Filtrar</button>
             <a href="{% url 'debtors_report' %}" class="btn btn-subtle">Limpiar</a>
-            <a href="{% url 'debtors_export_csv' %}?student={{ student_query|urlencode }}&grade={{ grade_id|urlencode }}&month={{ month|urlencode }}" class="btn btn-subtle">
+            <a href="{% url 'debtors_export_csv' %}?student={{ student_query|urlencode }}&grade={{ grade_id|urlencode }}&section={{ section_id|urlencode }}&concept={{ concept|urlencode }}&month={{ month|urlencode }}" class="btn btn-subtle">
                 Exportar Excel (CSV)
             </a>
         </div>

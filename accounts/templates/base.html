@@ -27,11 +27,13 @@
                 <nav class="side-menu">
                     {% if request.user.role == 'teacher' and not request.user.is_superuser %}
                     <a href="{% url 'teacher_dashboard' %}">Dashboard principal</a>
+                    {% elif request.user.role == 'secretary' and not request.user.is_superuser %}
+                    <a href="{% url 'secretary_dashboard' %}">Dashboard principal</a>
                     {% else %}
                     <a href="{% url 'dashboard' %}">Dashboard principal</a>
                     {% endif %}
 
-                    {% if request.user.role != 'parent' or request.user.is_superuser %}
+                    {% if request.user.role != 'parent' and request.user.role != 'secretary' or request.user.is_superuser %}
                     <details class="menu-group" {% if request.resolver_match.url_name == 'academic_dashboard' or request.resolver_match.url_name == 'course_management' or request.resolver_match.url_name == 'teacher_competency_gradebook' or request.resolver_match.url_name == 'student_list' or request.resolver_match.url_name == 'grade_list' or request.resolver_match.url_name == 'grade_create' or request.resolver_match.url_name == 'course_report' or request.resolver_match.url_name == 'period_report' or request.resolver_match.url_name == 'report_card' or request.resolver_match.url_name == 'student_report' or request.resolver_match.url_name == 'student_report_pdf' %}open{% endif %}>
                         <summary class="menu-title">Academico</summary>
                         <div class="menu-links">
@@ -49,7 +51,7 @@
                     </details>
                     {% endif %}
 
-                    {% if request.user.role == 'admin' or request.user.role == 'director' or request.user.role == 'secretary' or request.user.is_superuser %}
+                    {% if request.user.role == 'admin' or request.user.role == 'director' or request.user.is_superuser %}
                     <details class="menu-group" {% if request.resolver_match.url_name == 'enrollment_dashboard' or request.resolver_match.url_name == 'enrollment_list' or request.resolver_match.url_name == 'enrollment_create' or request.resolver_match.url_name == 'enrollment_detail' or request.resolver_match.url_name == 'enrollment_renew' or request.resolver_match.url_name == 'enrollment_history' %}open{% endif %}>
                         <summary class="menu-title">Matricula</summary>
                         <div class="menu-links">
@@ -66,10 +68,12 @@
                             <div class="menu-links">
                                 <a href="{% url 'account_status' %}">Estado de cuenta</a>
                                 <a href="{% url 'payment_history' %}">Historial de pagos</a>
-                                {% if request.user.role == 'admin' or request.user.role == 'director' or request.user.role == 'secretary' or request.user.is_superuser %}
+                                {% if request.user.role == 'admin' or request.user.role == 'director' or request.user.is_superuser %}
                                     <a href="{% url 'finance_dashboard' %}">Panel financiero</a>
-                                    <a href="{% url 'payment_create' %}">Registrar pago</a>
-                                    <a href="{% url 'debtors_report' %}">Deudores</a>
+                                {% endif %}
+                                <a href="{% url 'payment_create' %}">Registrar pago</a>
+                                <a href="{% url 'debtors_report' %}">Buscador de deudores</a>
+                                {% if request.user.role == 'admin' or request.user.role == 'director' or request.user.is_superuser %}
                                     <a href="{% url 'monthly_report' %}">Reporte mensual</a>
                                     <a href="{% url 'cash_report' %}">Caja diaria</a>
                                 {% endif %}
@@ -77,7 +81,7 @@
                         </details>
                     {% endif %}
 
-                    {% if request.user.role != 'parent' or request.user.is_superuser %}
+                    {% if request.user.role != 'parent' and request.user.role != 'secretary' or request.user.is_superuser %}
                     <details class="menu-group" {% if request.resolver_match.url_name == 'attendance_dashboard' or request.resolver_match.url_name == 'attendance_take' or request.resolver_match.url_name == 'attendance_student_history' or request.resolver_match.url_name == 'attendance_course_report' %}open{% endif %}>
                         <summary class="menu-title">Asistencia</summary>
                         <div class="menu-links">
@@ -126,7 +130,7 @@
                 <main class="container{% if not request.user.is_authenticated %} container-auth{% endif %}">
                     {% if messages %}
                         {% for message in messages %}
-                            <div class="alert">{{ message }}</div>
+                            <div class="alert {{ message.tags }}">{{ message|safe }}</div>
                         {% endfor %}
                     {% endif %}
                     {% block content %}{% endblock %}

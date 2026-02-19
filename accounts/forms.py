@@ -216,7 +216,71 @@ class UserUpdateForm(UserCreateForm):
         return password2
 
 
-class SchoolConfigForm(forms.ModelForm):
+class SchoolIdentityForm(forms.ModelForm):
     class Meta:
         model = School
-        fields = ['name', 'logo', 'address', 'phone', 'email']
+        fields = ['name', 'ruc', 'logo', 'address', 'phone', 'email']
+
+class SchoolBusinessForm(forms.ModelForm):
+    class Meta:
+        model = School
+        fields = ['pension_price', 'enrollment_price', 'supplies_price']
+        widgets = {
+            'pension_price': forms.NumberInput(attrs={'step': '0.01', 'class': 'stat-price-input'}),
+            'enrollment_price': forms.NumberInput(attrs={'step': '0.01', 'class': 'stat-price-input'}),
+            'supplies_price': forms.NumberInput(attrs={'step': '0.01', 'class': 'stat-price-input'}),
+        }
+
+class CourseBookPriceForm(forms.ModelForm):
+    class Meta:
+        model = Course
+        fields = ['book_price']
+        widgets = {
+            'book_price': forms.NumberInput(attrs={'step': '0.01', 'class': 'form-control-sm'}),
+        }
+
+
+class SelfProfileForm(forms.ModelForm):
+    password1 = forms.CharField(
+        label='Nueva contraseña',
+        widget=forms.PasswordInput(attrs={'placeholder': 'Dejar en blanco para no cambiar'}),
+        required=False,
+        help_text='Opcional. Al menos 8 caracteres.'
+    )
+    password2 = forms.CharField(
+        label='Confirmar nueva contraseña',
+        widget=forms.PasswordInput(attrs={'placeholder': 'Confirmar nueva contraseña'}),
+        required=False
+    )
+
+    class Meta:
+        model = User
+        fields = ['profile_picture', 'first_name', 'last_name', 'email', 'phone']
+        labels = {
+            'profile_picture': 'Foto de perfil',
+            'first_name': 'Nombre',
+            'last_name': 'Apellido',
+            'email': 'Correo electrónico',
+            'phone': 'Teléfono',
+        }
+
+    def clean_password2(self):
+        p1 = self.cleaned_data.get('password1')
+        p2 = self.cleaned_data.get('password2')
+        if p1:
+            if not p2:
+                raise forms.ValidationError("Debes confirmar la nueva contraseña.")
+            if p1 != p2:
+                raise forms.ValidationError("Las contraseñas no coinciden.")
+            if len(p1) < 8:
+                raise forms.ValidationError("La contraseña debe ser de al menos 8 caracteres.")
+        return p2
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        p1 = self.cleaned_data.get('password1')
+        if p1:
+            user.set_password(p1)
+        if commit:
+            user.save()
+        return user

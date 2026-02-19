@@ -9,7 +9,7 @@ from schools.models import School
 from enrollment.models import Enrollment
 from students.models import Student
 from .decorators import role_required
-from .forms import SchoolConfigForm, UserCreateForm, UserUpdateForm
+from .forms import SchoolIdentityForm, SchoolBusinessForm, UserCreateForm, UserUpdateForm
 from .models import ActivityLog, User
 
 
@@ -24,6 +24,8 @@ class RoleLoginView(LoginView):
 
         if self.request.user.role == 'teacher':
             return reverse('teacher_dashboard')
+        if self.request.user.role == 'secretary':
+            return reverse('secretary_dashboard')
         if self.request.user.role == 'parent':
             return reverse('account_status')
         return reverse('dashboard')
@@ -130,26 +132,50 @@ def roles_permissions(request):
 
 @role_required('admin', 'director')
 def system_config(request):
+    from django.forms import modelformset_factory
+    from .forms import CourseBookPriceForm, SchoolIdentityForm, SchoolBusinessForm
+    
     active_year = AcademicYear.objects.filter(is_active=True).select_related('school').first()
-    schools = School.objects.all().order_by('name')
     school_instance = School.objects.order_by('id').first()
+    
+    CourseFormSet = modelformset_factory(Course, form=CourseBookPriceForm, extra=0)
+
+    # Inicializar formularios
+    identity_form = SchoolIdentityForm(instance=school_instance)
+    business_form = SchoolBusinessForm(instance=school_instance)
+    course_formset = CourseFormSet(queryset=Course.objects.all().order_by('name'))
 
     if request.method == 'POST':
-        school_form = SchoolConfigForm(request.POST, request.FILES, instance=school_instance)
-        if school_form.is_valid():
-            school = school_form.save()
-            messages.success(request, f"Configuracion actualizada para {school.name}.")
-            return redirect('system_config')
-    else:
-        school_form = SchoolConfigForm(instance=school_instance)
+        if 'identity_config' in request.POST:
+            identity_form = SchoolIdentityForm(request.POST, request.FILES, instance=school_instance)
+            if identity_form.is_valid():
+                identity_form.save()
+                messages.success(request, "Identidad institucional actualizada.")
+                return redirect('system_config')
+        
+        elif 'business_config' in request.POST:
+            business_form = SchoolBusinessForm(request.POST, instance=school_instance)
+            if business_form.is_valid():
+                business_form.save()
+                messages.success(request, "Costos del negocio actualizados.")
+                return redirect('system_config')
+        
+        elif 'course_config' in request.POST:
+            course_formset = CourseFormSet(request.POST)
+            if course_formset.is_valid():
+                course_formset.save()
+                messages.success(request, "Precios de libros actualizados.")
+                return redirect('system_config')
 
     periods = Period.objects.select_related('academic_year').order_by('-academic_year__year', 'start_date', 'name')
 
     context = {
         'active_year': active_year,
-        'schools': schools,
         'periods': periods,
-        'school_form': school_form,
+        'school_form': identity_form, # Mantenemos nombre para compatibilidad o renombramos
+        'identity_form': identity_form,
+        'business_form': business_form,
+        'course_formset': course_formset,
         'school_instance': school_instance,
     }
     return render(request, 'accounts/system_config.html', context)
@@ -157,7 +183,21 @@ def system_config(request):
 
 @login_required
 def user_profile(request):
-    return render(request, 'accounts/user_profile.html', {'profile_user': request.user})
+    from .forms import SelfProfileForm
+    if request.method == 'POST':
+        form = SelfProfileForm(request.POST, request.FILES, instance=request.user)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Tu perfil ha sido actualizado correctamente.")
+            return redirect('user_profile')
+    else:
+        form = SelfProfileForm(instance=request.user)
+    
+    return render(request, 'accounts/user_profile.html', {
+        'profile_user': request.user,
+        'form': form
+    })
+    
 
 
 @role_required('admin', 'director')

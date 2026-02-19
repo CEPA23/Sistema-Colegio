@@ -66,6 +66,18 @@
             {% endif %}
         </div>
 
+        <div id="course_wrap" style="display:none;">
+            <label for="{{ form.course.id_for_label }}">{{ form.course.label }}</label>
+            {{ form.course }}
+            {% if form.course.errors %}
+                <div class="field-errors">
+                    {% for error in form.course.errors %}
+                        <div>{{ error }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+
         <div>
             <label for="{{ form.amount.id_for_label }}">{{ form.amount.label }}</label>
             {{ form.amount }}
@@ -121,11 +133,16 @@
     </form>
 </section>
 
+{{ suggested_prices|json_script:"suggested-prices-data" }}
+
 <script>
     (function () {
         const conceptField = document.getElementById('{{ form.concept.id_for_label }}');
         const methodField = document.getElementById('{{ form.method.id_for_label }}');
         const monthWrap = document.getElementById('pension_month_wrap');
+        const courseWrap = document.getElementById('course_wrap');
+        const courseField = document.getElementById('{{ form.course.id_for_label }}');
+        const amountField = document.getElementById('{{ form.amount.id_for_label }}');
         const proofWrap = document.getElementById('proof_wrap');
 
         const studentField = document.getElementById('{{ form.student_name.id_for_label }}');
@@ -134,19 +151,43 @@
         const searchUrl = "{% url 'payment_student_search' %}";
         let debounceTimer = null;
 
-        function toggleMonth() {
-            const isPension = conceptField && conceptField.value === 'pension';
-            monthWrap.style.display = isPension ? 'block' : 'none';
+        // Inyeccion segura de precios
+        const suggestedPrices = JSON.parse(document.getElementById('suggested-prices-data').textContent);
+
+        function updateSuggestedAmount() {
+            const concept = conceptField.value;
+            let price = null;
+            
+            if (concept === 'pension') price = suggestedPrices.pension;
+            else if (concept === 'matricula') price = suggestedPrices.matricula;
+            else if (concept === 'material_escolar') price = suggestedPrices.material_escolar;
+            else if (concept === 'libro') {
+                const courseId = courseField.value;
+                if (courseId && suggestedPrices.books[courseId]) {
+                    price = suggestedPrices.books[courseId];
+                }
+            }
+            
+            if (price !== null) {
+                amountField.value = price;
+            }
+        }
+
+        function toggleFields() {
+            const concept = conceptField ? conceptField.value : '';
+            if (monthWrap) monthWrap.style.display = concept === 'pension' ? 'block' : 'none';
+            if (courseWrap) courseWrap.style.display = concept === 'libro' ? 'block' : 'none';
+            updateSuggestedAmount();
         }
 
         function toggleProof() {
             const method = methodField ? methodField.value : '';
             const needsProof = method === 'transfer' || method === 'yape_plin';
-            proofWrap.style.display = needsProof ? 'block' : 'none';
+            if (proofWrap) proofWrap.style.display = needsProof ? 'block' : 'none';
         }
 
         function clearSuggestions() {
-            suggestionList.innerHTML = '';
+            if (suggestionList) suggestionList.innerHTML = '';
         }
 
         function renderSuggestions(results) {
@@ -164,7 +205,10 @@
         }
 
         if (conceptField) {
-            conceptField.addEventListener('change', toggleMonth);
+            conceptField.addEventListener('change', toggleFields);
+        }
+        if (courseField) {
+            courseField.addEventListener('change', updateSuggestedAmount);
         }
         if (methodField) {
             methodField.addEventListener('change', toggleProof);
@@ -196,7 +240,7 @@
             });
         }
 
-        toggleMonth();
+        toggleFields();
         toggleProof();
     })();
 </script>

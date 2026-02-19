@@ -1,6 +1,7 @@
 from django import forms
 from django.db.models import Q
 
+from academic.models import Course
 from enrollment.models import Enrollment
 
 from .models import Fee, Payment
@@ -18,6 +19,12 @@ class PaymentRegistrationForm(forms.Form):
         required=False,
         choices=[('', 'Selecciona un mes')] + [(str(k), v) for k, v in Fee.MONTH_CHOICES],
         label='Mes de pension'
+    )
+    course = forms.ModelChoiceField(
+        queryset=Course.objects.all().order_by('name'),
+        required=False,
+        label='Libro de curso',
+        empty_label="Selecciona un curso (para libros)"
     )
     amount = forms.DecimalField(max_digits=10, decimal_places=2, min_value=0.01, label='Monto a pagar')
     method = forms.ChoiceField(choices=Payment.METHOD_CHOICES, label='Metodo de pago')
@@ -64,5 +71,8 @@ class PaymentRegistrationForm(forms.Form):
 
         if method in (Payment.METHOD_TRANSFER, Payment.METHOD_YAPE_PLIN) and not proof_image:
             self.add_error('proof_image', 'Debes adjuntar la captura del pago.')
+
+        if concept == 'libro' and not cleaned_data.get('course'):
+            self.add_error('course', 'Debes seleccionar el libro/curso correspondiente.')
 
         return cleaned_data

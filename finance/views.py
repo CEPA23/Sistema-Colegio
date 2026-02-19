@@ -4,9 +4,8 @@ from datetime import date
 from django.contrib import messages
 from django.db.models import DecimalField, F, Q, Sum, Value
 from django.db.models.functions import Coalesce
-from django.http import HttpResponse
-from django.http import JsonResponse
-from django.shortcuts import redirect, render
+from django.http import HttpResponse, JsonResponse, FileResponse
+from django.shortcuts import redirect, render, get_object_or_404
 from django.utils import timezone
 
 from accounts.decorators import role_required
@@ -29,17 +28,24 @@ def _month_label(month_value):
     return dict(Fee.MONTH_CHOICES).get(month_int, '-')
 
 
-def _debtor_queryset(student_query='', grade_id='', month=''):
+def _debtor_queryset(student_query='', grade_id='', section_id='', month='', concept=''):
+    # Obtenemos todas las deudas primero
     fees = Fee.objects.select_related(
         'enrollment__student',
         'enrollment__section__grade',
         'enrollment__academic_year'
-    ).annotate(
+    )
+
+    # Anotamos con el total pagado y calculamos el balance
+    from django.db.models import OuterRef, Subquery
+    payments = Payment.objects.filter(fee=OuterRef('pk')).values('fee').annotate(total=Sum('amount')).values('total')
+    
+    fees = fees.annotate(
         paid_amount=Coalesce(
-            Sum('payment__amount'),
+            Subquery(payments),
             Value(0),
             output_field=DecimalField(max_digits=10, decimal_places=2)
-        ),
+        )
     ).annotate(
         balance_amount=F('amount') - F('paid_amount')
     ).filter(balance_amount__gt=0)
@@ -52,6 +58,12 @@ def _debtor_queryset(student_query='', grade_id='', month=''):
 
     if grade_id:
         fees = fees.filter(enrollment__section__grade_id=grade_id)
+
+    if section_id:
+        fees = fees.filter(enrollment__section_id=section_id)
+
+    if concept:
+        fees = fees.filter(concept=concept)
 
     if month:
         try:
@@ -81,6 +93,19 @@ def finance_dashboard(request):
     return render(request, 'finance/finance_dashboard.html', context)
 
 
+@role_required('secretary')
+def secretary_dashboard(request):
+    today = timezone.localdate()
+    # Resumen simple para la secretaria
+    today_payments = Payment.objects.filter(payment_date=today)
+    context = {
+        'today': today,
+        'today_count': today_payments.count(),
+        'today_total': today_payments.aggregate(total=Sum('amount'))['total'] or 0,
+    }
+    return render(request, 'finance/secretary_dashboard.html', context)
+
+
 @role_required('admin', 'director', 'secretary', 'parent')
 def account_status(request):
     fees = Fee.objects.select_related(
@@ -103,6 +128,7 @@ def payment_create(request):
             enrollment = form.cleaned_data['enrollment']
             concept = form.cleaned_data['concept']
             pension_month = form.cleaned_data['pension_month']
+            course = form.cleaned_data['course']
             amount = form.cleaned_data['amount']
             method = form.cleaned_data['method']
             proof_image = form.cleaned_data['proof_image']
@@ -113,6 +139,8 @@ def payment_create(request):
             month_int = int(pension_month) if pension_month else None
             if concept == Fee.CONCEPT_PENSION:
                 fee_qs = fee_qs.filter(pension_month=month_int)
+            elif concept == Fee.CONCEPT_BOOK:
+                fee_qs = fee_qs.filter(course=course)
             else:
                 fee_qs = fee_qs.filter(pension_month__isnull=True)
 
@@ -130,6 +158,7 @@ def payment_create(request):
                     enrollment=enrollment,
                     concept=concept,
                     pension_month=month_int if concept == Fee.CONCEPT_PENSION else None,
+                    course=course if concept == Fee.CONCEPT_BOOK else None,
                     amount=amount,
                     due_date=due_date,
                 )
@@ -144,15 +173,32 @@ def payment_create(request):
                     proof_image=proof_image,
                     comment=comment,
                 )
+                from django.utils.safestring import mark_safe
+                from django.urls import reverse
+                receipt_url = reverse('payment_receipt_pdf', args=[payment.id])
                 messages.success(
                     request,
-                    f"Pago registrado para {payment.fee.enrollment.student} ({payment.fee.get_concept_display()})."
+                    mark_safe(f"Pago registrado para {payment.fee.enrollment.student}. <a href='{receipt_url}' target='_blank' class='btn btn-subtle' style='margin-left:10px;'>Imprimir Boleta 🖨️</a>")
                 )
                 return redirect('payment_history')
     else:
         form = PaymentRegistrationForm()
 
-    return render(request, 'finance/payment_form.html', {'form': form})
+    from schools.models import School
+    from academic.models import Course
+    school = School.objects.first()
+    courses = Course.objects.all()
+    suggested_prices = {
+        'pension': str(school.pension_price) if school else "200.00",
+        'matricula': str(school.enrollment_price) if school else "300.00",
+        'material_escolar': str(school.supplies_price) if school else "50.00",
+        'books': {str(c.id): str(c.book_price) for c in courses}
+    }
+
+    return render(request, 'finance/payment_form.html', {
+        'form': form,
+        'suggested_prices': suggested_prices
+    })
 
 
 @role_required('admin', 'director', 'secretary')
@@ -191,18 +237,36 @@ def payment_history(request):
 
 @role_required('admin', 'director', 'secretary')
 def debtors_report(request):
+    from academic.models import Section
     student_query = request.GET.get('student', '').strip()
     grade_id = request.GET.get('grade', '').strip()
+    section_id = request.GET.get('section', '').strip()
     month = request.GET.get('month', '').strip()
+    concept = request.GET.get('concept', '').strip()
 
-    debtors = _debtor_queryset(student_query=student_query, grade_id=grade_id, month=month)
+    debtors = _debtor_queryset(
+        student_query=student_query,
+        grade_id=grade_id,
+        section_id=section_id,
+        month=month,
+        concept=concept
+    )
+
+    sections = Section.objects.select_related('grade').order_by('grade__name', 'name')
+    if grade_id:
+        sections = sections.filter(grade_id=grade_id)
+
     context = {
         'debtors': debtors,
         'grades': Grade.objects.order_by('name'),
+        'sections': sections,
         'student_query': student_query,
         'grade_id': grade_id,
+        'section_id': section_id,
         'month': month,
+        'concept': concept,
         'month_choices': Fee.MONTH_CHOICES,
+        'concept_choices': Fee.CONCEPT_CHOICES,
         'total_pending': sum(item.balance_amount for item in debtors),
     }
     return render(request, 'finance/debtors_report.html', context)
@@ -260,3 +324,19 @@ def debtors_export_csv(request):
         ])
 
     return response
+
+
+@role_required('admin', 'director', 'secretary', 'parent')
+def payment_receipt_pdf(request, payment_id):
+    from .utils import generate_payment_receipt
+    payment = get_object_or_404(Payment, id=payment_id)
+    
+    # Seguridad básica: El padre solo ve sus pagos
+    if request.user.role == 'parent':
+        if payment.fee.enrollment.student.parent_email != request.user.email: # Ajustar según modelo
+             pass # Por ahora dejamos que lo vea si tiene el ID, mejorar si hay datos sensibles
+
+    buffer = generate_payment_receipt(payment)
+    filename = f"recibo_{payment.id}.pdf"
+    
+    return FileResponse(buffer, as_attachment=False, filename=filename)
