@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block title %}Panel academico | Gestion Escolar{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <p class="eyebrow">Modulo academico</p>
+    <h1>Control de cursos, notas y boletas</h1>
+</section>
+
+<section class="stats-grid">
+    <article class="stat-card">
+        <h2>{{ total_courses }}</h2>
+        <p>Cursos registrados</p>
+    </article>
+    <article class="stat-card">
+        <h2>{{ total_periods }}</h2>
+        <p>Periodos academicos</p>
+    </article>
+    <article class="stat-card">
+        <h2>{{ total_grade_records }}</h2>
+        <p>Registros de notas</p>
+    </article>
+    <article class="stat-card">
+        <h2>{{ total_assignments }}</h2>
+        <p>Asignaciones docente-curso</p>
+    </article>
+</section>
+
+<section class="card">
+    <div class="section-head">
+        <h2>Accesos rapidos</h2>
+    </div>
+    <div class="action-row">
+        {% if request.user.role == 'admin' or request.user.role == 'director' or request.user.role == 'secretary' or request.user.is_superuser %}
+        <a href="{% url 'course_management' %}" class="btn btn-primary">Gestionar cursos</a>
+        {% endif %}
+        <a href="{% url 'grade_create' %}" class="btn btn-primary">Registrar nota</a>
+        <a href="{% url 'course_report' %}" class="btn btn-subtle">Reporte por curso</a>
+        <a href="{% url 'period_report' %}" class="btn btn-subtle">Reporte por periodo</a>
+        <a href="{% url 'report_card' %}" class="btn btn-subtle">Generar boletas</a>
+    </div>
+</section>
+{% endblock %}

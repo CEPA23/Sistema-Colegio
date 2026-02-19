@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+
+{% block title %}Panel | Gestion Escolar{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <p class="eyebrow">Panel principal</p>
+    <h1>Control academico del colegio</h1>
+    {% if active_year %}
+        <p class="muted">Anio activo: {{ active_year.year }} - {{ active_year.school.name }}</p>
+    {% else %}
+        <p class="muted">No hay un anio academico activo configurado.</p>
+    {% endif %}
+</section>
+
+<section class="stats-grid">
+    <article class="stat-card">
+        <h2>{{ total_students }}</h2>
+        <p>Estudiantes</p>
+    </article>
+    <article class="stat-card">
+        <h2>{{ total_enrollments }}</h2>
+        <p>Matriculas</p>
+    </article>
+    <article class="stat-card">
+        <h2>{{ total_courses }}</h2>
+        <p>Cursos</p>
+    </article>
+    <article class="stat-card">
+        <h2>{{ total_grade_records }}</h2>
+        <p>Registros de nota</p>
+    </article>
+</section>
+
+<section class="card">
+    <div class="section-head">
+        <h2>Modulos del sistema</h2>
+    </div>
+    <div class="action-row">
+        {% if request.user.role != 'parent' or request.user.is_superuser %}
+            <a href="{% url 'academic_dashboard' %}" class="btn btn-subtle">Academico</a>
+            <a href="{% url 'attendance_dashboard' %}" class="btn btn-subtle">Asistencias</a>
+        {% endif %}
+        {% if request.user.role == 'admin' or request.user.role == 'director' or request.user.role == 'secretary' or request.user.is_superuser %}
+            <a href="{% url 'enrollment_dashboard' %}" class="btn btn-subtle">Matricula</a>
+            <a href="{% url 'finance_dashboard' %}" class="btn btn-subtle">Pagos</a>
+        {% endif %}
+        {% if request.user.role == 'admin' or request.user.role == 'director' or request.user.is_superuser %}
+            <a href="{% url 'system_config' %}" class="btn btn-subtle">Administrativo</a>
+        {% endif %}
+    </div>
+</section>
+
+<section class="card">
+    <div class="section-head">
+        <h2>Ultimas matriculas</h2>
+        {% if request.user.role == 'admin' or request.user.role == 'director' or request.user.role == 'secretary' or request.user.is_superuser %}
+            <a href="{% url 'enrollment_list' %}" class="btn btn-subtle">Ver todo</a>
+        {% endif %}
+    </div>
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Alumno</th>
+                    <th>Anio</th>
+                    <th>Grado</th>
+                    <th>Seccion</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in recent_enrollments %}
+                    <tr>
+                        <td>{{ item.student }}</td>
+                        <td>{{ item.academic_year.year }}</td>
+                        <td>{{ item.section.grade }}</td>
+                        <td>{{ item.section.name }}</td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="4">No hay matriculas registradas.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}

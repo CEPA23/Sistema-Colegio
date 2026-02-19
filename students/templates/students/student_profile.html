@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block title %}Perfil del alumno | Gestion Escolar{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <p class="eyebrow">Perfil del alumno</p>
+    <h1>{{ student }}</h1>
+    <p class="muted">DNI {{ student.dni }} | Deuda total S/ {{ total_debt }}</p>
+</section>
+
+<section class="card">
+    <div class="section-head">
+        <h2>Datos familiares</h2>
+    </div>
+    <div class="form-grid">
+        <div><strong>Apoderado:</strong> {{ student.parent_name }}</div>
+        <div><strong>Telefono:</strong> {{ student.parent_phone }}</div>
+        <div><strong>Direccion:</strong> {{ student.address }}</div>
+    </div>
+</section>
+
+<section class="card">
+    <div class="section-head">
+        <h2>Historial academico y matricula</h2>
+    </div>
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Anio</th>
+                    <th>Grado</th>
+                    <th>Seccion</th>
+                    <th>Estado</th>
+                    <th>Boleta</th>
+                    <th>Asistencia</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in enrollments %}
+                    <tr>
+                        <td>{{ row.academic_year.year }}</td>
+                        <td>{{ row.section.grade }}</td>
+                        <td>{{ row.section.name }}</td>
+                        <td>{{ row.get_status_display }}</td>
+                        <td><a href="{% url 'student_report' row.id %}" class="btn btn-subtle">Ver boleta</a></td>
+                        <td><a href="{% url 'attendance_student_history' row.id %}" class="btn btn-subtle">Ver historial</a></td>
+                    </tr>
+                {% empty %}
+                    <tr><td colspan="6">No hay matriculas registradas.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}

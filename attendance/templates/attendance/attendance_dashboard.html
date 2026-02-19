@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block title %}Panel de asistencia | Gestion Escolar{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <p class="eyebrow">Modulo de asistencia</p>
+    <h1>Control diario de presencia estudiantil</h1>
+</section>
+
+<section class="stats-grid">
+    <article class="stat-card">
+        <h2>{{ today_records }}</h2>
+        <p>Registros del dia</p>
+    </article>
+    <article class="stat-card">
+        <h2>{{ total_records }}</h2>
+        <p>Registros acumulados</p>
+    </article>
+    <article class="stat-card">
+        <h2>{{ total_absences }}</h2>
+        <p>Faltas registradas</p>
+    </article>
+</section>
+
+<section class="card">
+    <div class="section-head">
+        <h2>Acciones</h2>
+    </div>
+    <div class="action-row">
+        <a href="{% url 'attendance_take' %}" class="btn btn-primary">Tomar asistencia por curso</a>
+        <a href="{% url 'attendance_course_report' %}" class="btn btn-subtle">Reporte por curso</a>
+    </div>
+</section>
+{% endblock %}

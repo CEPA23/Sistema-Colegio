@@ -1,0 +1,102 @@
+{% extends 'base.html' %}
+
+{% block title %}Tomar asistencia | Gestion Escolar{% endblock %}
+
+{% block content %}
+<section class="card">
+    <div class="section-head">
+        <h1>Tomar asistencia por curso</h1>
+        <a href="{% url 'attendance_dashboard' %}" class="btn btn-subtle">Panel asistencia</a>
+    </div>
+
+    <form method="get" class="form-grid">
+        {% for field in filter_form %}
+            <div>
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% if field.errors %}
+                    <div class="field-errors">
+                        {% for error in field.errors %}
+                            <div>{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+        {% endfor %}
+        <div class="action-row">
+            <button type="submit" class="btn btn-primary">Cargar aula</button>
+        </div>
+    </form>
+
+    <div style="margin-top: 12px;">
+        <span class="status-pill attendance-present">✔ Asistio</span>
+        <span class="status-pill attendance-absent">❌ Falto</span>
+        <span class="status-pill attendance-justified">✔ Justificado</span>
+    </div>
+</section>
+
+{% if selected_assignment %}
+<section class="card">
+    <div class="section-head">
+        <h2>
+            {{ selected_assignment.course.name }} -
+            {{ selected_assignment.grade.name|default:selected_assignment.section.grade.name }}
+            {{ selected_assignment.section.name }}
+        </h2>
+        <span class="muted">{{ selected_date }}</span>
+    </div>
+
+    <form method="post">
+        {% csrf_token %}
+        <input type="hidden" name="assignment" value="{{ selected_assignment.id }}">
+        <input type="hidden" name="date" value="{{ selected_date|date:'Y-m-d' }}">
+
+        <div class="table-wrap">
+            <table class="excel-table">
+                <thead>
+                    <tr>
+                        <th style="min-width: 250px;">Alumno</th>
+                        <th style="min-width: 180px;">Estado</th>
+                        <th>Visual</th>
+                        <th>Observacion</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in rows %}
+                        <tr>
+                            <td>{{ row.enrollment.student }}</td>
+                            <td>
+                                <select name="status_{{ row.enrollment.id }}" class="attendance-select">
+                                    {% for value, label in status_choices %}
+                                        <option value="{{ value }}" {% if row.status == value %}selected{% endif %}>{{ label }}</option>
+                                    {% endfor %}
+                                </select>
+                            </td>
+                            <td>
+                                <span class="status-pill {{ row.ui.css }}">
+                                    {{ row.ui.icon }} {{ row.ui.label }}
+                                </span>
+                            </td>
+                            <td>
+                                <input
+                                    type="text"
+                                    name="note_{{ row.enrollment.id }}"
+                                    value="{{ row.note }}"
+                                    placeholder="Opcional"
+                                >
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr><td colspan="4">No hay alumnos activos en esta seccion.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="action-row" style="margin-top: 14px;">
+            <button type="submit" class="btn btn-primary">Guardar asistencia</button>
+        </div>
+    </form>
+</section>
+{% endif %}
+{% endblock %}

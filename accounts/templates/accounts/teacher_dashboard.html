@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block title %}Panel docente | Gestion Escolar{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <p class="eyebrow">Panel docente</p>
+    <h1>Gestion de clases, notas y asistencia</h1>
+</section>
+
+<section class="stats-grid">
+    <article class="stat-card">
+        <h2>{{ total_students }}</h2>
+        <p>Estudiantes registrados</p>
+    </article>
+    <article class="stat-card">
+        <h2>{{ total_courses }}</h2>
+        <p>Cursos activos</p>
+    </article>
+    <article class="stat-card">
+        <h2>{{ total_grade_records }}</h2>
+        <p>Notas registradas</p>
+    </article>
+</section>
+
+<section class="card">
+    <div class="section-head">
+        <h2>Accesos docentes</h2>
+    </div>
+    <div class="action-row">
+        <a href="{% url 'student_list' %}" class="btn btn-subtle">Lista de alumnos</a>
+        <a href="{% url 'teacher_competency_gradebook' %}" class="btn btn-primary">Notas por competencias</a>
+        <a href="{% url 'grade_list' %}" class="btn btn-subtle">Resumen de notas</a>
+        <a href="{% url 'course_report' %}" class="btn btn-subtle">Reporte por curso</a>
+        <a href="{% url 'period_report' %}" class="btn btn-subtle">Reporte por periodo</a>
+        <a href="{% url 'attendance_take' %}" class="btn btn-subtle">Tomar asistencia por curso</a>
+    </div>
+</section>
+{% endblock %}

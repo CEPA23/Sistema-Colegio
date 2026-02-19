@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block title %}Logs de actividad | Gestion Escolar{% endblock %}
+
+{% block content %}
+<section class="card">
+    <div class="section-head">
+        <h1>Registro de actividad</h1>
+    </div>
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Fecha</th>
+                    <th>Usuario</th>
+                    <th>Metodo</th>
+                    <th>Ruta</th>
+                    <th>IP</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for log in logs %}
+                    <tr>
+                        <td>{{ log.created_at|date:"Y-m-d H:i:s" }}</td>
+                        <td>{{ log.user|default:"Sistema" }}</td>
+                        <td>{{ log.method }}</td>
+                        <td>{{ log.path }}</td>
+                        <td>{{ log.ip_address|default:"-" }}</td>
+                    </tr>
+                {% empty %}
+                    <tr><td colspan="5">No hay eventos registrados.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}

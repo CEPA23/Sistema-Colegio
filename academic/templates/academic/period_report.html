@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+
+{% block title %}Reporte por periodo | Gestion Escolar{% endblock %}
+
+{% block content %}
+<section class="card">
+    <div class="section-head">
+        <h1>Reporte por periodo</h1>
+        <a href="{% url 'academic_dashboard' %}" class="btn btn-subtle">Panel academico</a>
+    </div>
+
+    <form method="get" class="form-grid">
+        <div>
+            <label for="period">Periodo</label>
+            <select id="period" name="period">
+                <option value="">Seleccionar</option>
+                {% for period in periods %}
+                    <option value="{{ period.id }}" {% if selected_period and selected_period.id == period.id %}selected{% endif %}>
+                        {{ period.name }} - {{ period.academic_year.year }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="action-row">
+            <button type="submit" class="btn btn-primary">Consultar</button>
+        </div>
+    </form>
+</section>
+
+{% if selected_period %}
+<section class="card">
+    <div class="section-head">
+        <h2>{{ selected_period.name }} - {{ selected_period.academic_year.year }}</h2>
+    </div>
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Alumno</th>
+                    <th>Curso</th>
+                    <th>Nota</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for grade in grades %}
+                    <tr>
+                        <td>{{ grade.enrollment.student }}</td>
+                        <td>{{ grade.course.name }}</td>
+                        <td><span class="badge">{{ grade.grade }}</span></td>
+                    </tr>
+                {% empty %}
+                    <tr><td colspan="3">No hay notas en este periodo.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endif %}
+{% endblock %}

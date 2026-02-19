@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block title %}Caja diaria | Gestion Escolar{% endblock %}
+
+{% block content %}
+<section class="card">
+    <div class="section-head">
+        <h1>Caja diaria - {{ today }}</h1>
+    </div>
+    <p class="muted">Total del dia: S/ {{ total }}</p>
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Alumno</th>
+                    <th>Concepto</th>
+                    <th>Mes</th>
+                    <th>Monto</th>
+                    <th>Metodo</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for payment in payments %}
+                    <tr>
+                        <td>{{ payment.fee.enrollment.student }}</td>
+                        <td>{{ payment.fee.get_concept_display }}</td>
+                        <td>{{ payment.fee.get_pension_month_display|default:"-" }}</td>
+                        <td>S/ {{ payment.amount }}</td>
+                        <td>{{ payment.get_method_display }}</td>
+                    </tr>
+                {% empty %}
+                    <tr><td colspan="5">No hay movimientos hoy.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}

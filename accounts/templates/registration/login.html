@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block title %}Iniciar sesion | Gestion Escolar{% endblock %}
+
+{% block content %}
+<section class="auth-wrap">
+    <div class="auth-panel">
+        <p class="eyebrow">{{ system_school.name|default:"Sistema de gestion escolar" }}</p>
+        <h1>Bienvenido</h1>
+        <p class="muted">Ingresa con tu usuario institucional para continuar{% if system_school %} en {{ system_school.name }}{% endif %}.</p>
+
+        <form method="post" class="stack">
+            {% csrf_token %}
+            {% if next %}
+                <input type="hidden" name="next" value="{{ next }}">
+            {% endif %}
+            {% if form.non_field_errors %}
+                <div class="error-box">
+                    {% for error in form.non_field_errors %}
+                        <p>{{ error }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            <label for="id_username">Usuario o correo</label>
+            <input id="id_username" name="username" type="text" required autofocus>
+
+            <label for="id_password">Contrasena</label>
+            <input id="id_password" name="password" type="password" required>
+
+            <button type="submit" class="btn btn-primary">Entrar</button>
+        </form>
+    </div>
+</section>
+{% endblock %}

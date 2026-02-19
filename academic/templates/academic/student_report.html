@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block title %}Libreta del alumno | Gestion Escolar{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <p class="eyebrow">Reporte individual</p>
+    <h1>{{ enrollment.student }}</h1>
+    <p class="muted">
+        Anio {{ enrollment.academic_year.year }} |
+        {{ enrollment.section.grade }} {{ enrollment.section.name }}
+    </p>
+</section>
+
+<section class="card">
+    <div class="section-head">
+        <h2>Rendimiento por curso</h2>
+        <div class="action-row">
+            <a href="{% url 'student_report_pdf' enrollment.id %}" class="btn btn-primary">Descargar PDF</a>
+            <a href="{% url 'report_card' %}" class="btn btn-subtle">Volver</a>
+        </div>
+    </div>
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Curso</th>
+                    <th>Nota final</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for g in grades %}
+                    <tr>
+                        <td>{{ g.course }}</td>
+                        <td><span class="badge">{{ g.final_grade }}</span></td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="2">No hay calificaciones registradas.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}

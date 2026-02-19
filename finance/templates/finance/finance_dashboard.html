@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block title %}Panel financiero | Gestion Escolar{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <p class="eyebrow">Modulo de pagos</p>
+    <h1>Control de caja y deudas</h1>
+</section>
+
+<section class="stats-grid">
+    <article class="stat-card">
+        <h2>{{ total_fees }}</h2>
+        <p>Cuotas emitidas</p>
+    </article>
+    <article class="stat-card">
+        <h2>S/ {{ total_billed }}</h2>
+        <p>Total facturado</p>
+    </article>
+    <article class="stat-card">
+        <h2>S/ {{ total_paid }}</h2>
+        <p>Total pagado</p>
+    </article>
+    <article class="stat-card">
+        <h2>S/ {{ total_pending }}</h2>
+        <p>Saldo pendiente</p>
+    </article>
+    <article class="stat-card">
+        <h2>S/ {{ today_income }}</h2>
+        <p>Ingreso del dia</p>
+    </article>
+</section>
+
+<section class="card">
+    <div class="section-head">
+        <h2>Accesos rapidos</h2>
+    </div>
+    <div class="action-row">
+        <a href="{% url 'payment_create' %}" class="btn btn-primary">Registrar pago</a>
+        <a href="{% url 'account_status' %}" class="btn btn-subtle">Estado de cuenta</a>
+        <a href="{% url 'debtors_report' %}" class="btn btn-subtle">Reporte de deudores</a>
+        <a href="{% url 'cash_report' %}" class="btn btn-subtle">Caja diaria</a>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+
+{% block title %}Reporte de deudores | Gestion Escolar{% endblock %}
+
+{% block content %}
+<section class="card">
+    <div class="section-head">
+        <h1>Reporte de deudores</h1>
+        <div class="action-row">
+            <a href="{% url 'finance_dashboard' %}" class="btn btn-subtle">Panel financiero</a>
+        </div>
+    </div>
+
+    <form method="get" class="form-grid">
+        <div>
+            <label for="student">Alumno</label>
+            <input id="student" name="student" type="text" value="{{ student_query }}" placeholder="Nombre o apellido">
+        </div>
+        <div>
+            <label for="grade">Grado</label>
+            <select id="grade" name="grade">
+                <option value="">Todos</option>
+                {% for grade in grades %}
+                    <option value="{{ grade.id }}" {% if grade_id == grade.id|stringformat:'s' %}selected{% endif %}>
+                        {{ grade.name }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div>
+            <label for="month">Mes (solo pension)</label>
+            <select id="month" name="month">
+                <option value="">Todos</option>
+                {% for value, label in month_choices %}
+                    <option value="{{ value }}" {% if month == value|stringformat:'s' %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="action-row">
+            <button type="submit" class="btn btn-primary">Filtrar</button>
+            <a href="{% url 'debtors_report' %}" class="btn btn-subtle">Limpiar</a>
+            <a href="{% url 'debtors_export_csv' %}?student={{ student_query|urlencode }}&grade={{ grade_id|urlencode }}&month={{ month|urlencode }}" class="btn btn-subtle">
+                Exportar Excel (CSV)
+            </a>
+        </div>
+    </form>
+
+    <p class="muted">Deuda total filtrada: S/ {{ total_pending }}</p>
+
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Alumno</th>
+                    <th>Grado</th>
+                    <th>Concepto</th>
+                    <th>Mes</th>
+                    <th>Monto</th>
+                    <th>Pagado</th>
+                    <th>Pendiente</th>
+                    <th>Vence</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for fee in debtors %}
+                    <tr>
+                        <td>{{ fee.enrollment.student }}</td>
+                        <td>{{ fee.enrollment.section.grade }}</td>
+                        <td>{{ fee.get_concept_display }}</td>
+                        <td>{{ fee.get_pension_month_display|default:"-" }}</td>
+                        <td>S/ {{ fee.amount }}</td>
+                        <td>S/ {{ fee.paid_amount }}</td>
+                        <td>S/ {{ fee.balance_amount }}</td>
+                        <td>{{ fee.due_date }}</td>
+                    </tr>
+                {% empty %}
+                    <tr><td colspan="8">No se encontraron deudas para los filtros aplicados.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}

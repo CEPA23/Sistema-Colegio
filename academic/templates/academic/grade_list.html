@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block title %}Registro de notas | Gestion Escolar{% endblock %}
+
+{% block content %}
+<section class="card">
+    <div class="section-head">
+        <h1>Registro de notas</h1>
+        <div class="action-row">
+            <a href="{% url 'academic_dashboard' %}" class="btn btn-subtle">Panel academico</a>
+            <a href="{% url 'grade_create' %}" class="btn btn-primary">Registrar nota</a>
+            <a href="{% url 'course_report' %}" class="btn btn-subtle">Reporte por curso</a>
+            <a href="{% url 'period_report' %}" class="btn btn-subtle">Reporte por periodo</a>
+            <a href="{% url 'report_card' %}" class="btn btn-subtle">Ver libretas</a>
+        </div>
+    </div>
+
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Alumno</th>
+                    <th>Curso</th>
+                    <th>Periodo</th>
+                    <th>Nota</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for g in grades %}
+                    <tr>
+                        <td>{{ g.enrollment.student }}</td>
+                        <td>{{ g.course.name }}</td>
+                        <td>{{ g.period.name }}</td>
+                        <td><span class="badge">{{ g.grade }}</span></td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="4">No hay notas registradas.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block title %}Ficha de matricula | Gestion Escolar{% endblock %}
+
+{% block content %}
+<section class="card">
+    <div class="section-head">
+        <h1>Ficha individual de matricula</h1>
+        <div class="action-row">
+            <a href="{% url 'enrollment_history' enrollment.student.id %}" class="btn btn-subtle">Historial alumno</a>
+            <a href="{% url 'enrollment_list' %}" class="btn btn-subtle">Volver</a>
+        </div>
+    </div>
+
+    <div class="form-grid">
+        <div><strong>Alumno:</strong> {{ enrollment.student }}</div>
+        <div><strong>DNI:</strong> {{ enrollment.student.dni }}</div>
+        <div><strong>Anio:</strong> {{ enrollment.academic_year.year }}</div>
+        <div><strong>Grado:</strong> {{ enrollment.section.grade }}</div>
+        <div><strong>Seccion:</strong> {{ enrollment.section.name }}</div>
+        <div><strong>Estado:</strong> {{ enrollment.get_status_display }}</div>
+        <div><strong>Registrado:</strong> {{ enrollment.enrolled_at|date:"Y-m-d H:i" }}</div>
+    </div>
+</section>
+{% endblock %}

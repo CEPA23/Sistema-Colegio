@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block title %}Matriculas | Gestion Escolar{% endblock %}
+
+{% block content %}
+<section class="card">
+    <div class="section-head">
+        <h1>Alumnos matriculados</h1>
+        <div class="action-row">
+            <a href="{% url 'enrollment_dashboard' %}" class="btn btn-subtle">Panel de matricula</a>
+            <a href="{% url 'enrollment_create' %}" class="btn btn-primary">Nueva matricula</a>
+        </div>
+    </div>
+
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Alumno</th>
+                    <th>Anio</th>
+                    <th>Grado</th>
+                    <th>Seccion</th>
+                    <th>Estado</th>
+                    <th>Reporte</th>
+                    <th>Ficha</th>
+                    <th>Renovar</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for e in enrollments %}
+                    <tr>
+                        <td>{{ e.student }}</td>
+                        <td>{{ e.academic_year.year }}</td>
+                        <td>{{ e.section.grade }}</td>
+                        <td>{{ e.section.name }}</td>
+                        <td>{{ e.get_status_display }}</td>
+                        <td>
+                            <a href="{% url 'student_report' e.id %}" class="btn btn-subtle">Ver libreta</a>
+                        </td>
+                        <td>
+                            <a href="{% url 'enrollment_detail' e.id %}" class="btn btn-subtle">Ver ficha</a>
+                        </td>
+                        <td>
+                            <a href="{% url 'enrollment_renew' e.id %}" class="btn btn-subtle">Renovar</a>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="8">No hay matriculas registradas.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}

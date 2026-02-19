@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block title %}Panel de matricula | Gestion Escolar{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <p class="eyebrow">Modulo de matricula</p>
+    <h1>Control de ingresos y renovaciones</h1>
+</section>
+
+<section class="stats-grid">
+    <article class="stat-card">
+        <h2>{{ total_enrollments }}</h2>
+        <p>Total matriculas</p>
+    </article>
+    <article class="stat-card">
+        <h2>{{ active_enrollments }}</h2>
+        <p>Activos</p>
+    </article>
+    <article class="stat-card">
+        <h2>{{ retired_enrollments }}</h2>
+        <p>Retirados</p>
+    </article>
+    <article class="stat-card">
+        <h2>{{ transferred_enrollments }}</h2>
+        <p>Trasladados</p>
+    </article>
+</section>
+
+<section class="card">
+    <div class="section-head">
+        <h2>Acciones</h2>
+    </div>
+    <div class="action-row">
+        <a href="{% url 'enrollment_create' %}" class="btn btn-primary">Registrar matricula</a>
+        <a href="{% url 'enrollment_list' %}" class="btn btn-subtle">Ver matriculados</a>
+    </div>
+</section>
+{% endblock %}

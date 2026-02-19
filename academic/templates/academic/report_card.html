@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block title %}Libreta academica | Gestion Escolar{% endblock %}
+
+{% block content %}
+<section class="card">
+    <div class="section-head">
+        <h1>Libreta academica</h1>
+        <a href="{% url 'grade_list' %}" class="btn btn-subtle">Volver a notas</a>
+    </div>
+
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Alumno</th>
+                    {% for course in courses %}
+                        <th>{{ course.name }}</th>
+                    {% endfor %}
+                    <th>Detalle</th>
+                    <th>PDF</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for student in report %}
+                    <tr>
+                        <td>{{ student.student }}</td>
+                        {% for g in student.grades %}
+                            <td><span class="badge">{{ g.final_grade }}</span></td>
+                        {% endfor %}
+                        <td>
+                            <a href="{% url 'student_report' student.enrollment_id %}" class="btn btn-subtle">Ver alumno</a>
+                        </td>
+                        <td>
+                            <a href="{% url 'student_report_pdf' student.enrollment_id %}" class="btn btn-subtle">Descargar</a>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="{{ courses|length|add:3 }}">No hay datos para mostrar.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}

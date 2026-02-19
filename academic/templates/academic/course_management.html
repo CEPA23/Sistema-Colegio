@@ -1,0 +1,120 @@
+{% extends 'base.html' %}
+
+{% block title %}Gestion de cursos | Gestion Escolar{% endblock %}
+
+{% block content %}
+<section class="card">
+    <div class="section-head">
+        <h1>Gestion de cursos</h1>
+        <a href="{% url 'academic_dashboard' %}" class="btn btn-subtle">Panel academico</a>
+    </div>
+
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Curso</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for course in courses %}
+                    <tr>
+                        <td>{{ course.name }}</td>
+                    </tr>
+                {% empty %}
+                    <tr><td>No hay cursos registrados.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<section class="card" style="margin-top: 14px;">
+    <div class="section-head">
+        <h2>Crear curso</h2>
+    </div>
+
+    <form method="post" class="form-grid">
+        {% csrf_token %}
+        <input type="hidden" name="form_type" value="course">
+        {% for field in course_form %}
+            <div>
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% if field.errors %}
+                    <div class="field-errors">
+                        {% for error in field.errors %}
+                            <div>{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+        {% endfor %}
+        <div class="action-row">
+            <button type="submit" class="btn btn-primary">Guardar curso</button>
+        </div>
+    </form>
+</section>
+
+<section class="card" style="margin-top: 14px;">
+    <div class="section-head">
+        <h2>Asignar curso a nivel/grado/seccion/docente</h2>
+    </div>
+
+    <form method="post" class="form-grid">
+        {% csrf_token %}
+        <input type="hidden" name="form_type" value="assignment">
+        {% for field in assignment_form %}
+            <div>
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% if field.errors %}
+                    <div class="field-errors">
+                        {% for error in field.errors %}
+                            <div>{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+        {% endfor %}
+        <div class="action-row">
+            <button type="submit" class="btn btn-primary">Guardar asignacion</button>
+        </div>
+    </form>
+</section>
+
+<section class="card" style="margin-top: 14px;">
+    <div class="section-head">
+        <h2>Asignaciones actuales</h2>
+    </div>
+
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Anio</th>
+                    <th>Curso</th>
+                    <th>Nivel</th>
+                    <th>Grado</th>
+                    <th>Seccion</th>
+                    <th>Docente</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for assignment in assignments %}
+                    <tr>
+                        <td>{{ assignment.academic_year.year }}</td>
+                        <td>{{ assignment.course.name }}</td>
+                        <td>{{ assignment.level|default:"-" }}</td>
+                        <td>{{ assignment.grade|default:assignment.section.grade }}</td>
+                        <td>{{ assignment.section.name }}</td>
+                        <td>{{ assignment.teacher.get_full_name|default:assignment.teacher.username }}</td>
+                    </tr>
+                {% empty %}
+                    <tr><td colspan="6">No hay asignaciones registradas.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}

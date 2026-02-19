@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block title %}Nueva nota | Gestion Escolar{% endblock %}
+
+{% block content %}
+<section class="card">
+    <div class="section-head">
+        <h1>Registrar nota</h1>
+        <a href="{% url 'grade_list' %}" class="btn btn-subtle">Volver</a>
+    </div>
+
+    <form method="post" class="form-grid">
+        {% csrf_token %}
+        {% for field in form %}
+            <div>
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% if field.errors %}
+                    <div class="field-errors">
+                        {% for error in field.errors %}
+                            <div>{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+        {% endfor %}
+        <div class="action-row">
+            <button type="submit" class="btn btn-primary">Guardar</button>
+        </div>
+    </form>
+</section>
+{% endblock %}

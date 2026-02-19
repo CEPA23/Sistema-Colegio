@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block title %}Estudiantes | Gestion Escolar{% endblock %}
+
+{% block content %}
+<section class="card">
+    <div class="section-head">
+        <h1>Lista de estudiantes</h1>
+        {% if request.user.role == 'admin' or request.user.role == 'director' or request.user.role == 'secretary' or request.user.role == 'teacher' or request.user.is_superuser %}
+            <a href="{% url 'student_create' %}" class="btn btn-primary">Nuevo alumno</a>
+        {% endif %}
+    </div>
+
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Nombres</th>
+                    <th>Apellidos</th>
+                    <th>DNI</th>
+                    <th>Apoderado</th>
+                    <th>Telefono</th>
+                    <th>Perfil</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for student in students %}
+                    <tr>
+                        <td>{{ student.first_name }}</td>
+                        <td>{{ student.last_name }}</td>
+                        <td>{{ student.dni }}</td>
+                        <td>{{ student.parent_name }}</td>
+                        <td>{{ student.parent_phone }}</td>
+                        <td><a href="{% url 'student_profile' student.id %}" class="btn btn-subtle">Abrir</a></td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="6">No hay estudiantes registrados.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}

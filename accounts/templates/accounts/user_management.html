@@ -1,0 +1,246 @@
+{% extends 'base.html' %}
+
+{% block title %}Gestion de usuarios | Gestion Escolar{% endblock %}
+
+{% block content %}
+<section class="card">
+    <div class="section-head">
+        <h1>Usuarios registrados</h1>
+        <button type="button" class="btn btn-primary" id="toggle-user-form">Nuevo Usuario</button>
+    </div>
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Usuario</th>
+                    <th>Nombre</th>
+                    <th>Rol</th>
+                    <th>Grado asignado</th>
+                    <th>Sección asignada</th>
+                    <th>Polidocente</th>
+                    <th>Email</th>
+                    <th>Activo</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                    <tr>
+                        <td>{{ user.username }}</td>
+                        <td>{{ user.first_name }} {{ user.last_name }}</td>
+                        <td>{{ user.get_role_display }}</td>
+                        <td>{{ user.teaching_grade|default:"-" }}</td>
+                        <td>{{ user.teaching_section|default:"-" }}</td>
+                        <td>{% if user.is_polyteacher %}Sí{% else %}No{% endif %}</td>
+                        <td>{{ user.email|default:"-" }}</td>
+                        <td>{% if user.is_active %}Sí{% else %}No{% endif %}</td>
+                        <td>
+                            <div class="action-row" style="gap: 4px;">
+                                <a href="?edit={{ user.id }}" class="btn btn-subtle btn-sm">Editar</a>
+                                {% if user.id != request.user.id and not user.is_superuser %}
+                                    <button type="button" class="btn btn-danger btn-sm" onclick="confirmDelete('{{ user.username }}', '{% url 'user_delete' user.id %}')">Eliminar</button>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr><td colspan="9">No hay usuarios registrados.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<!-- Modal para crear usuario -->
+<div class="modal {% if show_user_form or form.errors %}is-visible{% endif %}" id="user-modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>{% if edit_user %}Editar usuario: {{ edit_user.username }}{% else %}Crear usuario{% endif %}</h2>
+            <a href="{% url 'user_management' %}" class="modal-close">&times;</a>
+        </div>
+        <form method="post" class="form-grid">
+            {% csrf_token %}
+            {% for field in form %}
+                <div>
+                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    {{ field }}
+                    {% if field.errors %}
+                        <div class="field-errors">
+                            {% for error in field.errors %}
+                                <div>{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+            <div class="action-row">
+                <button type="submit" class="btn btn-primary">{% if edit_user %}Actualizar usuario{% else %}Guardar usuario{% endif %}</button>
+                {% if edit_user %}
+                    <a href="{% url 'user_management' %}" class="btn btn-subtle">Cerrar</a>
+                {% endif %}
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal.is-visible {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-content {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 600px;
+    max-height: 80vh;
+    overflow-y: auto;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.modal-header h2 {
+    margin: 0;
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #666;
+}
+
+.modal-close:hover {
+    color: #000;
+}
+.btn-danger {
+    background-color: #dc3545;
+    color: white;
+}
+.btn-danger:hover {
+    background-color: #bb2d3b;
+}
+.btn-sm {
+    padding: 4px 8px;
+    font-size: 0.85em;
+}
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const modal = document.getElementById('user-modal');
+        const toggleButton = document.getElementById('toggle-user-form');
+        const closeButton = document.getElementById('close-modal');
+        const roleField = document.getElementById('id_role');
+        const gradeField = document.getElementById('id_teaching_grade');
+        const sectionField = document.getElementById('id_teaching_section');
+        const isPolyField = document.getElementById('id_is_polyteacher');
+        const coursesField = document.getElementById('id_teaching_courses');
+        const gradesPolyField = document.getElementById('id_teaching_grades');
+
+        const showModal = () => {
+            modal.classList.add('is-visible');
+            syncButtonText();
+        };
+        const hideModal = () => {
+             if (window.location.search.includes('edit=')) {
+                window.location.href = "{% url 'user_management' %}";
+            } else {
+                modal.classList.remove('is-visible');
+                syncButtonText();
+            }
+        };
+
+        const syncButtonText = () => {
+            if (toggleButton) {
+                toggleButton.textContent = modal.classList.contains('is-visible') ? 'Cancelar' : 'Nuevo Usuario';
+            }
+        };
+
+        if (toggleButton) {
+            toggleButton.addEventListener('click', function () {
+                if (modal.classList.contains('is-visible')) {
+                    hideModal();
+                } else {
+                    showModal();
+                }
+            });
+            syncButtonText();
+        }
+
+        // Cerrar modal al hacer clic fuera
+        modal.addEventListener('click', function (e) {
+            if (e.target === modal) {
+                hideModal();
+            }
+        });
+
+        window.confirmDelete = function(username, deleteUrl) {
+            if (confirm(`¿Estás seguro de que deseas eliminar al usuario "${username}"? Esta acción no se puede deshacer.`)) {
+                window.location.href = deleteUrl;
+            }
+        };
+
+        if (roleField && gradeField && sectionField && isPolyField && coursesField && gradesPolyField) {
+            const gradeWrapper = gradeField.closest('div');
+            const sectionWrapper = sectionField.closest('div');
+            const isPolyWrapper = isPolyField.closest('div');
+            const coursesWrapper = coursesField.closest('div');
+            const gradesPolyWrapper = gradesPolyField.closest('div');
+
+            const syncTeacherFieldsVisibility = function () {
+                const isTeacher = roleField.value === 'teacher';
+                const isPoly = isPolyField.checked;
+
+                if (isPolyWrapper) {
+                    isPolyWrapper.style.display = isTeacher ? '' : 'none';
+                }
+                if (isTeacher) {
+                    if (isPoly) {
+                        if (gradeWrapper) gradeWrapper.style.display = 'none';
+                        if (sectionWrapper) sectionWrapper.style.display = 'none';
+                        if (coursesWrapper) coursesWrapper.style.display = '';
+                        if (gradesPolyWrapper) gradesPolyWrapper.style.display = '';
+                    } else {
+                        if (gradeWrapper) gradeWrapper.style.display = '';
+                        if (sectionWrapper) sectionWrapper.style.display = '';
+                        if (coursesWrapper) coursesWrapper.style.display = 'none';
+                        if (gradesPolyWrapper) gradesPolyWrapper.style.display = 'none';
+                    }
+                } else {
+                    if (gradeWrapper) gradeWrapper.style.display = 'none';
+                    if (sectionWrapper) sectionWrapper.style.display = 'none';
+                    if (coursesWrapper) coursesWrapper.style.display = 'none';
+                    if (gradesPolyWrapper) gradesPolyWrapper.style.display = 'none';
+                    if (isPolyWrapper) isPolyWrapper.style.display = 'none';
+                }
+            };
+
+            roleField.addEventListener('change', syncTeacherFieldsVisibility);
+            isPolyField.addEventListener('change', syncTeacherFieldsVisibility);
+            syncTeacherFieldsVisibility();
+        }
+    });
+</script>
+{% endblock %}

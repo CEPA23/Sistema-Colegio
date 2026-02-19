@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block title %}Historial de asistencia | Gestion Escolar{% endblock %}
+
+{% block content %}
+<section class="card">
+    <div class="section-head">
+        <h1>Historial de asistencia</h1>
+        <a href="{% url 'student_profile' enrollment.student.id %}" class="btn btn-subtle">Perfil alumno</a>
+    </div>
+    <p class="muted">Alumno: {{ enrollment.student }}</p>
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Fecha</th>
+                    <th>Curso</th>
+                    <th>Estado</th>
+                    <th>Observacion</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for record in records %}
+                    <tr>
+                        <td>{{ record.date }}</td>
+                        <td>
+                            {% if record.assignment_id %}
+                                {{ record.assignment.course.name }} - {{ record.assignment.section.grade.name }} {{ record.assignment.section.name }}
+                            {% else %}
+                                -
+                            {% endif %}
+                        </td>
+                        <td>
+                            <span class="status-pill {{ record.status_css_class }}">
+                                {{ record.status_icon }} {{ record.get_status_display }}
+                            </span>
+                        </td>
+                        <td>{{ record.note|default:"-" }}</td>
+                    </tr>
+                {% empty %}
+                    <tr><td colspan="4">No hay registros de asistencia.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}

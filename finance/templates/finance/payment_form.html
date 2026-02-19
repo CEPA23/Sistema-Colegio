@@ -1,0 +1,203 @@
+{% extends 'base.html' %}
+
+{% block title %}Registrar pago | Gestion Escolar{% endblock %}
+
+{% block content %}
+<section class="card">
+    <div class="section-head">
+        <h1>Registrar pago</h1>
+        <a href="{% url 'payment_history' %}" class="btn btn-subtle">Historial</a>
+    </div>
+
+    {% if form.non_field_errors %}
+        <div class="error-box">
+            {% for error in form.non_field_errors %}
+                <p>{{ error }}</p>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <form method="post" enctype="multipart/form-data" class="form-grid">
+        {% csrf_token %}
+
+        <div>
+            <label for="{{ form.student_name.id_for_label }}">{{ form.student_name.label }}</label>
+            {{ form.student_name }}
+            {{ form.enrollment_id }}
+            <ul id="student_suggestions" class="search-suggestions"></ul>
+            <p class="muted">Escribe el nombre del alumno y selecciona una sugerencia.</p>
+            {% if form.student_name.errors %}
+                <div class="field-errors">
+                    {% for error in form.student_name.errors %}
+                        <div>{{ error }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+            {% if form.enrollment_id.errors %}
+                <div class="field-errors">
+                    {% for error in form.enrollment_id.errors %}
+                        <div>{{ error }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+
+        <div>
+            <label for="{{ form.concept.id_for_label }}">{{ form.concept.label }}</label>
+            {{ form.concept }}
+            {% if form.concept.errors %}
+                <div class="field-errors">
+                    {% for error in form.concept.errors %}
+                        <div>{{ error }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+
+        <div id="pension_month_wrap" style="display:none;">
+            <label for="{{ form.pension_month.id_for_label }}">{{ form.pension_month.label }}</label>
+            {{ form.pension_month }}
+            {% if form.pension_month.errors %}
+                <div class="field-errors">
+                    {% for error in form.pension_month.errors %}
+                        <div>{{ error }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+
+        <div>
+            <label for="{{ form.amount.id_for_label }}">{{ form.amount.label }}</label>
+            {{ form.amount }}
+            {% if form.amount.errors %}
+                <div class="field-errors">
+                    {% for error in form.amount.errors %}
+                        <div>{{ error }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+
+        <div>
+            <label for="{{ form.method.id_for_label }}">{{ form.method.label }}</label>
+            {{ form.method }}
+            {% if form.method.errors %}
+                <div class="field-errors">
+                    {% for error in form.method.errors %}
+                        <div>{{ error }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+
+        <div id="proof_wrap" style="display:none;">
+            <label for="{{ form.proof_image.id_for_label }}">{{ form.proof_image.label }}</label>
+            {{ form.proof_image }}
+            <p class="muted">Obligatorio para Transferencia o Yape/Plin.</p>
+            {% if form.proof_image.errors %}
+                <div class="field-errors">
+                    {% for error in form.proof_image.errors %}
+                        <div>{{ error }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+
+        <div>
+            <label for="{{ form.comment.id_for_label }}">{{ form.comment.label }}</label>
+            {{ form.comment }}
+            {% if form.comment.errors %}
+                <div class="field-errors">
+                    {% for error in form.comment.errors %}
+                        <div>{{ error }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="action-row">
+            <button type="submit" class="btn btn-primary">Registrar pago</button>
+        </div>
+    </form>
+</section>
+
+<script>
+    (function () {
+        const conceptField = document.getElementById('{{ form.concept.id_for_label }}');
+        const methodField = document.getElementById('{{ form.method.id_for_label }}');
+        const monthWrap = document.getElementById('pension_month_wrap');
+        const proofWrap = document.getElementById('proof_wrap');
+
+        const studentField = document.getElementById('{{ form.student_name.id_for_label }}');
+        const enrollmentIdField = document.getElementById('{{ form.enrollment_id.id_for_label }}');
+        const suggestionList = document.getElementById('student_suggestions');
+        const searchUrl = "{% url 'payment_student_search' %}";
+        let debounceTimer = null;
+
+        function toggleMonth() {
+            const isPension = conceptField && conceptField.value === 'pension';
+            monthWrap.style.display = isPension ? 'block' : 'none';
+        }
+
+        function toggleProof() {
+            const method = methodField ? methodField.value : '';
+            const needsProof = method === 'transfer' || method === 'yape_plin';
+            proofWrap.style.display = needsProof ? 'block' : 'none';
+        }
+
+        function clearSuggestions() {
+            suggestionList.innerHTML = '';
+        }
+
+        function renderSuggestions(results) {
+            clearSuggestions();
+            results.forEach(function (row) {
+                const item = document.createElement('li');
+                item.textContent = row.label;
+                item.addEventListener('click', function () {
+                    studentField.value = row.student_name;
+                    enrollmentIdField.value = row.enrollment_id;
+                    clearSuggestions();
+                });
+                suggestionList.appendChild(item);
+            });
+        }
+
+        if (conceptField) {
+            conceptField.addEventListener('change', toggleMonth);
+        }
+        if (methodField) {
+            methodField.addEventListener('change', toggleProof);
+        }
+
+        if (studentField && enrollmentIdField && suggestionList) {
+            studentField.addEventListener('input', function () {
+                enrollmentIdField.value = '';
+                const query = studentField.value.trim();
+                clearTimeout(debounceTimer);
+
+                if (query.length < 2) {
+                    clearSuggestions();
+                    return;
+                }
+
+                debounceTimer = setTimeout(function () {
+                    fetch(searchUrl + '?q=' + encodeURIComponent(query), { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+                        .then(function (response) { return response.json(); })
+                        .then(function (data) { renderSuggestions(data.results || []); })
+                        .catch(function () { clearSuggestions(); });
+                }, 220);
+            });
+
+            document.addEventListener('click', function (event) {
+                if (!suggestionList.contains(event.target) && event.target !== studentField) {
+                    clearSuggestions();
+                }
+            });
+        }
+
+        toggleMonth();
+        toggleProof();
+    })();
+</script>
+{% endblock %}

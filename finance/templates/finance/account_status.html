@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block title %}Estado de cuenta | Gestion Escolar{% endblock %}
+
+{% block content %}
+<section class="card">
+    <div class="section-head">
+        <h1>Estado de cuenta por alumno</h1>
+        <div class="action-row">
+            <a href="{% url 'payment_create' %}" class="btn btn-primary">Registrar pago</a>
+            <a href="{% url 'finance_dashboard' %}" class="btn btn-subtle">Panel financiero</a>
+        </div>
+    </div>
+    <p class="muted">Pendiente total: S/ {{ total_pending }}</p>
+
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Alumno</th>
+                    <th>Concepto</th>
+                    <th>Mes</th>
+                    <th>Monto</th>
+                    <th>Pagado</th>
+                    <th>Saldo</th>
+                    <th>Vencimiento</th>
+                    <th>Estado</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for fee in fees %}
+                    <tr>
+                        <td>{{ fee.enrollment.student }}</td>
+                        <td>{{ fee.get_concept_display }}</td>
+                        <td>{{ fee.get_pension_month_display|default:"-" }}</td>
+                        <td>S/ {{ fee.amount }}</td>
+                        <td>S/ {{ fee.total_paid }}</td>
+                        <td>S/ {{ fee.balance }}</td>
+                        <td>{{ fee.due_date }}</td>
+                        <td>{{ fee.get_status_display }}</td>
+                    </tr>
+                {% empty %}
+                    <tr><td colspan="8">No hay cuotas registradas.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}

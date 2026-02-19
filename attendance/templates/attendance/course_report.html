@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+
+{% block title %}Reporte de asistencia por curso | Gestion Escolar{% endblock %}
+
+{% block content %}
+<section class="card">
+    <div class="section-head">
+        <h1>Reporte por curso/seccion</h1>
+        <a href="{% url 'attendance_dashboard' %}" class="btn btn-subtle">Panel asistencia</a>
+    </div>
+
+    <form method="get" class="form-grid" style="margin-bottom: 14px;">
+        <div>
+            <label for="assignment">Curso</label>
+            <select id="assignment" name="assignment">
+                <option value="">Todos</option>
+                {% for item in assignments %}
+                    <option value="{{ item.id }}" {% if assignment_id == item.id|stringformat:'s' %}selected{% endif %}>
+                        {{ item.course.name }} - {{ item.section.grade.name }} {{ item.section.name }} ({{ item.academic_year.year }})
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="action-row">
+            <button type="submit" class="btn btn-primary">Filtrar</button>
+            <a href="{% url 'attendance_course_report' %}" class="btn btn-subtle">Limpiar</a>
+        </div>
+    </form>
+
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Curso</th>
+                    <th>Nivel</th>
+                    <th>Grado</th>
+                    <th>Seccion</th>
+                    <th>Total</th>
+                    <th>Asistio</th>
+                    <th>Falto</th>
+                    <th>Justificado</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in summary %}
+                    <tr>
+                        <td>{{ row.assignment__course__name }}</td>
+                        <td>{{ row.assignment__level__name|default:"-" }}</td>
+                        <td>{{ row.assignment__grade__name|default:"-" }}</td>
+                        <td>{{ row.assignment__section__name }}</td>
+                        <td>{{ row.total }}</td>
+                        <td>{{ row.present }}</td>
+                        <td>{{ row.absent }}</td>
+                        <td>{{ row.justified }}</td>
+                    </tr>
+                {% empty %}
+                    <tr><td colspan="8">No hay informacion para mostrar.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block title %}Historial de matricula | Gestion Escolar{% endblock %}
+
+{% block content %}
+<section class="card">
+    <div class="section-head">
+        <h1>Historial de matricula</h1>
+        <a href="{% url 'student_profile' student.id %}" class="btn btn-subtle">Perfil del alumno</a>
+    </div>
+    <p class="muted">Alumno: {{ student }}</p>
+
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Anio</th>
+                    <th>Grado</th>
+                    <th>Seccion</th>
+                    <th>Estado</th>
+                    <th>Fecha</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in history %}
+                    <tr>
+                        <td>{{ row.academic_year.year }}</td>
+                        <td>{{ row.section.grade }}</td>
+                        <td>{{ row.section.name }}</td>
+                        <td>{{ row.get_status_display }}</td>
+                        <td>{{ row.enrolled_at|date:"Y-m-d H:i" }}</td>
+                    </tr>
+                {% empty %}
+                    <tr><td colspan="5">No hay historial.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}

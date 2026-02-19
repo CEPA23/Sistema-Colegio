@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block title %}Roles y permisos | Gestion Escolar{% endblock %}
+
+{% block content %}
+<section class="card">
+    <div class="section-head">
+        <h1>Roles y permisos</h1>
+    </div>
+
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Rol</th>
+                    <th>Permisos principales</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in role_matrix %}
+                    <tr>
+                        <td>{{ row.role }}</td>
+                        <td>{{ row.access }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}
