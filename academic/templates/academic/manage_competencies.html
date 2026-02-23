@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+
+{% block title %}Gestionar Competencias - {{ course.name }} | Gestion Escolar{% endblock %}
+
+{% block content %}
+<section class="card">
+    <div class="section-head">
+        <div>
+            <h1>Competencias: {{ course.name }}</h1>
+            <p class="muted">Define las competencias principales para este curso.</p>
+        </div>
+        <a href="{% url 'teacher_competency_gradebook' %}" class="btn btn-subtle">Volver al registro</a>
+    </div>
+
+    <div class="grid" style="grid-template-columns: 1fr 2fr; gap: 24px;">
+        <!-- Formulario -->
+        <div class="card" style="padding: 20px; border: 1px solid #eee;">
+            <h3>Nueva Competencia</h3>
+            <form method="post" style="margin-top: 16px;">
+                {% csrf_token %}
+                <div class="form-group" style="margin-bottom: 16px;">
+                    <label>Nombre de la competencia</label>
+                    {{ form.name }}
+                    {% if form.name.errors %}<div class="error">{{ form.name.errors }}</div>{% endif %}
+                </div>
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <label>Orden</label>
+                    {{ form.order }}
+                </div>
+                <button type="submit" class="btn btn-primary w-full">Agregar Competencia</button>
+            </form>
+        </div>
+
+        <!-- Lista -->
+        <div>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="width: 60px;">Orden</th>
+                            <th>Competencia</th>
+                            <th>Indicadores</th>
+                            <th style="width: 150px;">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for comp in competencies %}
+                            <tr>
+                                <td>{{ comp.order }}</td>
+                                <td><strong>{{ comp.name }}</strong></td>
+                                <td>
+                                    <span class="badge">{{ comp.indicator_set.count }} indicadores</span>
+                                </td>
+                                <td>
+                                    <div class="action-row" style="gap: 8px;">
+                                        <a href="{% url 'manage_indicators' comp.id %}" class="btn btn-subtle btn-sm">Ver Indicadores</a>
+                                        <a href="{% url 'delete_competency' comp.id %}" class="btn btn-danger btn-sm" onclick="return confirm('¿Eliminar esta competencia y todos sus indicadores?')">
+                                            &times;
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="4" style="text-align: center; padding: 40px;" class="muted">
+                                    No hay competencias registradas.
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+    .w-full { width: 100%; }
+    .form-group label { display: block; margin-bottom: 6px; font-weight: 500; }
+    .form-group input { width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; }
+    .error { color: #dc3545; font-size: 0.85em; margin-top: 4px; }
+    .badge { background: #e9ecef; padding: 2px 8px; border-radius: 12px; font-size: 0.75em; }
+</style>
+{% endblock %}

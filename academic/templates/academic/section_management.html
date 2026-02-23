@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+
+{% block title %}Gestion de secciones | Gestion Escolar{% endblock %}
+
+{% block content %}
+<section class="card">
+    <div class="section-head">
+        <h1>Gestion de secciones</h1>
+        <a href="{% url 'academic_dashboard' %}" class="btn btn-subtle">Panel academico</a>
+    </div>
+
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Sección</th>
+                    <th>Grado</th>
+                    <th>Nivel</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for section in sections %}
+                    <tr {% if edit_section.id == section.id %}style="background-color: #fffde7;"{% endif %}>
+                        <td>{{ section.name }}</td>
+                        <td>{{ section.grade.name }}</td>
+                        <td>{{ section.grade.level|default:"-" }}</td>
+                        <td>
+                            <a href="?edit_section={{ section.id }}#section-form-section" class="btn btn-subtle btn-sm">Editar</a>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr><td colspan="4">No hay secciones registradas.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<section class="card" style="margin-top: 14px;" id="section-form-section">
+    <div class="section-head">
+        <h2>{% if edit_section %}Editar sección: {{ edit_section.name }}{% else %}Crear sección{% endif %}</h2>
+    </div>
+
+    <form method="post" class="form-grid">
+        {% csrf_token %}
+        {% for field in form %}
+            <div>
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% if field.errors %}
+                    <div class="field-errors">
+                        {% for error in field.errors %}
+                            <div>{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+        {% endfor %}
+        <div class="action-row">
+            <button type="submit" class="btn btn-primary">{% if edit_section %}Actualizar sección{% else %}Guardar sección{% endif %}</button>
+            {% if edit_section %}
+                <a href="{% url 'section_management' %}" class="btn btn-subtle">Cancelar</a>
+            {% endif %}
+        </div>
+    </form>
+</section>
+{% endblock %}

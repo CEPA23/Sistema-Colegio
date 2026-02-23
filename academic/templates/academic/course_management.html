@@ -14,24 +14,36 @@
             <thead>
                 <tr>
                     <th>Curso</th>
+                    <th>Tipo</th>
+                    <th>Acciones</th>
                 </tr>
             </thead>
             <tbody>
                 {% for course in courses %}
-                    <tr>
+                    <tr {% if edit_course.id == course.id %}style="background-color: #fffde7;"{% endif %}>
                         <td>{{ course.name }}</td>
+                        <td>
+                            {% if course.is_poly_course %}
+                                <span class="badge" style="background-color: #e3f2fd; color: #1976d2;">Polidocencia</span>
+                            {% else %}
+                                <span>Regular</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="?edit_course={{ course.id }}#course-form-section" class="btn btn-subtle btn-sm">Editar</a>
+                        </td>
                     </tr>
                 {% empty %}
-                    <tr><td>No hay cursos registrados.</td></tr>
+                    <tr><td colspan="3">No hay cursos registrados.</td></tr>
                 {% endfor %}
             </tbody>
         </table>
     </div>
 </section>
 
-<section class="card" style="margin-top: 14px;">
+<section class="card" style="margin-top: 14px;" id="course-form-section">
     <div class="section-head">
-        <h2>Crear curso</h2>
+        <h2>{% if edit_course %}Editar curso: {{ edit_course.name }}{% else %}Crear curso{% endif %}</h2>
     </div>
 
     <form method="post" class="form-grid">
@@ -51,7 +63,10 @@
             </div>
         {% endfor %}
         <div class="action-row">
-            <button type="submit" class="btn btn-primary">Guardar curso</button>
+            <button type="submit" class="btn btn-primary">{% if edit_course %}Actualizar curso{% else %}Guardar curso{% endif %}</button>
+            {% if edit_course %}
+                <a href="{% url 'course_management' %}" class="btn btn-subtle">Cancelar</a>
+            {% endif %}
         </div>
     </form>
 </section>
@@ -59,6 +74,7 @@
 <section class="card" style="margin-top: 14px;">
     <div class="section-head">
         <h2>Asignar curso a nivel/grado/seccion/docente</h2>
+        <a href="{% url 'auto_assign_poly_courses' %}" class="btn btn-primary" onclick="return confirm('¿Estás seguro de que deseas asignar automáticamente los cursos de polidocencia a todos los grados y secciones? Solo se asignarán si existe un docente polidocente vinculado al curso.')">Auto-asignar Cursos Polidocencia</a>
     </div>
 
     <form method="post" class="form-grid">
@@ -105,9 +121,17 @@
                     <tr>
                         <td>{{ assignment.academic_year.year }}</td>
                         <td>{{ assignment.course.name }}</td>
-                        <td>{{ assignment.level|default:"-" }}</td>
-                        <td>{{ assignment.grade|default:assignment.section.grade }}</td>
-                        <td>{{ assignment.section.name }}</td>
+                        <td>{{ assignment.level.name|default:"-" }}</td>
+                        <td>
+                            {% if assignment.grade %}
+                                {{ assignment.grade.name }}
+                            {% elif assignment.section %}
+                                {{ assignment.section.grade.name }}
+                            {% else %}
+                                -
+                            {% endif %}
+                        </td>
+                        <td>{{ assignment.section.name|default:"-" }}</td>
                         <td>{{ assignment.teacher.get_full_name|default:assignment.teacher.username }}</td>
                     </tr>
                 {% empty %}

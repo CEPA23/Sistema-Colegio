@@ -1,246 +1,456 @@
 {% extends 'base.html' %}
 
-{% block title %}Gestion de usuarios | Gestion Escolar{% endblock %}
+{% block title %}Gestión de Usuarios | Gestión Escolar{% endblock %}
 
 {% block content %}
-<section class="card">
-    <div class="section-head">
-        <h1>Usuarios registrados</h1>
-        <button type="button" class="btn btn-primary" id="toggle-user-form">Nuevo Usuario</button>
+
+<style>
+/* ── Layout ── */
+.um-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+.um-header h1 { margin: 0; font-size: 1.5rem; }
+
+/* ── Role filter tabs ── */
+.role-tabs {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+}
+.role-tab {
+    padding: 6px 14px;
+    border-radius: 20px;
+    border: 1px solid #e2e8f0;
+    background: #f8fafc;
+    color: #64748b;
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all .18s;
+}
+.role-tab:hover, .role-tab.active {
+    background: var(--primary-color, #4f46e5);
+    color: #fff;
+    border-color: var(--primary-color, #4f46e5);
+}
+
+/* ── Status badges ── */
+.badge-role {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 12px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    background: #e0e7ff;
+    color: #3730a3;
+}
+.badge-role.admin     { background:#fee2e2; color:#991b1b; }
+.badge-role.director  { background:#fef3c7; color:#92400e; }
+.badge-role.teacher   { background:#d1fae5; color:#065f46; }
+.badge-role.secretary { background:#e0e7ff; color:#3730a3; }
+.badge-role.parent    { background:#f3f4f6; color:#374151; }
+
+.badge-poly {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 12px;
+    font-size: 0.78rem;
+    background: #dbeafe;
+    color: #1e40af;
+    font-weight: 600;
+}
+
+.status-dot {
+    display: inline-block;
+    width: 9px; height: 9px;
+    border-radius: 50%;
+    margin-right: 5px;
+    background: #22c55e;
+}
+.status-dot.inactive { background: #e5e7eb; }
+
+/* ── Search box ── */
+.um-search {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+.um-search input {
+    padding: 8px 14px;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    width: 260px;
+    outline: none;
+    transition: border .18s;
+}
+.um-search input:focus { border-color: var(--primary-color, #4f46e5); }
+
+/* ── Table ── */
+.um-table th { white-space: nowrap; }
+
+/* ── Modal overlay ── */
+.modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    background: rgba(0,0,0,.45);
+    backdrop-filter: blur(2px);
+    align-items: center;
+    justify-content: center;
+}
+.modal.is-visible { display: flex; }
+
+.modal-content {
+    background: #fff;
+    border-radius: 16px;
+    width: 96%;
+    max-width: 640px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(0,0,0,.18);
+    display: flex;
+    flex-direction: column;
+}
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 24px 16px;
+    border-bottom: 1px solid #f1f5f9;
+    position: sticky; top: 0;
+    background: #fff;
+    z-index: 1;
+    border-radius: 16px 16px 0 0;
+}
+.modal-header h2 { margin: 0; font-size: 1.15rem; }
+.modal-close {
+    background: #f1f5f9;
+    border: none;
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    font-size: 18px;
+    cursor: pointer;
+    color: #64748b;
+    display: flex; align-items: center; justify-content: center;
+    transition: background .18s;
+}
+.modal-close:hover { background: #e2e8f0; color: #1e293b; }
+
+.modal-body { padding: 20px 24px; }
+
+/* ── Form sections inside modal ── */
+.form-section-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: #94a3b8;
+    margin: 20px 0 10px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.form-section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: #f1f5f9;
+}
+
+/* ── Misc ── */
+.btn-danger { background: #ef4444; color: #fff; }
+.btn-danger:hover { background: #dc2626; }
+.btn-sm { padding: 4px 10px; font-size: 0.82rem; }
+.field-errors { color: #dc2626; font-size: 0.82rem; margin-top: 4px; }
+
+/* Hidden but still submitted */
+.hidden-field { display: none !important; }
+</style>
+
+<!-- Page Header -->
+<div class="um-header">
+    <h1>Gestión de Usuarios</h1>
+    <div style="display:flex;gap:8px;">
+        <a href="{% url 'dashboard' %}" class="btn btn-subtle">← Panel</a>
+        <button type="button" class="btn btn-primary" id="toggle-user-form">+ Nuevo Usuario</button>
     </div>
+</div>
+
+<!-- Role filter tabs -->
+<div class="role-tabs">
+    <button class="role-tab active" data-role="">Todos <span id="count-all"></span></button>
+    <button class="role-tab" data-role="admin">Administradores</button>
+    <button class="role-tab" data-role="director">Directores</button>
+    <button class="role-tab" data-role="teacher">Docentes</button>
+    <button class="role-tab" data-role="secretary">Secretarias</button>
+    <button class="role-tab" data-role="parent">Padres</button>
+</div>
+
+<!-- Search -->
+<div class="um-search">
+    <input type="text" id="user-search" placeholder="Buscar por nombre o usuario…" autocomplete="off">
+</div>
+
+<!-- Users Table -->
+<section class="card" style="padding: 0; overflow: hidden;">
     <div class="table-wrap">
-        <table>
+        <table class="um-table">
             <thead>
                 <tr>
                     <th>Usuario</th>
-                    <th>Nombre</th>
+                    <th>Nombre completo</th>
                     <th>Rol</th>
-                    <th>Grado asignado</th>
-                    <th>Sección asignada</th>
-                    <th>Polidocente</th>
-                    <th>Email</th>
-                    <th>Activo</th>
+                    <th>Asignación</th>
+                    <th>Estado</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody id="user-table-body">
                 {% for user in users %}
-                    <tr>
-                        <td>{{ user.username }}</td>
-                        <td>{{ user.first_name }} {{ user.last_name }}</td>
-                        <td>{{ user.get_role_display }}</td>
-                        <td>{{ user.teaching_grade|default:"-" }}</td>
-                        <td>{{ user.teaching_section|default:"-" }}</td>
-                        <td>{% if user.is_polyteacher %}Sí{% else %}No{% endif %}</td>
-                        <td>{{ user.email|default:"-" }}</td>
-                        <td>{% if user.is_active %}Sí{% else %}No{% endif %}</td>
-                        <td>
-                            <div class="action-row" style="gap: 4px;">
-                                <a href="?edit={{ user.id }}" class="btn btn-subtle btn-sm">Editar</a>
-                                {% if user.id != request.user.id and not user.is_superuser %}
-                                    <button type="button" class="btn btn-danger btn-sm" onclick="confirmDelete('{{ user.username }}', '{% url 'user_delete' user.id %}')">Eliminar</button>
-                                {% endif %}
-                            </div>
-                        </td>
-                    </tr>
+                <tr data-role="{{ user.role }}" data-name="{{ user.get_full_name|lower }} {{ user.username|lower }}">
+                    <td><strong>{{ user.username }}</strong></td>
+                    <td>{{ user.get_full_name|default:"—" }}</td>
+                    <td>
+                        <span class="badge-role {{ user.role }}">{{ user.get_role_display }}</span>
+                    </td>
+                    <td>
+                        {% if user.role == 'teacher' %}
+                            {% if user.is_polyteacher %}
+                                <span class="badge-poly">Poly: {{ user.poly_course|default:"—" }}</span>
+                            {% else %}
+                                {{ user.teaching_grade|default:"—" }} / {{ user.teaching_section|default:"—" }}
+                            {% endif %}
+                        {% else %}
+                            —
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if user.is_active %}
+                            <span class="status-dot"></span>Activo
+                        {% else %}
+                            <span class="status-dot inactive"></span>Inactivo
+                        {% endif %}
+                    </td>
+                    <td>
+                        <div style="display:flex;gap:5px;">
+                            <a href="?edit={{ user.id }}" class="btn btn-subtle btn-sm">Editar</a>
+                            {% if user.id != request.user.id and not user.is_superuser %}
+                                {% url 'user_delete' user.id as delete_url %}
+                                <button type="button" class="btn btn-danger btn-sm"
+                                        onclick="confirmDelete('{{ user.username|escapejs }}','{{ delete_url|escapejs }}')">
+                                    Eliminar
+                                </button>
+                            {% endif %}
+                        </div>
+                    </td>
+                </tr>
                 {% empty %}
-                    <tr><td colspan="9">No hay usuarios registrados.</td></tr>
+                <tr><td colspan="6" style="text-align:center;color:#94a3b8;">No hay usuarios registrados.</td></tr>
                 {% endfor %}
             </tbody>
         </table>
     </div>
 </section>
 
-<!-- Modal para crear usuario -->
+<!-- ═══════════════════ MODAL ═══════════════════ -->
 <div class="modal {% if show_user_form or form.errors %}is-visible{% endif %}" id="user-modal">
     <div class="modal-content">
         <div class="modal-header">
-            <h2>{% if edit_user %}Editar usuario: {{ edit_user.username }}{% else %}Crear usuario{% endif %}</h2>
-            <a href="{% url 'user_management' %}" class="modal-close">&times;</a>
+            <h2 id="modal-title">
+                {% if edit_user %}Editar: {{ edit_user.username }}{% else %}Nuevo Usuario{% endif %}
+            </h2>
+            <button type="button" class="modal-close" id="close-modal" title="Cerrar">&times;</button>
         </div>
-        <form method="post" class="form-grid">
-            {% csrf_token %}
-            {% for field in form %}
-                <div>
-                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-                    {{ field }}
-                    {% if field.errors %}
-                        <div class="field-errors">
-                            {% for error in field.errors %}
-                                <div>{{ error }}</div>
-                            {% endfor %}
+
+        <div class="modal-body">
+            <form method="post" id="user-form">
+                {% csrf_token %}
+
+                <!-- ── Datos básicos ── -->
+                <div class="form-section-label">Datos de acceso</div>
+                <div class="form-grid">
+                    {% for field in form %}
+                        {% if field.name in "username,first_name,last_name,email,phone,role,is_active" %}
+                        <div>
+                            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                            {{ field }}
+                            {% if field.errors %}<div class="field-errors">{% for e in field.errors %}{{ e }}{% endfor %}</div>{% endif %}
                         </div>
-                    {% endif %}
+                        {% endif %}
+                    {% endfor %}
                 </div>
-            {% endfor %}
-            <div class="action-row">
-                <button type="submit" class="btn btn-primary">{% if edit_user %}Actualizar usuario{% else %}Guardar usuario{% endif %}</button>
-                {% if edit_user %}
-                    <a href="{% url 'user_management' %}" class="btn btn-subtle">Cerrar</a>
+
+                <!-- ── Contraseña (solo en creación) ── -->
+                {% if not edit_user %}
+                <div class="form-section-label">Contraseña</div>
+                <div class="form-grid">
+                    {% for field in form %}
+                        {% if field.name in "password1,password2" %}
+                        <div>
+                            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                            {{ field }}
+                            {% if field.errors %}<div class="field-errors">{% for e in field.errors %}{{ e }}{% endfor %}</div>{% endif %}
+                        </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
                 {% endif %}
-            </div>
-        </form>
+
+                <!-- ── Asignación docente ── -->
+                <div class="form-section-label" id="teacher-section-label" style="display:none;">Configuración docente</div>
+                <div class="form-grid" id="teacher-fields">
+                    {% for field in form %}
+                        {% if field.name in "is_polyteacher,teaching_grade,teaching_section,poly_course,teaching_grades,teaching_sections,teaching_courses" %}
+                        <div class="teacher-field-wrapper" data-field="{{ field.name }}">
+                            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                            {{ field }}
+                            {% if field.errors %}<div class="field-errors">{% for e in field.errors %}{{ e }}{% endfor %}</div>{% endif %}
+                        </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+
+                <!-- Errors globales -->
+                {% if form.non_field_errors %}
+                <div class="field-errors" style="margin-top:8px;">
+                    {% for e in form.non_field_errors %}{{ e }}<br>{% endfor %}
+                </div>
+                {% endif %}
+
+                <div class="action-row" style="margin-top: 24px;">
+                    <button type="submit" class="btn btn-primary">
+                        {% if edit_user %}Actualizar usuario{% else %}Crear usuario{% endif %}
+                    </button>
+                    <button type="button" class="btn btn-subtle" id="cancel-modal">Cancelar</button>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 
-<style>
-.modal {
-    display: none;
-    position: fixed;
-    z-index: 1000;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-}
-
-.modal.is-visible {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.modal-content {
-    background-color: white;
-    padding: 20px;
-    border-radius: 8px;
-    width: 90%;
-    max-width: 600px;
-    max-height: 80vh;
-    overflow-y: auto;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.modal-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-}
-
-.modal-header h2 {
-    margin: 0;
-}
-
-.modal-close {
-    background: none;
-    border: none;
-    font-size: 24px;
-    cursor: pointer;
-    color: #666;
-}
-
-.modal-close:hover {
-    color: #000;
-}
-.btn-danger {
-    background-color: #dc3545;
-    color: white;
-}
-.btn-danger:hover {
-    background-color: #bb2d3b;
-}
-.btn-sm {
-    padding: 4px 8px;
-    font-size: 0.85em;
-}
-</style>
-
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const modal = document.getElementById('user-modal');
-        const toggleButton = document.getElementById('toggle-user-form');
-        const closeButton = document.getElementById('close-modal');
-        const roleField = document.getElementById('id_role');
-        const gradeField = document.getElementById('id_teaching_grade');
-        const sectionField = document.getElementById('id_teaching_section');
-        const isPolyField = document.getElementById('id_is_polyteacher');
-        const coursesField = document.getElementById('id_teaching_courses');
-        const gradesPolyField = document.getElementById('id_teaching_grades');
+document.addEventListener('DOMContentLoaded', function () {
 
-        const showModal = () => {
-            modal.classList.add('is-visible');
-            syncButtonText();
-        };
-        const hideModal = () => {
-             if (window.location.search.includes('edit=')) {
-                window.location.href = "{% url 'user_management' %}";
-            } else {
-                modal.classList.remove('is-visible');
-                syncButtonText();
-            }
-        };
+    /* ── Modal ── */
+    const modal        = document.getElementById('user-modal');
+    const toggleBtn    = document.getElementById('toggle-user-form');
+    const closeBtn     = document.getElementById('close-modal');
+    const cancelBtn    = document.getElementById('cancel-modal');
+    const isEditing    = {{ edit_user|yesno:"true,false" }};
 
-        const syncButtonText = () => {
-            if (toggleButton) {
-                toggleButton.textContent = modal.classList.contains('is-visible') ? 'Cancelar' : 'Nuevo Usuario';
-            }
-        };
+    const openModal  = () => modal.classList.add('is-visible');
+    const closeModal = () => {
+        if (isEditing) { window.location.href = "{% url 'user_management' %}"; }
+        else           { modal.classList.remove('is-visible'); }
+    };
 
-        if (toggleButton) {
-            toggleButton.addEventListener('click', function () {
-                if (modal.classList.contains('is-visible')) {
-                    hideModal();
-                } else {
-                    showModal();
-                }
-            });
-            syncButtonText();
-        }
+    toggleBtn.addEventListener('click', () =>
+        modal.classList.contains('is-visible') ? closeModal() : openModal());
+    closeBtn.addEventListener('click', closeModal);
+    cancelBtn.addEventListener('click', closeModal);
+    modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
 
-        // Cerrar modal al hacer clic fuera
-        modal.addEventListener('click', function (e) {
-            if (e.target === modal) {
-                hideModal();
-            }
-        });
+    /* ── Teacher field logic ── */
+    const roleField         = document.getElementById('id_role');
+    const isPolyField       = document.getElementById('id_is_polyteacher');
+    const teacherSectionLbl = document.getElementById('teacher-section-label');
 
-        window.confirmDelete = function(username, deleteUrl) {
-            if (confirm(`¿Estás seguro de que deseas eliminar al usuario "${username}"? Esta acción no se puede deshacer.`)) {
-                window.location.href = deleteUrl;
-            }
-        };
+    const POLY_ONLY    = ['poly_course', 'teaching_grades', 'teaching_sections', 'teaching_courses'];
+    const REGULAR_ONLY = ['teaching_grade', 'teaching_section'];
 
-        if (roleField && gradeField && sectionField && isPolyField && coursesField && gradesPolyField) {
-            const gradeWrapper = gradeField.closest('div');
-            const sectionWrapper = sectionField.closest('div');
-            const isPolyWrapper = isPolyField.closest('div');
-            const coursesWrapper = coursesField.closest('div');
-            const gradesPolyWrapper = gradesPolyField.closest('div');
+    function wrapperOf(name) {
+        return document.querySelector(`.teacher-field-wrapper[data-field="${name}"]`);
+    }
 
-            const syncTeacherFieldsVisibility = function () {
-                const isTeacher = roleField.value === 'teacher';
-                const isPoly = isPolyField.checked;
-
-                if (isPolyWrapper) {
-                    isPolyWrapper.style.display = isTeacher ? '' : 'none';
-                }
-                if (isTeacher) {
-                    if (isPoly) {
-                        if (gradeWrapper) gradeWrapper.style.display = 'none';
-                        if (sectionWrapper) sectionWrapper.style.display = 'none';
-                        if (coursesWrapper) coursesWrapper.style.display = '';
-                        if (gradesPolyWrapper) gradesPolyWrapper.style.display = '';
-                    } else {
-                        if (gradeWrapper) gradeWrapper.style.display = '';
-                        if (sectionWrapper) sectionWrapper.style.display = '';
-                        if (coursesWrapper) coursesWrapper.style.display = 'none';
-                        if (gradesPolyWrapper) gradesPolyWrapper.style.display = 'none';
-                    }
-                } else {
-                    if (gradeWrapper) gradeWrapper.style.display = 'none';
-                    if (sectionWrapper) sectionWrapper.style.display = 'none';
-                    if (coursesWrapper) coursesWrapper.style.display = 'none';
-                    if (gradesPolyWrapper) gradesPolyWrapper.style.display = 'none';
-                    if (isPolyWrapper) isPolyWrapper.style.display = 'none';
-                }
-            };
-
-            roleField.addEventListener('change', syncTeacherFieldsVisibility);
-            isPolyField.addEventListener('change', syncTeacherFieldsVisibility);
-            syncTeacherFieldsVisibility();
+    // Add "Select all" buttons for multi-selects
+    ['teaching_grades', 'teaching_sections'].forEach(fname => {
+        const w   = wrapperOf(fname);
+        const sel = document.getElementById('id_' + fname);
+        if (w && sel && !w.querySelector('.btn-select-all')) {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'btn btn-subtle btn-sm btn-select-all';
+            btn.style.marginTop = '6px';
+            btn.textContent = 'Seleccionar todos';
+            btn.onclick = () => { for (const o of sel.options) o.selected = true; };
+            w.appendChild(btn);
         }
     });
+
+    function syncFields() {
+        const isTeacher = roleField && roleField.value === 'teacher';
+        const isPoly    = isPolyField && isPolyField.checked;
+
+        if (teacherSectionLbl) teacherSectionLbl.style.display = isTeacher ? '' : 'none';
+
+        // teaching_courses always hidden (managed automatically)
+        const tcw = wrapperOf('teaching_courses');
+        if (tcw) tcw.style.display = 'none';
+
+        if (isTeacher) {
+            if (isPoly) {
+                POLY_ONLY.forEach(f => { const w = wrapperOf(f); if (w && f !== 'teaching_courses') w.style.display = ''; });
+                REGULAR_ONLY.forEach(f => { const w = wrapperOf(f); if (w) w.style.display = 'none'; });
+                const isPolyW = wrapperOf('is_polyteacher'); if (isPolyW) isPolyW.style.display = '';
+            } else {
+                POLY_ONLY.forEach(f => { const w = wrapperOf(f); if (w) w.style.display = 'none'; });
+                REGULAR_ONLY.forEach(f => { const w = wrapperOf(f); if (w) w.style.display = ''; });
+                const isPolyW = wrapperOf('is_polyteacher'); if (isPolyW) isPolyW.style.display = '';
+            }
+        } else {
+            [...POLY_ONLY, ...REGULAR_ONLY, 'is_polyteacher'].forEach(f => {
+                const w = wrapperOf(f); if (w) w.style.display = 'none';
+            });
+        }
+    }
+
+    if (roleField)   roleField.addEventListener('change', syncFields);
+    if (isPolyField) isPolyField.addEventListener('change', syncFields);
+    syncFields();
+
+    /* ── Role filter tabs ── */
+    const rows = document.querySelectorAll('#user-table-body tr[data-role]');
+    const tabs = document.querySelectorAll('.role-tab');
+
+    function applyFilters() {
+        const activeTab   = document.querySelector('.role-tab.active');
+        const roleFilter  = activeTab ? activeTab.dataset.role : '';
+        const searchQuery = (document.getElementById('user-search').value || '').toLowerCase();
+
+        rows.forEach(row => {
+            const roleMatch   = !roleFilter || row.dataset.role === roleFilter;
+            const searchMatch = !searchQuery || row.dataset.name.includes(searchQuery);
+            row.style.display = (roleMatch && searchMatch) ? '' : 'none';
+        });
+    }
+
+    tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            tabs.forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+            applyFilters();
+        });
+    });
+
+    document.getElementById('user-search').addEventListener('input', applyFilters);
+    applyFilters();
+
+    /* ── Delete confirm ── */
+    window.confirmDelete = (username, url) => {
+        if (confirm(`¿Eliminar al usuario "${username}"? Esta acción no se puede deshacer.`)) {
+            window.location.href = url;
+        }
+    };
+});
 </script>
+
 {% endblock %}

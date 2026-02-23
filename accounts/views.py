@@ -4,7 +4,7 @@ from django.contrib import messages
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 
-from academic.models import AcademicYear, Course, GradeRecord, Period
+from academic.models import AcademicYear, Course, GradeRecord, Period, TeacherCourseAssignment
 from schools.models import School
 from enrollment.models import Enrollment
 from students.models import Student
@@ -53,10 +53,25 @@ def dashboard(request):
 
 @role_required('teacher')
 def teacher_dashboard(request):
+    # Fetch teacher's assignments
+    assignments = TeacherCourseAssignment.objects.filter(teacher=request.user).select_related(
+        'course', 'section__grade', 'academic_year'
+    )
+    
+    # Calculate relevant stats
+    assigned_section_ids = assignments.values_list('section_id', flat=True).distinct()
+    total_students = Enrollment.objects.filter(section_id__in=assigned_section_ids, status='active').count()
+    total_courses = assignments.values_list('course_id', flat=True).distinct().count()
+    
+    # Filter grade records for this teacher
+    assigned_course_ids = assignments.values_list('course_id', flat=True)
+    total_grade_records = GradeRecord.objects.filter(course_id__in=assigned_course_ids).count()
+
     context = {
-        'total_students': Student.objects.count(),
-        'total_courses': Course.objects.count(),
-        'total_grade_records': GradeRecord.objects.count(),
+        'total_students': total_students,
+        'total_courses': total_courses,
+        'total_grade_records': total_grade_records,
+        'assignments': assignments,
     }
     return render(request, 'accounts/teacher_dashboard.html', context)
 

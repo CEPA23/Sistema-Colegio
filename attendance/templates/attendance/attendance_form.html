@@ -40,8 +40,13 @@
     <div class="section-head">
         <h2>
             {{ selected_assignment.course.name }} -
-            {{ selected_assignment.grade.name|default:selected_assignment.section.grade.name }}
-            {{ selected_assignment.section.name }}
+            {% if selected_assignment.section %}
+                {{ selected_assignment.section.grade.name }} {{ selected_assignment.section.name }}
+            {% elif selected_assignment.grade %}
+                {{ selected_assignment.grade.name }} (Todo)
+            {% else %}
+                {{ selected_assignment.level.name }}
+            {% endif %}
         </h2>
         <span class="muted">{{ selected_date }}</span>
     </div>
@@ -56,24 +61,27 @@
                 <thead>
                     <tr>
                         <th style="min-width: 250px;">Alumno</th>
-                        <th style="min-width: 180px;">Estado</th>
+                        <th style="min-width: 180px;">
+                            Estado 
+                            <button type="button" id="mark-all-present" class="btn btn-subtle btn-sm" style="font-size: 0.65rem; padding: 2px 6px; margin-left: 8px;">Marcar todos (✔)</button>
+                        </th>
                         <th>Visual</th>
                         <th>Observacion</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for row in rows %}
-                        <tr>
-                            <td>{{ row.enrollment.student }}</td>
+                        <tr class="attendance-row">
+                            <td class="student-name">{{ row.enrollment.student }}</td>
                             <td>
-                                <select name="status_{{ row.enrollment.id }}" class="attendance-select">
+                                <select name="status_{{ row.enrollment.id }}" class="attendance-select status-dropdown" data-row-id="{{ row.enrollment.id }}">
                                     {% for value, label in status_choices %}
                                         <option value="{{ value }}" {% if row.status == value %}selected{% endif %}>{{ label }}</option>
                                     {% endfor %}
                                 </select>
                             </td>
                             <td>
-                                <span class="status-pill {{ row.ui.css }}">
+                                <span id="ui-badge-{{ row.enrollment.id }}" class="status-pill {{ row.ui.css }}">
                                     {{ row.ui.icon }} {{ row.ui.label }}
                                 </span>
                             </td>
@@ -99,4 +107,43 @@
     </form>
 </section>
 {% endif %}
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const markAllPresentBtn = document.getElementById('mark-all-present');
+        const statusDropdowns = document.querySelectorAll('.status-dropdown');
+        
+        const uiMap = {
+            'present': { label: 'Asistio', icon: '✔', css: 'attendance-present' },
+            'absent': { label: 'Falto', icon: '❌', css: 'attendance-absent' },
+            'justified': { label: 'Justificado', icon: '✔', css: 'attendance-justified' }
+        };
+
+        if (markAllPresentBtn) {
+            markAllPresentBtn.addEventListener('click', function() {
+                statusDropdowns.forEach(select => {
+                    select.value = 'present';
+                    updateBadge(select);
+                });
+            });
+        }
+
+        statusDropdowns.forEach(select => {
+            select.addEventListener('change', function() {
+                updateBadge(this);
+            });
+        });
+
+        function updateBadge(select) {
+            const enrollmentId = select.getAttribute('data-row-id');
+            const badge = document.getElementById(`ui-badge-${enrollmentId}`);
+            const config = uiMap[select.value];
+            
+            if (badge && config) {
+                badge.className = `status-pill ${config.css}`;
+                badge.innerHTML = `${config.icon} ${config.label}`;
+            }
+        }
+    });
+</script>
 {% endblock %}

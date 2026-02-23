@@ -1,61 +1,185 @@
 {% extends 'base.html' %}
 
-{% block title %}Panel | Gestion Escolar{% endblock %}
+{% block title %}Panel Principal | Gestión Escolar{% endblock %}
 
 {% block content %}
-<section class="hero">
-    <p class="eyebrow">Panel principal</p>
-    <h1>Control academico del colegio</h1>
-    {% if active_year %}
-        <p class="muted">Anio activo: {{ active_year.year }} - {{ active_year.school.name }}</p>
-    {% else %}
-        <p class="muted">No hay un anio academico activo configurado.</p>
-    {% endif %}
-</section>
 
-<section class="stats-grid">
-    <article class="stat-card">
+<style>
+.dash-hero {
+    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+    border-radius: 16px;
+    padding: 32px 36px;
+    color: #fff;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+.dash-hero h1 { margin: 0; font-size: 1.8rem; font-weight: 700; }
+.dash-hero p  { margin: 6px 0 0; opacity: .8; font-size: 0.95rem; }
+.dash-hero .year-badge {
+    background: rgba(255,255,255,.18);
+    border-radius: 10px;
+    padding: 10px 20px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-align: center;
+    white-space: nowrap;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+}
+.stat-card {
+    background: #fff;
+    border-radius: 14px;
+    padding: 20px 22px;
+    border: 1px solid #e2e8f0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    transition: box-shadow .18s;
+}
+.stat-card:hover { box-shadow: 0 4px 20px rgba(79,70,229,.1); }
+.stat-card .stat-icon {
+    font-size: 1.6rem;
+    margin-bottom: 4px;
+}
+.stat-card h2 {
+    margin: 0;
+    font-size: 2rem;
+    font-weight: 800;
+    color: #1e293b;
+}
+.stat-card p {
+    margin: 0;
+    font-size: 0.82rem;
+    color: #64748b;
+    font-weight: 500;
+}
+
+.modules-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 14px;
+    margin-bottom: 24px;
+}
+.module-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 24px 16px;
+    border-radius: 14px;
+    border: 1px solid #e2e8f0;
+    background: #fff;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #1e293b;
+    text-decoration: none;
+    transition: all .2s;
+    text-align: center;
+}
+.module-btn:hover {
+    border-color: #4f46e5;
+    background: #f5f3ff;
+    color: #4f46e5;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(79,70,229,.12);
+}
+.module-btn .mod-icon { font-size: 1.8rem; }
+
+.recent-table-section { margin-top: 4px; }
+</style>
+
+<!-- Hero -->
+<div class="dash-hero">
+    <div>
+        <h1>Bienvenido, {{ request.user.first_name|default:request.user.username }} 👋</h1>
+        <p>Panel de control del sistema de gestión escolar</p>
+    </div>
+    {% if active_year %}
+        <div class="year-badge">
+            📅 Año activo<br>
+            <strong>{{ active_year.year }}</strong><br>
+            <span style="opacity:.8;font-size:0.82rem;">{{ active_year.school.name }}</span>
+        </div>
+    {% else %}
+        <div class="year-badge" style="background:rgba(239,68,68,.25);">
+            ⚠️ Sin año<br>académico activo
+        </div>
+    {% endif %}
+</div>
+
+<!-- Stats -->
+<div class="stats-grid">
+    <div class="stat-card">
+        <span class="stat-icon">🎓</span>
         <h2>{{ total_students }}</h2>
         <p>Estudiantes</p>
-    </article>
-    <article class="stat-card">
+    </div>
+    <div class="stat-card">
+        <span class="stat-icon">📋</span>
         <h2>{{ total_enrollments }}</h2>
-        <p>Matriculas</p>
-    </article>
-    <article class="stat-card">
+        <p>Matrículas</p>
+    </div>
+    <div class="stat-card">
+        <span class="stat-icon">📚</span>
         <h2>{{ total_courses }}</h2>
         <p>Cursos</p>
-    </article>
-    <article class="stat-card">
+    </div>
+    <div class="stat-card">
+        <span class="stat-icon">📝</span>
         <h2>{{ total_grade_records }}</h2>
         <p>Registros de nota</p>
-    </article>
-</section>
-
-<section class="card">
-    <div class="section-head">
-        <h2>Modulos del sistema</h2>
     </div>
-    <div class="action-row">
+</div>
+
+<!-- Módulos según rol -->
+<section class="card" style="margin-bottom:24px;">
+    <div class="section-head">
+        <h2>Módulos del sistema</h2>
+    </div>
+    <div class="modules-grid">
         {% if request.user.role != 'parent' or request.user.is_superuser %}
-            <a href="{% url 'academic_dashboard' %}" class="btn btn-subtle">Academico</a>
-            <a href="{% url 'attendance_dashboard' %}" class="btn btn-subtle">Asistencias</a>
+            <a href="{% url 'academic_dashboard' %}" class="module-btn">
+                <span class="mod-icon">🏫</span> Académico
+            </a>
+            <a href="{% url 'attendance_dashboard' %}" class="module-btn">
+                <span class="mod-icon">✅</span> Asistencias
+            </a>
         {% endif %}
         {% if request.user.role == 'admin' or request.user.role == 'director' or request.user.role == 'secretary' or request.user.is_superuser %}
-            <a href="{% url 'enrollment_dashboard' %}" class="btn btn-subtle">Matricula</a>
-            <a href="{% url 'finance_dashboard' %}" class="btn btn-subtle">Pagos</a>
+            <a href="{% url 'enrollment_dashboard' %}" class="module-btn">
+                <span class="mod-icon">📋</span> Matrículas
+            </a>
+            <a href="{% url 'finance_dashboard' %}" class="module-btn">
+                <span class="mod-icon">💰</span> Pagos
+            </a>
         {% endif %}
         {% if request.user.role == 'admin' or request.user.role == 'director' or request.user.is_superuser %}
-            <a href="{% url 'system_config' %}" class="btn btn-subtle">Administrativo</a>
+            <a href="{% url 'user_management' %}" class="module-btn">
+                <span class="mod-icon">👥</span> Usuarios
+            </a>
+            <a href="{% url 'system_config' %}" class="module-btn">
+                <span class="mod-icon">⚙️</span> Configuración
+            </a>
         {% endif %}
     </div>
 </section>
 
-<section class="card">
+<!-- Últimas matrículas -->
+<section class="card recent-table-section">
     <div class="section-head">
-        <h2>Ultimas matriculas</h2>
+        <h2>Últimas matrículas</h2>
         {% if request.user.role == 'admin' or request.user.role == 'director' or request.user.role == 'secretary' or request.user.is_superuser %}
-            <a href="{% url 'enrollment_list' %}" class="btn btn-subtle">Ver todo</a>
+            <a href="{% url 'enrollment_list' %}" class="btn btn-subtle">Ver todo →</a>
         {% endif %}
     </div>
     <div class="table-wrap">
@@ -63,26 +187,25 @@
             <thead>
                 <tr>
                     <th>Alumno</th>
-                    <th>Anio</th>
+                    <th>Año</th>
                     <th>Grado</th>
-                    <th>Seccion</th>
+                    <th>Sección</th>
                 </tr>
             </thead>
             <tbody>
                 {% for item in recent_enrollments %}
-                    <tr>
-                        <td>{{ item.student }}</td>
-                        <td>{{ item.academic_year.year }}</td>
-                        <td>{{ item.section.grade }}</td>
-                        <td>{{ item.section.name }}</td>
-                    </tr>
+                <tr>
+                    <td>{{ item.student }}</td>
+                    <td>{{ item.academic_year.year }}</td>
+                    <td>{{ item.section.grade }}</td>
+                    <td>{{ item.section.name }}</td>
+                </tr>
                 {% empty %}
-                    <tr>
-                        <td colspan="4">No hay matriculas registradas.</td>
-                    </tr>
+                <tr><td colspan="4" style="text-align:center;color:#94a3b8;">No hay matrículas registradas.</td></tr>
                 {% endfor %}
             </tbody>
         </table>
     </div>
 </section>
+
 {% endblock %}

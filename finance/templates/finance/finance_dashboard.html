@@ -1,45 +1,138 @@
 {% extends 'base.html' %}
-
-{% block title %}Panel financiero | Gestion Escolar{% endblock %}
-
+{% block title %}Panel Financiero | Gestión Escolar{% endblock %}
 {% block content %}
-<section class="hero">
-    <p class="eyebrow">Modulo de pagos</p>
-    <h1>Control de caja y deudas</h1>
-</section>
+<style>
+.fin-hero {
+    background: linear-gradient(135deg, #064e3b 0%, #047857 55%, #059669 100%);
+    border-radius: 16px;
+    padding: 28px 32px;
+    color: #fff;
+    margin-bottom: 24px;
+    position: relative;
+    overflow: hidden;
+}
+.fin-hero::after { content: '💰'; position: absolute; right: 28px; top: 50%; transform: translateY(-50%); font-size: 5rem; opacity: .08; pointer-events: none; }
+.fin-hero .eyebrow { font-size: 0.72rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: rgba(255,255,255,.6); margin: 0 0 6px; }
+.fin-hero h1 { margin: 0 0 6px; font-size: 1.6rem; font-weight: 800; }
+.fin-hero p  { margin: 0; color: rgba(255,255,255,.7); font-size: 0.9rem; }
 
-<section class="stats-grid">
-    <article class="stat-card">
+.stat-band { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 16px; margin-bottom: 24px; }
+.stat-item {
+    background: #fff;
+    border-radius: 14px;
+    border: 1px solid #e2e8f0;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    transition: box-shadow .18s, transform .18s;
+}
+.stat-item:hover { box-shadow: 0 6px 24px rgba(5,150,105,.1); transform: translateY(-2px); }
+.stat-item.highlight {
+    background: linear-gradient(135deg, #ecfdf5 0%, #f0fdf4 100%);
+    border-color: #86efac;
+}
+.stat-item.danger {
+    background: linear-gradient(135deg, #fff1f2 0%, #fef2f2 100%);
+    border-color: #fca5a5;
+}
+.stat-item .si-icon { font-size: 1.5rem; margin-bottom: 4px; }
+.stat-item h2 { margin: 0; font-size: 1.8rem; font-weight: 800; color: #1e293b; }
+.stat-item p  { margin: 0; font-size: 0.8rem; color: #64748b; font-weight: 500; }
+.stat-item.highlight h2 { color: #15803d; }
+.stat-item.danger h2    { color: #dc2626; }
+
+.fin-actions { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 14px; margin-top: 4px; }
+.fin-action-card {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 18px;
+    background: #fff;
+    border-radius: 14px;
+    border: 1px solid #e2e8f0;
+    text-decoration: none;
+    color: #1e293b;
+    transition: all .2s;
+}
+.fin-action-card:hover { border-color: #059669; box-shadow: 0 6px 20px rgba(5,150,105,.12); transform: translateY(-2px); }
+.fin-action-card .fac-icon { width: 44px; height: 44px; border-radius: 11px; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; flex-shrink: 0; }
+.fin-action-card .fac-text strong { display: block; font-size: 0.9rem; font-weight: 700; margin-bottom: 2px; }
+.fin-action-card .fac-text span   { font-size: 0.75rem; color: #64748b; }
+</style>
+
+<div class="fin-hero">
+    <p class="eyebrow">Módulo financiero</p>
+    <h1>Panel Financiero</h1>
+    <p>Control de caja, pagos pendientes y reporte de deudas</p>
+</div>
+
+<div class="stat-band">
+    <div class="stat-item">
+        <span class="si-icon">🧾</span>
         <h2>{{ total_fees }}</h2>
         <p>Cuotas emitidas</p>
-    </article>
-    <article class="stat-card">
+    </div>
+    <div class="stat-item">
+        <span class="si-icon">💵</span>
         <h2>S/ {{ total_billed }}</h2>
         <p>Total facturado</p>
-    </article>
-    <article class="stat-card">
+    </div>
+    <div class="stat-item highlight">
+        <span class="si-icon">✅</span>
         <h2>S/ {{ total_paid }}</h2>
         <p>Total pagado</p>
-    </article>
-    <article class="stat-card">
+    </div>
+    <div class="stat-item danger">
+        <span class="si-icon">⚠️</span>
         <h2>S/ {{ total_pending }}</h2>
         <p>Saldo pendiente</p>
-    </article>
-    <article class="stat-card">
+    </div>
+    <div class="stat-item highlight">
+        <span class="si-icon">📅</span>
         <h2>S/ {{ today_income }}</h2>
-        <p>Ingreso del dia</p>
-    </article>
-</section>
+        <p>Ingreso del día</p>
+    </div>
+</div>
 
 <section class="card">
-    <div class="section-head">
-        <h2>Accesos rapidos</h2>
-    </div>
-    <div class="action-row">
-        <a href="{% url 'payment_create' %}" class="btn btn-primary">Registrar pago</a>
-        <a href="{% url 'account_status' %}" class="btn btn-subtle">Estado de cuenta</a>
-        <a href="{% url 'debtors_report' %}" class="btn btn-subtle">Reporte de deudores</a>
-        <a href="{% url 'cash_report' %}" class="btn btn-subtle">Caja diaria</a>
+    <div class="section-head"><h2>Accesos rápidos</h2></div>
+    <div class="fin-actions">
+        <a href="{% url 'payment_create' %}" class="fin-action-card">
+            <div class="fac-icon" style="background:#d1fae5; color:#065f46;">💳</div>
+            <div class="fac-text">
+                <strong>Registrar Pago</strong>
+                <span>Ingresar un nuevo pago</span>
+            </div>
+        </a>
+        <a href="{% url 'account_status' %}" class="fin-action-card">
+            <div class="fac-icon" style="background:#ecfdf5; color:#16a34a;">📋</div>
+            <div class="fac-text">
+                <strong>Estado de Cuenta</strong>
+                <span>Consultar saldo por alumno</span>
+            </div>
+        </a>
+        <a href="{% url 'debtors_report' %}" class="fin-action-card">
+            <div class="fac-icon" style="background:#fff1f2; color:#be123c;">⚠️</div>
+            <div class="fac-text">
+                <strong>Deudores</strong>
+                <span>Reporte de alumnos morosos</span>
+            </div>
+        </a>
+        <a href="{% url 'monthly_report' %}" class="fin-action-card">
+            <div class="fac-icon" style="background:#eff6ff; color:#1d4ed8;">📆</div>
+            <div class="fac-text">
+                <strong>Reporte Mensual</strong>
+                <span>Resumen de cobros por mes</span>
+            </div>
+        </a>
+        <a href="{% url 'cash_report' %}" class="fin-action-card">
+            <div class="fac-icon" style="background:#fefce8; color:#a16207;">🧾</div>
+            <div class="fac-text">
+                <strong>Caja Diaria</strong>
+                <span>Movimientos del día de hoy</span>
+            </div>
+        </a>
     </div>
 </section>
 {% endblock %}

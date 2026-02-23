@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+
+{% block title %}Gestionar Indicadores - {{ competency.name }} | Gestion Escolar{% endblock %}
+
+{% block content %}
+<section class="card">
+    <div class="section-head">
+        <div>
+            <nav style="margin-bottom: 8px;">
+                <a href="{% url 'manage_competencies' course.id %}" class="muted" style="text-decoration: none;">&larr; Volver a Competencias</a>
+            </nav>
+            <h1>Indicadores para: {{ competency.name }}</h1>
+            <p class="muted">Curso: {{ course.name }}</p>
+        </div>
+        <a href="{% url 'teacher_competency_gradebook' %}" class="btn btn-subtle">Volver al registro</a>
+    </div>
+
+    <div class="grid" style="grid-template-columns: 1fr 2fr; gap: 24px;">
+        <!-- Formulario -->
+        <div class="card" style="padding: 20px; border: 1px solid #eee;">
+            <h3>Nuevo Indicador / Desempeño</h3>
+            <form method="post" style="margin-top: 16px;">
+                {% csrf_token %}
+                <div class="form-group" style="margin-bottom: 16px;">
+                    <label>Nombre del indicador</label>
+                    {{ form.name }}
+                    {% if form.name.errors %}<div class="error">{{ form.name.errors }}</div>{% endif %}
+                </div>
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <label>Orden</label>
+                    {{ form.order }}
+                </div>
+                <button type="submit" class="btn btn-primary w-full">Agregar Indicador</button>
+            </form>
+        </div>
+
+        <!-- Lista -->
+        <div>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="width: 60px;">Orden</th>
+                            <th>Indicador / Criterio</th>
+                            <th style="width: 100px;">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for ind in indicators %}
+                            <tr>
+                                <td>{{ ind.order }}</td>
+                                <td>{{ ind.name }}</td>
+                                <td>
+                                    <a href="{% url 'delete_indicator' ind.id %}" class="btn btn-danger btn-sm" onclick="return confirm('¿Eliminar este indicador?')">
+                                        Eliminar
+                                    </a>
+                                </td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="3" style="text-align: center; padding: 40px;" class="muted">
+                                    No hay indicadores registrados para esta competencia.
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+    .w-full { width: 100%; }
+    .form-group label { display: block; margin-bottom: 6px; font-weight: 500; }
+    .form-group input { width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; }
+    .error { color: #dc3545; font-size: 0.85em; margin-top: 4px; }
+</style>
+{% endblock %}

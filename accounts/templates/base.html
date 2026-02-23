@@ -4,171 +4,527 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{% block title %}Sistema de Gestion Escolar{% endblock %}</title>
+    <title>{% block title %}Sistema de Gestión Escolar{% endblock %}</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&family=Merriweather:wght@700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{% static 'accounts/site.css' %}?v=20260219-4">
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'accounts/site.css' %}?v=20260222-6">
+    <style>
+    /* ══════════════════════════════════════════
+       NEW SIDEBAR STYLES
+    ══════════════════════════════════════════ */
+    :root {
+        --sidebar-w: 240px;
+        --sidebar-bg: #0f172a;
+        --sidebar-hover: rgba(255,255,255,.06);
+        --sidebar-active: rgba(99,102,241,.22);
+        --sidebar-active-border: #6366f1;
+        --sidebar-text: #94a3b8;
+        --sidebar-text-active: #f1f5f9;
+        --sidebar-label: #475569;
+    }
+
+    .app-shell {
+        display: flex;
+        min-height: 100vh;
+    }
+
+    /* ── Sidebar ── */
+    .sidebar {
+        width: var(--sidebar-w);
+        min-width: var(--sidebar-w);
+        background: var(--sidebar-bg);
+        display: flex;
+        flex-direction: column;
+        position: fixed;
+        top: 0; left: 0; bottom: 0;
+        overflow-y: auto;
+        overflow-x: hidden;
+        z-index: 200;
+        scrollbar-width: thin;
+        scrollbar-color: #1e293b transparent;
+    }
+    .sidebar::-webkit-scrollbar { width: 4px; }
+    .sidebar::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 4px; }
+
+    /* Brand */
+    .brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 16px 16px 14px;
+        border-bottom: 1px solid rgba(255,255,255,.06);
+        text-decoration: none;
+        flex-shrink: 0;
+    }
+    .brand-media {
+        width: 36px; height: 36px;
+        border-radius: 10px;
+        overflow: hidden;
+        flex-shrink: 0;
+        background: #1e293b;
+        display: flex; align-items: center; justify-content: center;
+    }
+    .brand-logo { width: 100%; height: 100%; object-fit: cover; }
+    .brand-mark {
+        font-size: 0.85rem;
+        font-weight: 800;
+        color: #6366f1;
+    }
+    .brand-text {
+        font-size: 0.82rem;
+        font-weight: 700;
+        color: #e2e8f0;
+        line-height: 1.3;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    /* Navigation */
+    .side-menu {
+        padding: 10px 8px 20px;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+    }
+
+    /* Section labels */
+    .menu-label {
+        padding: 14px 10px 5px;
+        font-size: 0.67rem;
+        font-weight: 700;
+        letter-spacing: .1em;
+        text-transform: uppercase;
+        color: var(--sidebar-label);
+        pointer-events: none;
+        user-select: none;
+    }
+
+    /* Individual links */
+    .side-menu a,
+    .menu-links a {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 8px 10px;
+        border-radius: 8px;
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: var(--sidebar-text);
+        text-decoration: none;
+        transition: background .15s, color .15s;
+        border-left: 2px solid transparent;
+    }
+    .side-menu a:hover,
+    .menu-links a:hover {
+        background: var(--sidebar-hover);
+        color: var(--sidebar-text-active);
+    }
+    .side-menu a.active,
+    .menu-links a.active {
+        background: var(--sidebar-active);
+        color: var(--sidebar-text-active);
+        border-left-color: var(--sidebar-active-border);
+        font-weight: 600;
+    }
+    .nav-icon {
+        font-size: 1rem;
+        width: 20px;
+        text-align: center;
+        flex-shrink: 0;
+    }
+
+    /* Collapsible groups */
+    .menu-group {
+        border: none;
+    }
+    .menu-group summary {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 8px 10px;
+        border-radius: 8px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        letter-spacing: .07em;
+        text-transform: uppercase;
+        color: var(--sidebar-label);
+        cursor: pointer;
+        list-style: none;
+        user-select: none;
+        transition: color .15s, background .15s;
+    }
+    .menu-group summary::-webkit-details-marker { display: none; }
+    .menu-group summary:hover {
+        color: var(--sidebar-text);
+        background: var(--sidebar-hover);
+    }
+    .menu-group[open] summary {
+        color: var(--sidebar-text);
+    }
+    .menu-group summary .chevron {
+        margin-left: auto;
+        font-size: 0.7rem;
+        transition: transform .2s;
+        opacity: .5;
+    }
+    .menu-group[open] summary .chevron {
+        transform: rotate(90deg);
+    }
+    .menu-links {
+        padding: 2px 0 4px 8px;
+        display: flex;
+        flex-direction: column;
+        gap: 1px;
+    }
+
+    /* Divider */
+    .side-divider {
+        height: 1px;
+        background: rgba(255,255,255,.05);
+        margin: 8px 10px;
+    }
+
+    /* User footer strip */
+    .sidebar-footer {
+        padding: 10px 8px 14px;
+        border-top: 1px solid rgba(255,255,255,.06);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    .user-avatar {
+        width: 32px; height: 32px;
+        border-radius: 50%;
+        background: #1e293b;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 0.8rem;
+        font-weight: 700;
+        color: #94a3b8;
+        flex-shrink: 0;
+    }
+    .user-info { flex: 1; overflow: hidden; }
+    .user-info strong {
+        display: block;
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: #e2e8f0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .user-info span {
+        font-size: 0.72rem;
+        color: var(--sidebar-label);
+    }
+    .logout-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: #475569;
+        font-size: 1rem;
+        padding: 4px 6px;
+        border-radius: 6px;
+        transition: color .15s, background .15s;
+        display: flex; align-items: center;
+    }
+    .logout-btn:hover { color: #ef4444; background: rgba(239,68,68,.1); }
+
+    /* ── Workspace ── */
+    .workspace {
+        margin-left: var(--sidebar-w);
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+    }
+
+    .topbar {
+        background: #fff;
+        border-bottom: 1px solid #e2e8f0;
+        padding: 0 28px;
+        height: 54px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+    }
+    .topbar .school-meta {
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+    }
+    .topbar .school-meta strong { font-size: 0.85rem; color: #1e293b; }
+    .topbar .school-meta span  { font-size: 0.75rem; color: #94a3b8; }
+
+    /* ── Responsive ── */
+    @media (max-width: 768px) {
+        :root { --sidebar-w: 0px; }
+        .sidebar { transform: translateX(-240px); width: 240px; transition: transform .25s; }
+        .sidebar.open { transform: translateX(0); }
+        .workspace { margin-left: 0; }
+    }
+    </style>
 </head>
-<body>
+<body data-url-name="{{ request.resolver_match.url_name }}">
     {% if request.user.is_authenticated %}
-        <div class="app-shell">
-            <aside class="sidebar">
-                <a class="brand" href="{% url 'dashboard' %}">
-                    <span class="brand-media">
-                        {% if system_school and system_school.logo %}
-                            <img class="brand-logo" src="{{ system_school.logo.url }}" alt="Logo {{ system_school.name }}">
-                        {% else %}
-                            <span class="brand-mark">GE</span>
-                        {% endif %}
-                    </span>
-                    <span class="brand-text">{{ system_school.name|default:"Gestion Escolar" }}</span>
-                </a>
-                <nav class="side-menu">
-                    {% if request.user.role == 'teacher' and not request.user.is_superuser %}
-                    <a href="{% url 'teacher_dashboard' %}">Dashboard principal</a>
-                    {% elif request.user.role == 'secretary' and not request.user.is_superuser %}
-                    <a href="{% url 'secretary_dashboard' %}">Dashboard principal</a>
+    <div class="app-shell">
+        <aside class="sidebar" id="sidebar">
+
+            <!-- Brand -->
+            <a class="brand" href="{% url 'dashboard' %}">
+                <span class="brand-media">
+                    {% if system_school and system_school.logo %}
+                        <img class="brand-logo" src="{{ system_school.logo.url }}" alt="Logo">
                     {% else %}
-                    <a href="{% url 'dashboard' %}">Dashboard principal</a>
+                        <span class="brand-mark">GE</span>
                     {% endif %}
+                </span>
+                <span class="brand-text">{{ system_school.name|default:"Gestión Escolar" }}</span>
+            </a>
 
-                    {% if request.user.role != 'parent' and request.user.role != 'secretary' or request.user.is_superuser %}
-                    <details class="menu-group" {% if request.resolver_match.url_name == 'academic_dashboard' or request.resolver_match.url_name == 'course_management' or request.resolver_match.url_name == 'teacher_competency_gradebook' or request.resolver_match.url_name == 'student_list' or request.resolver_match.url_name == 'grade_list' or request.resolver_match.url_name == 'grade_create' or request.resolver_match.url_name == 'course_report' or request.resolver_match.url_name == 'period_report' or request.resolver_match.url_name == 'report_card' or request.resolver_match.url_name == 'student_report' or request.resolver_match.url_name == 'student_report_pdf' %}open{% endif %}>
-                        <summary class="menu-title">Academico</summary>
-                        <div class="menu-links">
-                            <a href="{% url 'academic_dashboard' %}">Panel academico</a>
-                            {% if request.user.role == 'admin' or request.user.role == 'director' or request.user.role == 'secretary' or request.user.is_superuser %}
-                            <a href="{% url 'course_management' %}">Gestion de cursos</a>
-                            {% endif %}
-                            <a href="{% url 'teacher_competency_gradebook' %}">Notas por competencias</a>
-                            <a href="{% url 'student_list' %}">Lista de alumnos</a>
-                            <a href="{% url 'grade_list' %}">Registro de notas</a>
-                            <a href="{% url 'course_report' %}">Reporte por curso</a>
-                            <a href="{% url 'period_report' %}">Reporte por periodo</a>
-                            <a href="{% url 'report_card' %}">Boletas</a>
-                        </div>
-                    </details>
-                    {% endif %}
+            <!-- Navigation -->
+            <nav class="side-menu">
 
-                    {% if request.user.role == 'admin' or request.user.role == 'director' or request.user.is_superuser %}
-                    <details class="menu-group" {% if request.resolver_match.url_name == 'enrollment_dashboard' or request.resolver_match.url_name == 'enrollment_list' or request.resolver_match.url_name == 'enrollment_create' or request.resolver_match.url_name == 'enrollment_detail' or request.resolver_match.url_name == 'enrollment_renew' or request.resolver_match.url_name == 'enrollment_history' %}open{% endif %}>
-                        <summary class="menu-title">Matricula</summary>
-                        <div class="menu-links">
-                            <a href="{% url 'enrollment_dashboard' %}">Panel de matricula</a>
-                            <a href="{% url 'enrollment_list' %}">Lista de matriculados</a>
-                            <a href="{% url 'enrollment_create' %}">Nueva matricula</a>
-                        </div>
-                    </details>
-                    {% endif %}
+                <!-- HOME -->
+                {% if request.user.role == 'teacher' and not request.user.is_superuser %}
+                    <a href="{% url 'teacher_dashboard' %}" {% if request.resolver_match.url_name == 'teacher_dashboard' %}class="active"{% endif %}>
+                        <span class="nav-icon">🏠</span> Inicio
+                    </a>
+                {% elif request.user.role == 'secretary' and not request.user.is_superuser %}
+                    <a href="{% url 'secretary_dashboard' %}"><span class="nav-icon">🏠</span> Inicio</a>
+                {% else %}
+                    <a href="{% url 'dashboard' %}" {% if request.resolver_match.url_name == 'dashboard' %}class="active"{% endif %}>
+                        <span class="nav-icon">🏠</span> Inicio
+                    </a>
+                {% endif %}
 
-                    {% if request.user.role == 'admin' or request.user.role == 'director' or request.user.role == 'secretary' or request.user.role == 'parent' or request.user.is_superuser %}
-                        <details class="menu-group" {% if request.resolver_match.url_name == 'account_status' or request.resolver_match.url_name == 'payment_history' or request.resolver_match.url_name == 'finance_dashboard' or request.resolver_match.url_name == 'payment_create' or request.resolver_match.url_name == 'debtors_report' or request.resolver_match.url_name == 'monthly_report' or request.resolver_match.url_name == 'cash_report' %}open{% endif %}>
-                            <summary class="menu-title">Pagos</summary>
-                            <div class="menu-links">
-                                <a href="{% url 'account_status' %}">Estado de cuenta</a>
-                                <a href="{% url 'payment_history' %}">Historial de pagos</a>
-                                {% if request.user.role == 'admin' or request.user.role == 'director' or request.user.is_superuser %}
-                                    <a href="{% url 'finance_dashboard' %}">Panel financiero</a>
-                                {% endif %}
-                                <a href="{% url 'payment_create' %}">Registrar pago</a>
-                                <a href="{% url 'debtors_report' %}">Buscador de deudores</a>
-                                {% if request.user.role == 'admin' or request.user.role == 'director' or request.user.is_superuser %}
-                                    <a href="{% url 'monthly_report' %}">Reporte mensual</a>
-                                    <a href="{% url 'cash_report' %}">Caja diaria</a>
-                                {% endif %}
-                            </div>
-                        </details>
-                    {% endif %}
-
-                    {% if request.user.role != 'parent' and request.user.role != 'secretary' or request.user.is_superuser %}
-                    <details class="menu-group" {% if request.resolver_match.url_name == 'attendance_dashboard' or request.resolver_match.url_name == 'attendance_take' or request.resolver_match.url_name == 'attendance_student_history' or request.resolver_match.url_name == 'attendance_course_report' %}open{% endif %}>
-                        <summary class="menu-title">Asistencia</summary>
-                        <div class="menu-links">
-                            <a href="{% url 'attendance_dashboard' %}">Panel asistencia</a>
-                            <a href="{% url 'attendance_take' %}">Tomar asistencia por curso</a>
-                            <a href="{% url 'attendance_course_report' %}">Reporte por curso</a>
-                        </div>
-                    </details>
-                    {% endif %}
-
-                    {% if request.user.role == 'admin' or request.user.role == 'director' or request.user.is_superuser %}
-                    <details class="menu-group" {% if request.resolver_match.url_name == 'user_management' or request.resolver_match.url_name == 'roles_permissions' or request.resolver_match.url_name == 'system_config' or request.resolver_match.url_name == 'activity_logs' %}open{% endif %}>
-                        <summary class="menu-title">Administrativo</summary>
-                        <div class="menu-links">
-                            <a href="{% url 'user_management' %}">Usuarios</a>
-                            <a href="{% url 'roles_permissions' %}">Roles y permisos</a>
-                            <a href="{% url 'system_config' %}">Configuracion</a>
-                            <a href="{% url 'activity_logs' %}">Logs de actividad</a>
-                        </div>
-                    </details>
-                    {% endif %}
-
-                    <p class="menu-title">Mi cuenta</p>
-                    <a href="{% url 'user_profile' %}">Perfil</a>
-                </nav>
-            </aside>
-
-            <section class="workspace">
-                <header class="topbar">
-                    {% if system_school %}
-                        <div class="school-meta">
-                            <strong>{{ system_school.name }}</strong>
-                            <span>{{ system_school.phone }}{% if system_school.email %} | {{ system_school.email }}{% endif %}</span>
-                        </div>
-                    {% endif %}
-                    <div class="user-box">
-                        <span>{{ request.user.username }} ({{ request.user.get_role_display }})</span>
-                        <form method="post" action="{% url 'logout' %}">
-                            {% csrf_token %}
-                            <button type="submit" class="btn btn-subtle">Salir</button>
-                        </form>
+                <!-- ACADÉMICO -->
+                {% if request.user.role != 'parent' and request.user.role != 'secretary' or request.user.is_superuser %}
+                <details class="menu-group" data-urls="academic_dashboard course_management grade_management section_management teacher_competency_gradebook student_list grade_list course_report period_report report_card student_report">
+                    <summary>
+                        <span class="nav-icon">📚</span> Académico
+                        <span class="chevron">▶</span>
+                    </summary>
+                    <div class="menu-links">
+                        {% if request.user.role == 'admin' or request.user.role == 'director' or request.user.is_superuser %}
+                            <a href="{% url 'academic_dashboard' %}" {% if request.resolver_match.url_name == 'academic_dashboard' %}class="active"{% endif %}>
+                                <span class="nav-icon">📊</span> Panel académico
+                            </a>
+                        {% endif %}
+                        <a href="{% url 'teacher_competency_gradebook' %}" {% if request.resolver_match.url_name == 'teacher_competency_gradebook' %}class="active"{% endif %}>
+                            <span class="nav-icon">✏️</span> Registro de notas
+                        </a>
+                        <a href="{% url 'student_list' %}" {% if request.resolver_match.url_name == 'student_list' %}class="active"{% endif %}>
+                            <span class="nav-icon">🎓</span> {% if request.user.role == 'teacher' and not request.user.is_superuser %}Mis alumnos{% else %}Alumnos{% endif %}
+                        </a>
+                        <a href="{% url 'grade_list' %}" {% if request.resolver_match.url_name == 'grade_list' %}class="active"{% endif %}>
+                            <span class="nav-icon">📋</span> Reporte de notas
+                        </a>
+                        <a href="{% url 'report_card' %}" {% if request.resolver_match.url_name == 'report_card' %}class="active"{% endif %}>
+                            <span class="nav-icon">📄</span> Boletas / Libreta
+                        </a>
                     </div>
-                </header>
+                </details>
+                {% endif %}
+
+                <!-- MATRÍCULA -->
+                {% if request.user.role == 'admin' or request.user.role == 'director' or request.user.role == 'secretary' or request.user.is_superuser %}
+                <details class="menu-group" data-urls="enrollment_dashboard enrollment_list enrollment_create enrollment_detail enrollment_renew enrollment_history">
+                    <summary>
+                        <span class="nav-icon">📋</span> Matrícula
+                        <span class="chevron">▶</span>
+                    </summary>
+                    <div class="menu-links">
+                        <a href="{% url 'enrollment_dashboard' %}" {% if request.resolver_match.url_name == 'enrollment_dashboard' %}class="active"{% endif %}>
+                            <span class="nav-icon">📊</span> Panel
+                        </a>
+                        <a href="{% url 'enrollment_list' %}" {% if request.resolver_match.url_name == 'enrollment_list' %}class="active"{% endif %}>
+                            <span class="nav-icon">📑</span> Matriculados
+                        </a>
+                        <a href="{% url 'enrollment_create' %}" {% if request.resolver_match.url_name == 'enrollment_create' %}class="active"{% endif %}>
+                            <span class="nav-icon">➕</span> Nueva matrícula
+                        </a>
+                    </div>
+                </details>
+                {% endif %}
+
+                <!-- PAGOS -->
+                {% if request.user.role == 'admin' or request.user.role == 'director' or request.user.role == 'secretary' or request.user.role == 'parent' or request.user.is_superuser %}
+                <details class="menu-group" data-urls="account_status payment_history finance_dashboard payment_create debtors_report monthly_report cash_report">
+                    <summary>
+                        <span class="nav-icon">💰</span> Pagos
+                        <span class="chevron">▶</span>
+                    </summary>
+                    <div class="menu-links">
+                        <a href="{% url 'account_status' %}" {% if request.resolver_match.url_name == 'account_status' %}class="active"{% endif %}>
+                            <span class="nav-icon">💳</span> Estado de cuenta
+                        </a>
+                        <a href="{% url 'payment_history' %}" {% if request.resolver_match.url_name == 'payment_history' %}class="active"{% endif %}>
+                            <span class="nav-icon">🕐</span> Historial
+                        </a>
+                        {% if request.user.role == 'admin' or request.user.role == 'director' or request.user.role == 'secretary' or request.user.is_superuser %}
+                        <a href="{% url 'payment_create' %}" {% if request.resolver_match.url_name == 'payment_create' %}class="active"{% endif %}>
+                            <span class="nav-icon">➕</span> Registrar pago
+                        </a>
+                        <a href="{% url 'debtors_report' %}" {% if request.resolver_match.url_name == 'debtors_report' %}class="active"{% endif %}>
+                            <span class="nav-icon">⚠️</span> Deudores
+                        </a>
+                        {% endif %}
+                        {% if request.user.role == 'admin' or request.user.role == 'director' or request.user.is_superuser %}
+                        <a href="{% url 'finance_dashboard' %}" {% if request.resolver_match.url_name == 'finance_dashboard' %}class="active"{% endif %}>
+                            <span class="nav-icon">📊</span> Panel financiero
+                        </a>
+                        <a href="{% url 'monthly_report' %}" {% if request.resolver_match.url_name == 'monthly_report' %}class="active"{% endif %}>
+                            <span class="nav-icon">📆</span> Reporte mensual
+                        </a>
+                        <a href="{% url 'cash_report' %}" {% if request.resolver_match.url_name == 'cash_report' %}class="active"{% endif %}>
+                            <span class="nav-icon">🧾</span> Caja diaria
+                        </a>
+                        {% endif %}
+                    </div>
+                </details>
+                {% endif %}
+
+                <!-- ASISTENCIA -->
+                {% if request.user.role != 'parent' and request.user.role != 'secretary' or request.user.is_superuser %}
+                <details class="menu-group" data-urls="attendance_dashboard attendance_take attendance_student_history attendance_course_report">
+                    <summary>
+                        <span class="nav-icon">✅</span> Asistencia
+                        <span class="chevron">▶</span>
+                    </summary>
+                    <div class="menu-links">
+                        <a href="{% url 'attendance_dashboard' %}" {% if request.resolver_match.url_name == 'attendance_dashboard' %}class="active"{% endif %}>
+                            <span class="nav-icon">📊</span> Panel
+                        </a>
+                        <a href="{% url 'attendance_take' %}" {% if request.resolver_match.url_name == 'attendance_take' %}class="active"{% endif %}>
+                            <span class="nav-icon">📝</span> Tomar asistencia
+                        </a>
+                        <a href="{% url 'attendance_course_report' %}" {% if request.resolver_match.url_name == 'attendance_course_report' %}class="active"{% endif %}>
+                            <span class="nav-icon">📊</span> Reporte
+                        </a>
+                    </div>
+                </details>
+                {% endif %}
+
+                <!-- ADMIN -->
+                {% if request.user.role == 'admin' or request.user.role == 'director' or request.user.is_superuser %}
+                <div class="side-divider"></div>
+                <details class="menu-group" data-urls="user_management roles_permissions system_config activity_logs">
+                    <summary>
+                        <span class="nav-icon">⚙️</span> Administración
+                        <span class="chevron">▶</span>
+                    </summary>
+                    <div class="menu-links">
+                        <a href="{% url 'user_management' %}" {% if request.resolver_match.url_name == 'user_management' %}class="active"{% endif %}>
+                            <span class="nav-icon">👥</span> Usuarios
+                        </a>
+                        <a href="{% url 'system_config' %}" {% if request.resolver_match.url_name == 'system_config' %}class="active"{% endif %}>
+                            <span class="nav-icon">🔧</span> Configuración
+                        </a>
+                        <a href="{% url 'activity_logs' %}" {% if request.resolver_match.url_name == 'activity_logs' %}class="active"{% endif %}>
+                            <span class="nav-icon">🕐</span> Logs
+                        </a>
+                    </div>
+                </details>
+                {% endif %}
+
+            </nav>
+
+            <!-- User Footer -->
+            <div class="sidebar-footer">
+                <div class="user-avatar">{{ request.user.username|first|upper }}</div>
+                <div class="user-info">
+                    <strong>{{ request.user.get_full_name|default:request.user.username }}</strong>
+                    <span>{{ request.user.get_role_display }}</span>
+                </div>
+                <form method="post" action="{% url 'logout' %}">
+                    {% csrf_token %}
+                    <button class="logout-btn" type="submit" title="Cerrar sesión">⏻</button>
+                </form>
+            </div>
+        </aside>
+
+        <section class="workspace">
+            <header class="topbar">
+                {% if system_school %}
+                    <div class="school-meta">
+                        <strong>{{ system_school.name }}</strong>
+                        <span>{{ system_school.phone }}{% if system_school.email %} · {{ system_school.email }}{% endif %}</span>
+                    </div>
+                {% else %}
+                    <div></div>
+                {% endif %}
+                <a href="{% url 'user_profile' %}" class="btn btn-subtle" style="font-size:0.82rem;">
+                    👤 {{ request.user.username }}
+                </a>
+            </header>
     {% endif %}
 
-                <main class="container{% if not request.user.is_authenticated %} container-auth{% endif %}">
-                    {% if messages %}
-                        {% for message in messages %}
-                            <div class="alert {{ message.tags }}">{{ message|safe }}</div>
-                        {% endfor %}
-                    {% endif %}
-                    {% block content %}{% endblock %}
-                </main>
+            <main class="container{% if not request.user.is_authenticated %} container-auth{% endif %}">
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert {{ message.tags }}">{{ message|safe }}</div>
+                    {% endfor %}
+                {% endif %}
+                {% block content %}{% endblock %}
+            </main>
 
     {% if request.user.is_authenticated %}
-            </section>
-        </div>
+        </section>
+    </div>
     {% endif %}
 
     <script>
+        // CSRF for all POSTs
         function getCookie(name) {
-            const cookieValue = document.cookie
-                .split('; ')
-                .find((row) => row.startsWith(name + '='));
-            return cookieValue ? decodeURIComponent(cookieValue.split('=')[1]) : null;
+            const c = document.cookie.split('; ').find(r => r.startsWith(name + '='));
+            return c ? decodeURIComponent(c.split('=')[1]) : null;
         }
-
-        document.addEventListener('submit', function (event) {
-            const form = event.target;
-            if (!form || form.method.toLowerCase() !== 'post') {
-                return;
+        document.addEventListener('submit', function(e) {
+            const form = e.target;
+            if (!form || form.method.toLowerCase() !== 'post') return;
+            const token = getCookie('csrftoken');
+            if (!token) return;
+            let inp = form.querySelector('input[name="csrfmiddlewaretoken"]');
+            if (!inp) {
+                inp = document.createElement('input');
+                inp.type = 'hidden';
+                inp.name = 'csrfmiddlewaretoken';
+                form.appendChild(inp);
             }
-
-            const csrfToken = getCookie('csrftoken');
-            if (!csrfToken) {
-                return;
-            }
-
-            let csrfInput = form.querySelector('input[name="csrfmiddlewaretoken"]');
-            if (!csrfInput) {
-                csrfInput = document.createElement('input');
-                csrfInput.type = 'hidden';
-                csrfInput.name = 'csrfmiddlewaretoken';
-                form.appendChild(csrfInput);
-            }
-            csrfInput.value = csrfToken;
+            inp.value = token;
         }, true);
+
+        // Open the correct sidebar group using exact URL-name matching
+        document.addEventListener('DOMContentLoaded', () => {
+            // Django injects the current url_name as a data attribute on body
+            const currentUrlName = document.body.dataset.urlName || '';
+            const currentPath    = window.location.pathname;
+
+            // 1. Open group whose data-urls contains the current url name (exact word match)
+            document.querySelectorAll('details.menu-group[data-urls]').forEach(details => {
+                const urls = details.dataset.urls.split(' ');
+                if (currentUrlName && urls.includes(currentUrlName)) {
+                    details.open = true;
+                }
+            });
+
+            // 2. Highlight the active link by exact href match
+            document.querySelectorAll('.side-menu a, .menu-links a').forEach(a => {
+                const href = a.getAttribute('href');
+                if (href && href !== '#' && currentPath === href) {
+                    a.classList.add('active');
+                    // Also open group in case data-urls didn't catch it
+                    const grp = a.closest('details.menu-group');
+                    if (grp) grp.open = true;
+                }
+            });
+        });
     </script>
 </body>
 </html>

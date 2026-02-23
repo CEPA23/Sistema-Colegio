@@ -1,44 +1,145 @@
 {% extends 'base.html' %}
-
-{% block title %}Panel academico | Gestion Escolar{% endblock %}
-
+{% block title %}Panel Académico | Gestión Escolar{% endblock %}
 {% block content %}
-<section class="hero">
-    <p class="eyebrow">Modulo academico</p>
-    <h1>Control de cursos, notas y boletas</h1>
-</section>
+<style>
+.dash-hero {
+    background: linear-gradient(135deg, #312e81 0%, #4f46e5 60%, #7c3aed 100%);
+    border-radius: 16px;
+    padding: 28px 32px;
+    color: #fff;
+    margin-bottom: 24px;
+    position: relative;
+    overflow: hidden;
+}
+.dash-hero::after {
+    content: '📚';
+    position: absolute;
+    right: 28px; top: 50%;
+    transform: translateY(-50%);
+    font-size: 5rem;
+    opacity: .08;
+    pointer-events: none;
+}
+.dash-hero .eyebrow {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,.6);
+    margin: 0 0 6px;
+}
+.dash-hero h1 { margin: 0 0 6px; font-size: 1.6rem; font-weight: 800; }
+.dash-hero p  { margin: 0; color: rgba(255,255,255,.7); font-size: 0.9rem; }
 
-<section class="stats-grid">
-    <article class="stat-card">
+.stat-band {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+}
+.stat-item {
+    background: #fff;
+    border-radius: 14px;
+    border: 1px solid #e2e8f0;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    transition: box-shadow .18s, transform .18s;
+}
+.stat-item:hover { box-shadow: 0 6px 24px rgba(79,70,229,.1); transform: translateY(-2px); }
+.stat-item .si-icon { font-size: 1.5rem; margin-bottom: 4px; }
+.stat-item h2 { margin: 0; font-size: 2rem; font-weight: 800; color: #1e293b; }
+.stat-item p  { margin: 0; font-size: 0.8rem; color: #64748b; font-weight: 500; }
+
+.module-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+    gap: 14px;
+}
+.module-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    padding: 26px 16px;
+    background: #fff;
+    border-radius: 14px;
+    border: 1px solid #e2e8f0;
+    text-decoration: none;
+    color: #1e293b;
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-align: center;
+    transition: all .2s;
+}
+.module-btn:hover {
+    border-color: #6366f1;
+    background: #f5f3ff;
+    color: #4f46e5;
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(99,102,241,.14);
+}
+.module-btn .mb-icon { font-size: 2rem; }
+.module-btn.primary-btn { background: #4f46e5; color: #fff; border-color: #4f46e5; }
+.module-btn.primary-btn:hover { background: #4338ca; border-color: #4338ca; color: #fff; }
+</style>
+
+<div class="dash-hero">
+    <p class="eyebrow">Módulo académico</p>
+    <h1>Panel Académico</h1>
+    <p>Control de cursos, notas, períodos y boletas</p>
+</div>
+
+<div class="stat-band">
+    <div class="stat-item">
+        <span class="si-icon">📚</span>
         <h2>{{ total_courses }}</h2>
         <p>Cursos registrados</p>
-    </article>
-    <article class="stat-card">
+    </div>
+    <div class="stat-item">
+        <span class="si-icon">📅</span>
         <h2>{{ total_periods }}</h2>
-        <p>Periodos academicos</p>
-    </article>
-    <article class="stat-card">
+        <p>Períodos académicos</p>
+    </div>
+    <div class="stat-item">
+        <span class="si-icon">📝</span>
         <h2>{{ total_grade_records }}</h2>
         <p>Registros de notas</p>
-    </article>
-    <article class="stat-card">
+    </div>
+    <div class="stat-item">
+        <span class="si-icon">👤</span>
         <h2>{{ total_assignments }}</h2>
-        <p>Asignaciones docente-curso</p>
-    </article>
-</section>
+        <p>Asignaciones docente</p>
+    </div>
+</div>
 
 <section class="card">
-    <div class="section-head">
-        <h2>Accesos rapidos</h2>
-    </div>
-    <div class="action-row">
+    <div class="section-head"><h2>Accesos rápidos</h2></div>
+    <div class="module-grid" style="margin-top:4px;">
         {% if request.user.role == 'admin' or request.user.role == 'director' or request.user.role == 'secretary' or request.user.is_superuser %}
-        <a href="{% url 'course_management' %}" class="btn btn-primary">Gestionar cursos</a>
+        <a href="{% url 'course_management' %}" class="module-btn primary-btn">
+            <span class="mb-icon">⚙️</span> Gestionar Cursos
+        </a>
+        <a href="{% url 'grade_management' %}" class="module-btn primary-btn">
+            <span class="mb-icon">🎓</span> Gestionar Grados
+        </a>
+        <a href="{% url 'section_management' %}" class="module-btn primary-btn">
+            <span class="mb-icon">🗂️</span> Gestionar Secciones
+        </a>
         {% endif %}
-        <a href="{% url 'grade_create' %}" class="btn btn-primary">Registrar nota</a>
-        <a href="{% url 'course_report' %}" class="btn btn-subtle">Reporte por curso</a>
-        <a href="{% url 'period_report' %}" class="btn btn-subtle">Reporte por periodo</a>
-        <a href="{% url 'report_card' %}" class="btn btn-subtle">Generar boletas</a>
+        <a href="{% url 'grade_create' %}" class="module-btn">
+            <span class="mb-icon">✏️</span> Registrar Nota
+        </a>
+        <a href="{% url 'course_report' %}" class="module-btn">
+            <span class="mb-icon">📊</span> Reporte por Curso
+        </a>
+        <a href="{% url 'period_report' %}" class="module-btn">
+            <span class="mb-icon">📆</span> Reporte por Período
+        </a>
+        <a href="{% url 'report_card' %}" class="module-btn">
+            <span class="mb-icon">📄</span> Generar Boletas
+        </a>
     </div>
 </section>
 {% endblock %}

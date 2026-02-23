@@ -1,35 +1,96 @@
 {% extends 'base.html' %}
-
-{% block title %}Panel de asistencia | Gestion Escolar{% endblock %}
-
+{% block title %}Panel de Asistencia | Gestión Escolar{% endblock %}
 {% block content %}
-<section class="hero">
-    <p class="eyebrow">Modulo de asistencia</p>
-    <h1>Control diario de presencia estudiantil</h1>
-</section>
+<style>
+.att-hero {
+    background: linear-gradient(135deg, #065f46 0%, #059669 60%, #10b981 100%);
+    border-radius: 16px;
+    padding: 28px 32px;
+    color: #fff;
+    margin-bottom: 24px;
+    position: relative;
+    overflow: hidden;
+}
+.att-hero::after {
+    content: '✅';
+    position: absolute;
+    right: 28px; top: 50%;
+    transform: translateY(-50%);
+    font-size: 5rem;
+    opacity: .08;
+    pointer-events: none;
+}
+.att-hero .eyebrow { font-size: 0.72rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: rgba(255,255,255,.6); margin: 0 0 6px; }
+.att-hero h1 { margin: 0 0 6px; font-size: 1.6rem; font-weight: 800; }
+.att-hero p  { margin: 0; color: rgba(255,255,255,.7); font-size: 0.9rem; }
 
-<section class="stats-grid">
-    <article class="stat-card">
+.stat-band { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 16px; margin-bottom: 24px; }
+.stat-item { background: #fff; border-radius: 14px; border: 1px solid #e2e8f0; padding: 20px; display: flex; flex-direction: column; gap: 4px; transition: box-shadow .18s, transform .18s; }
+.stat-item:hover { box-shadow: 0 6px 24px rgba(5,150,105,.12); transform: translateY(-2px); }
+.stat-item .si-icon { font-size: 1.5rem; margin-bottom: 4px; }
+.stat-item h2 { margin: 0; font-size: 2rem; font-weight: 800; color: #1e293b; }
+.stat-item p  { margin: 0; font-size: 0.8rem; color: #64748b; font-weight: 500; }
+
+.action-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 14px; margin-top: 4px; }
+.action-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 20px;
+    background: #fff;
+    border-radius: 14px;
+    border: 1px solid #e2e8f0;
+    text-decoration: none;
+    color: #1e293b;
+    transition: all .2s;
+}
+.action-card:hover { border-color: #059669; box-shadow: 0 6px 20px rgba(5,150,105,.12); transform: translateY(-2px); }
+.action-card .ac-icon { width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; flex-shrink: 0; }
+.action-card .ac-text strong { display: block; font-size: 0.95rem; font-weight: 700; margin-bottom: 2px; }
+.action-card .ac-text span   { font-size: 0.78rem; color: #64748b; }
+</style>
+
+<div class="att-hero">
+    <p class="eyebrow">Módulo de asistencia</p>
+    <h1>Control de Asistencia</h1>
+    <p>Registro diario de presencia estudiantil por curso</p>
+</div>
+
+<div class="stat-band">
+    <div class="stat-item">
+        <span class="si-icon">📋</span>
         <h2>{{ today_records }}</h2>
-        <p>Registros del dia</p>
-    </article>
-    <article class="stat-card">
+        <p>Registros del día</p>
+    </div>
+    <div class="stat-item">
+        <span class="si-icon">📊</span>
         <h2>{{ total_records }}</h2>
         <p>Registros acumulados</p>
-    </article>
-    <article class="stat-card">
+    </div>
+    <div class="stat-item">
+        <span class="si-icon">⚠️</span>
         <h2>{{ total_absences }}</h2>
         <p>Faltas registradas</p>
-    </article>
-</section>
+    </div>
+</div>
 
 <section class="card">
-    <div class="section-head">
-        <h2>Acciones</h2>
-    </div>
-    <div class="action-row">
-        <a href="{% url 'attendance_take' %}" class="btn btn-primary">Tomar asistencia por curso</a>
-        <a href="{% url 'attendance_course_report' %}" class="btn btn-subtle">Reporte por curso</a>
+    <div class="section-head"><h2>Acciones</h2></div>
+    <div class="action-cards">
+        <a href="{% url 'attendance_take' %}" class="action-card">
+            <div class="ac-icon" style="background:#dcfce7; color:#16a34a;">📝</div>
+            <div class="ac-text">
+                <strong>Tomar Asistencia</strong>
+                <span>Registrar presencia por curso</span>
+            </div>
+        </a>
+        <a href="{% url 'attendance_course_report' %}" class="action-card">
+            <div class="ac-icon" style="background:#f0fdf4; color:#15803d;">📊</div>
+            <div class="ac-text">
+                <strong>Reporte por Curso</strong>
+                <span>Ver historial de asistencia</span>
+            </div>
+        </a>
     </div>
 </section>
 {% endblock %}

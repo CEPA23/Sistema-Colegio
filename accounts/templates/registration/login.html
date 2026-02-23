@@ -1,35 +1,61 @@
 {% extends 'base.html' %}
+{% load static %}
 
-{% block title %}Iniciar sesion | Gestion Escolar{% endblock %}
+{% block title %}Iniciar sesión | {{ system_school.name|default:"Gestión Escolar" }}{% endblock %}
 
 {% block content %}
 <section class="auth-wrap">
-    <div class="auth-panel">
-        <p class="eyebrow">{{ system_school.name|default:"Sistema de gestion escolar" }}</p>
-        <h1>Bienvenido</h1>
-        <p class="muted">Ingresa con tu usuario institucional para continuar{% if system_school %} en {{ system_school.name }}{% endif %}.</p>
+    <div class="auth-panel-premium">
+        <div class="auth-header">
+            <div class="auth-logo-box">
+                {% if system_school and system_school.logo %}
+                    <img src="{{ system_school.logo.url }}" alt="Logo {{ system_school.name }}" class="login-logo">
+                {% else %}
+                    <div class="login-logo-placeholder">GE</div>
+                {% endif %}
+            </div>
+            <p class="eyebrow">{{ system_school.name|default:"Sistema de Gestión Escolar" }}</p>
+            <h1>Bienvenido</h1>
+            <p class="muted">Ingresa con tus credenciales institucionales</p>
+        </div>
 
         <form method="post" class="stack">
             {% csrf_token %}
             {% if next %}
                 <input type="hidden" name="next" value="{{ next }}">
             {% endif %}
+            
             {% if form.non_field_errors %}
-                <div class="error-box">
+                <div class="error-box animate-shake">
                     {% for error in form.non_field_errors %}
                         <p>{{ error }}</p>
                     {% endfor %}
                 </div>
             {% endif %}
 
-            <label for="id_username">Usuario o correo</label>
-            <input id="id_username" name="username" type="text" required autofocus>
+            <div class="input-group">
+                <label for="id_username">Usuario o correo</label>
+                <div class="input-with-icon">
+                    <input id="id_username" name="username" type="text" required autofocus placeholder="ej: usuario123">
+                </div>
+            </div>
 
-            <label for="id_password">Contrasena</label>
-            <input id="id_password" name="password" type="password" required>
+            <div class="input-group">
+                <label for="id_password">Contraseña</label>
+                <div class="input-with-icon">
+                    <input id="id_password" name="password" type="password" required placeholder="••••••••">
+                </div>
+            </div>
 
-            <button type="submit" class="btn btn-primary">Entrar</button>
+            <button type="submit" class="btn btn-primary btn-block btn-lg">
+                <span>Acceder al Sistema</span>
+            </button>
         </form>
+        
+        <div class="auth-footer">
+            <p>© {% now "Y" %} {{ system_school.name|default:"Gestión Escolar" }} — Todos los derechos reservados.</p>
+        </div>
     </div>
 </section>
 {% endblock %}
+

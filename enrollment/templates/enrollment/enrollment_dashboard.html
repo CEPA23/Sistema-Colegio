@@ -1,39 +1,93 @@
 {% extends 'base.html' %}
-
-{% block title %}Panel de matricula | Gestion Escolar{% endblock %}
-
+{% block title %}Panel de Matrícula | Gestión Escolar{% endblock %}
 {% block content %}
-<section class="hero">
-    <p class="eyebrow">Modulo de matricula</p>
-    <h1>Control de ingresos y renovaciones</h1>
-</section>
+<style>
+.enr-hero {
+    background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 60%, #3b82f6 100%);
+    border-radius: 16px;
+    padding: 28px 32px;
+    color: #fff;
+    margin-bottom: 24px;
+    position: relative;
+    overflow: hidden;
+}
+.enr-hero::after { content: '📋'; position: absolute; right: 28px; top: 50%; transform: translateY(-50%); font-size: 5rem; opacity: .08; pointer-events: none; }
+.enr-hero .eyebrow { font-size: 0.72rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: rgba(255,255,255,.6); margin: 0 0 6px; }
+.enr-hero h1 { margin: 0 0 6px; font-size: 1.6rem; font-weight: 800; }
+.enr-hero p  { margin: 0; color: rgba(255,255,255,.7); font-size: 0.9rem; }
 
-<section class="stats-grid">
-    <article class="stat-card">
+.stat-band { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 16px; margin-bottom: 24px; }
+.stat-item { background: #fff; border-radius: 14px; border: 1px solid #e2e8f0; padding: 20px; display: flex; flex-direction: column; gap: 4px; transition: box-shadow .18s, transform .18s; }
+.stat-item:hover { box-shadow: 0 6px 24px rgba(37,99,235,.1); transform: translateY(-2px); }
+.stat-item .si-icon { font-size: 1.5rem; margin-bottom: 4px; }
+.stat-item h2 { margin: 0; font-size: 2rem; font-weight: 800; color: #1e293b; }
+.stat-item p  { margin: 0; font-size: 0.8rem; color: #64748b; font-weight: 500; }
+
+.enr-actions { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 14px; margin-top: 4px; }
+.enr-action-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 20px;
+    background: #fff;
+    border-radius: 14px;
+    border: 1px solid #e2e8f0;
+    text-decoration: none;
+    color: #1e293b;
+    transition: all .2s;
+}
+.enr-action-card:hover { border-color: #2563eb; box-shadow: 0 6px 20px rgba(37,99,235,.12); transform: translateY(-2px); }
+.enr-action-card .eac-icon { width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; flex-shrink: 0; }
+.enr-action-card .eac-text strong { display: block; font-size: 0.95rem; font-weight: 700; margin-bottom: 2px; }
+.enr-action-card .eac-text span   { font-size: 0.78rem; color: #64748b; }
+</style>
+
+<div class="enr-hero">
+    <p class="eyebrow">Módulo de matrícula</p>
+    <h1>Panel de Matrículas</h1>
+    <p>Control de ingresos, renovaciones y retiros estudiantiles</p>
+</div>
+
+<div class="stat-band">
+    <div class="stat-item">
+        <span class="si-icon">📋</span>
         <h2>{{ total_enrollments }}</h2>
-        <p>Total matriculas</p>
-    </article>
-    <article class="stat-card">
+        <p>Total matrículas</p>
+    </div>
+    <div class="stat-item">
+        <span class="si-icon">✅</span>
         <h2>{{ active_enrollments }}</h2>
         <p>Activos</p>
-    </article>
-    <article class="stat-card">
+    </div>
+    <div class="stat-item">
+        <span class="si-icon">🚪</span>
         <h2>{{ retired_enrollments }}</h2>
         <p>Retirados</p>
-    </article>
-    <article class="stat-card">
+    </div>
+    <div class="stat-item">
+        <span class="si-icon">🔄</span>
         <h2>{{ transferred_enrollments }}</h2>
         <p>Trasladados</p>
-    </article>
-</section>
+    </div>
+</div>
 
 <section class="card">
-    <div class="section-head">
-        <h2>Acciones</h2>
-    </div>
-    <div class="action-row">
-        <a href="{% url 'enrollment_create' %}" class="btn btn-primary">Registrar matricula</a>
-        <a href="{% url 'enrollment_list' %}" class="btn btn-subtle">Ver matriculados</a>
+    <div class="section-head"><h2>Acciones rápidas</h2></div>
+    <div class="enr-actions">
+        <a href="{% url 'enrollment_create' %}" class="enr-action-card">
+            <div class="eac-icon" style="background:#dbeafe; color:#1d4ed8;">➕</div>
+            <div class="eac-text">
+                <strong>Nueva Matrícula</strong>
+                <span>Registrar un nuevo estudiante</span>
+            </div>
+        </a>
+        <a href="{% url 'enrollment_list' %}" class="enr-action-card">
+            <div class="eac-icon" style="background:#eff6ff; color:#2563eb;">📑</div>
+            <div class="eac-text">
+                <strong>Lista de Matriculados</strong>
+                <span>Ver y gestionar matrículas existentes</span>
+            </div>
+        </a>
     </div>
 </section>
 {% endblock %}

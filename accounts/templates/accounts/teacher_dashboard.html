@@ -1,39 +1,162 @@
 {% extends 'base.html' %}
-
-{% block title %}Panel docente | Gestion Escolar{% endblock %}
-
+{% block title %}Panel Docente | Gestión Escolar{% endblock %}
 {% block content %}
-<section class="hero">
-    <p class="eyebrow">Panel docente</p>
-    <h1>Gestion de clases, notas y asistencia</h1>
-</section>
+<style>
+.teacher-hero {
+    background: linear-gradient(135deg, #1e1b4b 0%, #4338ca 60%, #6366f1 100%);
+    border-radius: 16px;
+    padding: 28px 32px;
+    color: #fff;
+    margin-bottom: 28px;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+.teacher-hero::after { content: '🎓'; position: absolute; right: 28px; top: 50%; transform: translateY(-50%); font-size: 5rem; opacity: .08; pointer-events: none; }
+.teacher-hero .eyebrow { font-size: 0.72rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: rgba(255,255,255,.6); margin: 0 0 6px; }
+.teacher-hero h1 { margin: 0 0 4px; font-size: 1.6rem; font-weight: 800; }
+.teacher-hero p  { margin: 0; color: rgba(255,255,255,.7); font-size: 0.92rem; }
+.hero-stats-row { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 6px; }
+.hero-mini-stat { background: rgba(255,255,255,.15); border-radius: 10px; padding: 8px 16px; text-align: center; }
+.hero-mini-stat strong { display: block; font-size: 1.3rem; font-weight: 800; }
+.hero-mini-stat span   { font-size: 0.7rem; opacity: .8; }
 
-<section class="stats-grid">
-    <article class="stat-card">
-        <h2>{{ total_students }}</h2>
-        <p>Estudiantes registrados</p>
-    </article>
-    <article class="stat-card">
-        <h2>{{ total_courses }}</h2>
-        <p>Cursos activos</p>
-    </article>
-    <article class="stat-card">
-        <h2>{{ total_grade_records }}</h2>
-        <p>Notas registradas</p>
-    </article>
-</section>
+.big-actions { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; margin-bottom: 28px; }
+.big-action-card {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 22px;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    text-decoration: none;
+    color: #1e293b;
+    transition: all .22s cubic-bezier(0.4,0,0.2,1);
+    box-shadow: 0 2px 8px rgba(0,0,0,.05);
+}
+.big-action-card:hover { transform: translateY(-4px); box-shadow: 0 12px 28px rgba(0,0,0,.1); border-color: #c7d2fe; }
+.action-icon { width: 56px; height: 56px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 1.7rem; flex-shrink: 0; }
+.action-info h3 { margin: 0 0 4px; font-size: 1.05rem; font-weight: 700; }
+.action-info p  { margin: 0; font-size: 0.82rem; color: #64748b; line-height: 1.4; }
 
-<section class="card">
-    <div class="section-head">
-        <h2>Accesos docentes</h2>
+.course-list { display: flex; flex-direction: column; gap: 10px; margin-top: 4px; }
+.course-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 16px;
+    background: #f8fafc;
+    border-radius: 11px;
+    border: 1px solid transparent;
+    transition: all .18s;
+}
+.course-item:hover { background: #fff; border-color: #e2e8f0; box-shadow: 0 2px 8px rgba(0,0,0,.06); }
+.course-info strong { display: block; font-size: 0.95rem; font-weight: 700; color: #4338ca; }
+.course-info span   { font-size: 0.8rem; color: #64748b; }
+
+.badge-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: #eef2ff;
+    color: #4338ca;
+    border-radius: 20px;
+    padding: 2px 12px;
+    font-size: 0.78rem;
+    font-weight: 700;
+}
+</style>
+
+<!-- Hero -->
+<div class="teacher-hero">
+    <div>
+        <p class="eyebrow">Panel docente</p>
+        <h1>Hola, {{ request.user.first_name|default:request.user.username }} 👋</h1>
+        <p>¿Qué deseas gestionar hoy?</p>
+        <div class="hero-stats-row">
+            <div class="hero-mini-stat">
+                <strong>{{ total_courses }}</strong>
+                <span>Cursos</span>
+            </div>
+            <div class="hero-mini-stat">
+                <strong>{{ total_students }}</strong>
+                <span>Alumnos</span>
+            </div>
+            <div class="hero-mini-stat">
+                <strong>{{ total_grade_records }}</strong>
+                <span>Notas</span>
+            </div>
+        </div>
     </div>
-    <div class="action-row">
-        <a href="{% url 'student_list' %}" class="btn btn-subtle">Lista de alumnos</a>
-        <a href="{% url 'teacher_competency_gradebook' %}" class="btn btn-primary">Notas por competencias</a>
-        <a href="{% url 'grade_list' %}" class="btn btn-subtle">Resumen de notas</a>
-        <a href="{% url 'course_report' %}" class="btn btn-subtle">Reporte por curso</a>
-        <a href="{% url 'period_report' %}" class="btn btn-subtle">Reporte por periodo</a>
-        <a href="{% url 'attendance_take' %}" class="btn btn-subtle">Tomar asistencia por curso</a>
+</div>
+
+<!-- 4 big action tiles -->
+<div class="big-actions">
+    <a href="{% url 'teacher_competency_gradebook' %}" class="big-action-card">
+        <div class="action-icon" style="background:#eef2ff; color:#4338ca;">📝</div>
+        <div class="action-info">
+            <h3>Registrar Notas</h3>
+            <p>Ingresa calificaciones por competencias e indicadores.</p>
+        </div>
+    </a>
+    <a href="#mis-cursos" class="big-action-card">
+        <div class="action-icon" style="background:#fdf4ff; color:#9333ea;">⚙️</div>
+        <div class="action-info">
+            <h3>Competencias</h3>
+            <p>Configura los criterios de evaluación de tus cursos.</p>
+        </div>
+    </a>
+    <a href="{% url 'grade_list' %}" class="big-action-card">
+        <div class="action-icon" style="background:#f0fdf4; color:#16a34a;">📊</div>
+        <div class="action-info">
+            <h3>Reporte de Notas</h3>
+            <p>Consulta el historial y resumen de calificaciones.</p>
+        </div>
+    </a>
+    <a href="{% url 'report_card' %}" class="big-action-card">
+        <div class="action-icon" style="background:#fffbeb; color:#b45309;">📄</div>
+        <div class="action-info">
+            <h3>Libreta de Notas</h3>
+            <p>Genera las boletas de rendimiento de tus alumnos.</p>
+        </div>
+    </a>
+</div>
+
+<!-- Assigned courses -->
+<section id="mis-cursos" class="card">
+    <div class="section-head">
+        <h2>Mis Cursos Asignados</h2>
+        <span class="badge-count">{{ assignments|length }}</span>
+    </div>
+    <div class="course-list">
+        {% for assignment in assignments %}
+        <div class="course-item">
+            <div class="course-info">
+                <strong>{{ assignment.course.name }}</strong>
+                <span>
+                    {% if assignment.section %}
+                        {{ assignment.section.grade.name }} — Sección {{ assignment.section.name }}
+                    {% else %}
+                        {{ assignment.grade.name }}
+                    {% endif %}
+                </span>
+            </div>
+            <a href="{% url 'manage_competencies' assignment.course.id %}" class="btn btn-subtle btn-sm">
+                Competencias
+            </a>
+        </div>
+        {% empty %}
+        <div style="text-align:center; padding: 32px; color: #94a3b8;">
+            <div style="font-size:2.5rem;margin-bottom:10px;">📚</div>
+            <strong style="display:block;color:#64748b;margin-bottom:4px;">Sin cursos asignados</strong>
+            <span style="font-size:0.85rem;">Contacta al administrador para que te asigne cursos</span>
+        </div>
+        {% endfor %}
     </div>
 </section>
 {% endblock %}

@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+
+{% block title %}Gestion de grados | Gestion Escolar{% endblock %}
+
+{% block content %}
+<section class="card">
+    <div class="section-head">
+        <h1>Gestion de grados</h1>
+        <a href="{% url 'academic_dashboard' %}" class="btn btn-subtle">Panel academico</a>
+    </div>
+
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Grado</th>
+                    <th>Nivel</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for grade in grades %}
+                    <tr {% if edit_grade.id == grade.id %}style="background-color: #fffde7;"{% endif %}>
+                        <td>{{ grade.name }}</td>
+                        <td>{{ grade.level|default:"-" }}</td>
+                        <td>
+                            <a href="?edit_grade={{ grade.id }}#grade-form-section" class="btn btn-subtle btn-sm">Editar</a>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr><td colspan="3">No hay grados registrados.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<section class="card" style="margin-top: 14px;" id="grade-form-section">
+    <div class="section-head">
+        <h2>{% if edit_grade %}Editar grado: {{ edit_grade.name }}{% else %}Crear grado{% endif %}</h2>
+    </div>
+
+    <form method="post" class="form-grid">
+        {% csrf_token %}
+        {% for field in form %}
+            <div>
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% if field.errors %}
+                    <div class="field-errors">
+                        {% for error in field.errors %}
+                            <div>{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+        {% endfor %}
+        <div class="action-row">
+            <button type="submit" class="btn btn-primary">{% if edit_grade %}Actualizar grado{% else %}Guardar grado{% endif %}</button>
+            {% if edit_grade %}
+                <a href="{% url 'grade_management' %}" class="btn btn-subtle">Cancelar</a>
+            {% endif %}
+        </div>
+    </form>
+</section>
+{% endblock %}

@@ -52,10 +52,20 @@ def attendance_take(request):
     if filter_form.is_valid():
         selected_date = filter_form.cleaned_data['date']
         selected_assignment = filter_form.cleaned_data['assignment']
+        
+        enrollment_filters = {
+            'academic_year': selected_assignment.academic_year,
+            'status': 'active'
+        }
+        if selected_assignment.section_id:
+            enrollment_filters['section_id'] = selected_assignment.section_id
+        elif selected_assignment.grade_id:
+            enrollment_filters['section__grade_id'] = selected_assignment.grade_id
+        elif selected_assignment.level_id:
+            enrollment_filters['section__grade__level_id'] = selected_assignment.level_id
+
         enrollments = Enrollment.objects.select_related('student').filter(
-            academic_year=selected_assignment.academic_year,
-            section=selected_assignment.section,
-            status='active'
+            **enrollment_filters
         ).order_by('student__last_name', 'student__first_name')
 
         if request.method == 'POST':
@@ -125,10 +135,19 @@ def attendance_student_history(request, enrollment_id):
 
 @role_required('admin', 'director', 'teacher', 'secretary')
 def attendance_course_report(request):
+    is_teacher = request.user.role == 'teacher' and not request.user.is_superuser
+    
     records = AttendanceRecord.objects.select_related(
         'assignment__course',
         'assignment__section__grade__level',
-    )
+        'assignment__grade',
+        'assignment__level',
+    ).filter(assignment__isnull=False) # Exclude records without assignment
+
+    if is_teacher:
+        assigned_course_ids = TeacherCourseAssignment.objects.filter(teacher=request.user).values_list('course_id', flat=True)
+        records = records.filter(assignment__teacher=request.user)
+
     assignment_id = request.GET.get('assignment')
     if assignment_id:
         records = records.filter(assignment_id=assignment_id)
@@ -154,11 +173,16 @@ def attendance_course_report(request):
     assignments = TeacherCourseAssignment.objects.select_related(
         'course',
         'section__grade',
+        'grade',
+        'level',
         'academic_year',
     ).order_by(
         '-academic_year__year',
         'course__name',
     )
+    
+    if is_teacher:
+        assignments = assignments.filter(teacher=request.user)
 
     return render(request, 'attendance/course_report.html', {
         'summary': summary,
@@ -183,10 +207,14 @@ def attendance_export_csv(request):
     for record in records:
         course_label = '-'
         if record.assignment_id:
-            course_label = (
-                f"{record.assignment.course.name} - "
-                f"{record.assignment.section.grade.name} {record.assignment.section.name}"
-            )
+            a = record.assignment
+            course_label = f"{a.course.name} | "
+            if a.section:
+                course_label += f"{a.section.grade.name} {a.section.name}"
+            elif a.grade:
+                course_label += f"{a.grade.name}"
+            elif a.level:
+                course_label += f"{a.level.name}"
 
         writer.writerow([
             record.date,

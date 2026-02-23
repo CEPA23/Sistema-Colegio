@@ -32,17 +32,31 @@ class User(AbstractUser):
         related_name='teachers_by_section',
     )
     is_polyteacher = models.BooleanField(default=False, verbose_name='Es polidocente')
+    poly_course = models.ForeignKey(
+        'academic.Course',
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        related_name='poly_teachers_assigned',
+        verbose_name='Curso de polidocencia'
+    )
     teaching_courses = models.ManyToManyField(
         'academic.Course',
         blank=True,
         related_name='poly_teachers',
-        verbose_name='Cursos que enseña (polidocente)'
+        verbose_name='Cursos que enseña (polidocente) - MÚLTIPLES'
     )
     teaching_grades = models.ManyToManyField(
         'academic.Grade',
         blank=True,
         related_name='poly_teachers_grades',
         verbose_name='Grados que enseña (polidocente)'
+    )
+    teaching_sections = models.ManyToManyField(
+        'academic.Section',
+        blank=True,
+        related_name='poly_teachers_sections',
+        verbose_name='Secciones que enseña (polidocente)'
     )
 
     def __str__(self):
