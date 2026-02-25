@@ -3,7 +3,6 @@ from decimal import Decimal
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import Sum
-from django.utils import timezone
 
 from enrollment.models import Enrollment
 
@@ -40,12 +39,13 @@ class Fee(models.Model):
     pension_month = models.PositiveSmallIntegerField(choices=MONTH_CHOICES, null=True, blank=True)
     course = models.ForeignKey('academic.Course', on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Curso (para libros)")
     amount = models.DecimalField(max_digits=10, decimal_places=2)
+    amount_paid = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal('0.00'))
     due_date = models.DateField()
 
     STATUS = (
         ('pending', 'Pendiente'),
+        ('partial', 'Parcial'),
         ('paid', 'Pagado'),
-        ('late', 'Vencido'),
     )
 
     status = models.CharField(max_length=20, choices=STATUS, default='pending')
@@ -58,22 +58,59 @@ class Fee(models.Model):
 
     @property
     def total_paid(self):
-        total = self.payment_set.aggregate(total=Sum('amount'))['total']
-        return total or Decimal('0.00')
+        return self.amount_paid or Decimal('0.00')
 
     @property
     def balance(self):
         remaining = self.amount - self.total_paid
         return remaining if remaining > Decimal('0.00') else Decimal('0.00')
 
-    def refresh_status(self):
-        if self.balance <= Decimal('0.00'):
+    @property
+    def pending(self):
+        return self.balance
+
+    def refresh_status(self, save=True):
+        if self.pending <= Decimal('0.00'):
             self.status = 'paid'
-        elif self.due_date < timezone.localdate():
-            self.status = 'late'
+        elif self.total_paid > Decimal('0.00'):
+            self.status = 'partial'
         else:
             self.status = 'pending'
-        self.save(update_fields=['status'])
+        if save:
+            self.save(update_fields=['status'])
+
+    def recalculate_from_payments(self):
+        total = self.payment_set.aggregate(total=Sum('amount'))['total'] or Decimal('0.00')
+        if total > self.amount:
+            total = self.amount
+        self.amount_paid = total
+        self.refresh_status(save=False)
+        self.save(update_fields=['amount_paid', 'status'])
+
+    def clean(self):
+        super().clean()
+        if self.amount <= Decimal('0.00'):
+            raise ValidationError({'amount': "El monto total de la deuda debe ser mayor a cero."})
+        if self.amount_paid < Decimal('0.00'):
+            raise ValidationError({'amount_paid': "El monto pagado no puede ser negativo."})
+        if self.amount_paid > self.amount:
+            raise ValidationError({'amount_paid': "El monto pagado no puede exceder el monto total."})
+
+        if self.concept == self.CONCEPT_PENSION:
+            if not self.pension_month:
+                raise ValidationError({'pension_month': "La pension requiere mes."})
+            if self.course_id:
+                raise ValidationError({'course': "La pension no debe tener curso asociado."})
+        elif self.concept == self.CONCEPT_BOOK:
+            if not self.course_id:
+                raise ValidationError({'course': "El concepto libro requiere curso."})
+            if self.pension_month:
+                raise ValidationError({'pension_month': "El concepto libro no debe tener mes."})
+        else:
+            if self.pension_month:
+                raise ValidationError({'pension_month': "Este concepto no debe tener mes."})
+            if self.course_id:
+                raise ValidationError({'course': "Este concepto no debe tener curso."})
 
 
 class Payment(models.Model):
@@ -103,10 +140,9 @@ class Payment(models.Model):
         if self.method in (self.METHOD_TRANSFER, self.METHOD_YAPE_PLIN) and not self.proof_image:
             raise ValidationError("Debes adjuntar una captura para transferencias o Yape/Plin.")
 
-        remaining = self.fee.balance
-        if self.pk:
-            previous = Payment.objects.get(pk=self.pk).amount
-            remaining += previous
+        aggregate = Payment.objects.filter(fee=self.fee).exclude(pk=self.pk).aggregate(total=Sum('amount'))
+        already_paid_without_current = aggregate['total'] or Decimal('0.00')
+        remaining = self.fee.amount - already_paid_without_current
 
         if self.amount > remaining:
             raise ValidationError("El monto excede la deuda pendiente.")
@@ -114,4 +150,9 @@ class Payment(models.Model):
     def save(self, *args, **kwargs):
         self.full_clean()
         super().save(*args, **kwargs)
-        self.fee.refresh_status()
+        self.fee.recalculate_from_payments()
+
+    def delete(self, *args, **kwargs):
+        fee = self.fee
+        super().delete(*args, **kwargs)
+        fee.recalculate_from_payments()

@@ -31,12 +31,24 @@ class StudentEnrollmentForm(forms.ModelForm):
             'address',
             'parent_name',
             'parent_phone',
+            'father_name',
+            'father_phone',
+            'mother_name',
+            'mother_phone',
             'academic_year',
             'section',
             'enrollment_status',
         ]
         widgets = {
             'birth_date': forms.DateInput(attrs={'type': 'date'}),
+        }
+        labels = {
+            'parent_name': 'Apoderado principal',
+            'parent_phone': 'Telefono del apoderado',
+            'father_name': 'Nombre del padre',
+            'father_phone': 'Telefono del padre',
+            'mother_name': 'Nombre de la madre',
+            'mother_phone': 'Telefono de la madre',
         }
 
     def __init__(self, *args, **kwargs):

@@ -14,38 +14,28 @@ class AcademicYear(models.Model):
         return f"{self.school.name} - {self.year}"
 
 
-class Level(models.Model):
-    name = models.CharField(max_length=50, unique=True)
-
-    class Meta:
-        ordering = ("name",)
-
-    def __str__(self):
-        return self.name
-
-
 class Grade(models.Model):
     name = models.CharField(max_length=50)
-    level = models.ForeignKey(
-        Level,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name='grades',
-    )
 
     class Meta:
         ordering = ('name',)
 
     def __str__(self):
-        if self.level:
-            return f"{self.level.name} - {self.name}"
         return self.name
 
 
 class Section(models.Model):
     name = models.CharField(max_length=10)
     grade = models.ForeignKey(Grade, on_delete=models.CASCADE)
+    tutor_teacher = models.ForeignKey(
+        'accounts.User',
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        related_name='tutor_sections',
+        limit_choices_to={'role': 'teacher'},
+        verbose_name='Tutora de aula',
+    )
 
     class Meta:
         ordering = ('grade__name', 'name')
@@ -57,6 +47,7 @@ class Section(models.Model):
 
 class Course(models.Model):
     name = models.CharField(max_length=100)
+    has_book = models.BooleanField(default=False, verbose_name='Tiene libro')
     is_poly_course = models.BooleanField(default=False, verbose_name="¿Es curso de polidocencia?")
     book_price = models.DecimalField(max_digits=10, decimal_places=2, default=0.00, verbose_name="Precio del Libro")
 
@@ -71,21 +62,19 @@ class TeacherCourseAssignment(models.Model):
         limit_choices_to={'role': 'teacher'}
     )
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
-    level = models.ForeignKey(Level, on_delete=models.SET_NULL, null=True, blank=True)
     grade = models.ForeignKey(Grade, on_delete=models.SET_NULL, null=True, blank=True)
     section = models.ForeignKey(Section, on_delete=models.SET_NULL, null=True, blank=True)
     academic_year = models.ForeignKey(AcademicYear, on_delete=models.CASCADE)
 
     class Meta:
         unique_together = ('teacher', 'course', 'section', 'academic_year')
-        ordering = ('academic_year__year', 'level__name', 'grade__name', 'section__name', 'course__name')
+        ordering = ('academic_year__year', 'grade__name', 'section__name', 'course__name')
 
     def __str__(self):
-        level_name = self.level.name if self.level else '-'
         grade_name = self.grade.name if self.grade else '-'
         section_name = self.section.name if self.section else '-'
         return (
-            f"{self.course.name} | {level_name} {grade_name} {section_name} "
+            f"{self.course.name} | {grade_name} {section_name} "
             f"({self.academic_year.year}) - {self.teacher}"
         )
 
@@ -95,15 +84,6 @@ class TeacherCourseAssignment(models.Model):
             if self.grade and self.grade_id != section_grade.id:
                 raise ValidationError({'grade': 'El grado debe coincidir con la seccion seleccionada.'})
             self.grade = section_grade
-
-            if section_grade.level:
-                if self.level and self.level_id != section_grade.level_id:
-                    raise ValidationError({'level': 'El nivel debe coincidir con el grado/seccion seleccionados.'})
-                self.level = section_grade.level
-        elif self.grade and self.grade.level:
-            if self.level and self.level_id != self.grade.level_id:
-                raise ValidationError({'level': 'El nivel debe coincidir con el grado.'})
-            self.level = self.grade.level
 
     def save(self, *args, **kwargs):
         self.full_clean()

@@ -225,7 +225,7 @@
                     <td>
                         {% if user.role == 'teacher' %}
                             {% if user.is_polyteacher %}
-                                <span class="badge-poly">Poly: {{ user.poly_course|default:"—" }}</span>
+                                <span class="badge-poly">Poly: {{ user.teaching_courses.count }} curso(s) / {{ user.teaching_sections.count }} seccion(es)</span>
                             {% else %}
                                 {{ user.teaching_grade|default:"—" }} / {{ user.teaching_section|default:"—" }}
                             {% endif %}
@@ -309,7 +309,7 @@
                 <div class="form-section-label" id="teacher-section-label" style="display:none;">Configuración docente</div>
                 <div class="form-grid" id="teacher-fields">
                     {% for field in form %}
-                        {% if field.name in "is_polyteacher,teaching_grade,teaching_section,poly_course,teaching_grades,teaching_sections,teaching_courses" %}
+                        {% if field.name in "is_polyteacher,teaching_grade,teaching_section,teaching_grades,teaching_sections,teaching_courses" %}
                         <div class="teacher-field-wrapper" data-field="{{ field.name }}">
                             <label for="{{ field.id_for_label }}">{{ field.label }}</label>
                             {{ field }}
@@ -364,15 +364,16 @@ document.addEventListener('DOMContentLoaded', function () {
     const isPolyField       = document.getElementById('id_is_polyteacher');
     const teacherSectionLbl = document.getElementById('teacher-section-label');
 
-    const POLY_ONLY    = ['poly_course', 'teaching_grades', 'teaching_sections', 'teaching_courses'];
+    const POLY_ONLY    = ['teaching_courses', 'teaching_sections'];
     const REGULAR_ONLY = ['teaching_grade', 'teaching_section'];
+    const ALWAYS_HIDE  = ['teaching_grades'];
 
     function wrapperOf(name) {
         return document.querySelector(`.teacher-field-wrapper[data-field="${name}"]`);
     }
 
     // Add "Select all" buttons for multi-selects
-    ['teaching_grades', 'teaching_sections'].forEach(fname => {
+    ['teaching_courses', 'teaching_sections'].forEach(fname => {
         const w   = wrapperOf(fname);
         const sel = document.getElementById('id_' + fname);
         if (w && sel && !w.querySelector('.btn-select-all')) {
@@ -392,13 +393,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
         if (teacherSectionLbl) teacherSectionLbl.style.display = isTeacher ? '' : 'none';
 
-        // teaching_courses always hidden (managed automatically)
-        const tcw = wrapperOf('teaching_courses');
-        if (tcw) tcw.style.display = 'none';
+        ALWAYS_HIDE.forEach(f => {
+            const w = wrapperOf(f);
+            if (w) w.style.display = 'none';
+        });
 
         if (isTeacher) {
             if (isPoly) {
-                POLY_ONLY.forEach(f => { const w = wrapperOf(f); if (w && f !== 'teaching_courses') w.style.display = ''; });
+                POLY_ONLY.forEach(f => { const w = wrapperOf(f); if (w) w.style.display = ''; });
                 REGULAR_ONLY.forEach(f => { const w = wrapperOf(f); if (w) w.style.display = 'none'; });
                 const isPolyW = wrapperOf('is_polyteacher'); if (isPolyW) isPolyW.style.display = '';
             } else {
@@ -407,7 +409,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 const isPolyW = wrapperOf('is_polyteacher'); if (isPolyW) isPolyW.style.display = '';
             }
         } else {
-            [...POLY_ONLY, ...REGULAR_ONLY, 'is_polyteacher'].forEach(f => {
+            [...POLY_ONLY, ...REGULAR_ONLY, ...ALWAYS_HIDE, 'is_polyteacher'].forEach(f => {
                 const w = wrapperOf(f); if (w) w.style.display = 'none';
             });
         }

@@ -1,5 +1,5 @@
-{% extends 'base.html' %}
-{% block title %}Panel de Asistencia | Gestión Escolar{% endblock %}
+﻿{% extends 'base.html' %}
+{% block title %}Panel de Asistencia | Gestion Escolar{% endblock %}
 {% block content %}
 <style>
 .att-hero {
@@ -12,12 +12,12 @@
     overflow: hidden;
 }
 .att-hero::after {
-    content: '✅';
+    content: 'OK';
     position: absolute;
     right: 28px; top: 50%;
     transform: translateY(-50%);
-    font-size: 5rem;
-    opacity: .08;
+    font-size: 2.2rem;
+    opacity: .12;
     pointer-events: none;
 }
 .att-hero .eyebrow { font-size: 0.72rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: rgba(255,255,255,.6); margin: 0 0 6px; }
@@ -51,16 +51,16 @@
 </style>
 
 <div class="att-hero">
-    <p class="eyebrow">Módulo de asistencia</p>
+    <p class="eyebrow">Modulo de asistencia</p>
     <h1>Control de Asistencia</h1>
-    <p>Registro diario de presencia estudiantil por curso</p>
+    <p>Registro diario de presencia estudiantil por seccion</p>
 </div>
 
 <div class="stat-band">
     <div class="stat-item">
         <span class="si-icon">📋</span>
         <h2>{{ today_records }}</h2>
-        <p>Registros del día</p>
+        <p>Registros del dia</p>
     </div>
     <div class="stat-item">
         <span class="si-icon">📊</span>
@@ -68,7 +68,7 @@
         <p>Registros acumulados</p>
     </div>
     <div class="stat-item">
-        <span class="si-icon">⚠️</span>
+        <span class="si-icon">⚠</span>
         <h2>{{ total_absences }}</h2>
         <p>Faltas registradas</p>
     </div>
@@ -81,14 +81,14 @@
             <div class="ac-icon" style="background:#dcfce7; color:#16a34a;">📝</div>
             <div class="ac-text">
                 <strong>Tomar Asistencia</strong>
-                <span>Registrar presencia por curso</span>
+                <span>Registrar presencia por seccion</span>
             </div>
         </a>
         <a href="{% url 'attendance_course_report' %}" class="action-card">
             <div class="ac-icon" style="background:#f0fdf4; color:#15803d;">📊</div>
             <div class="ac-text">
-                <strong>Reporte por Curso</strong>
-                <span>Ver historial de asistencia</span>
+                <strong>Reporte por Seccion</strong>
+                <span>Ver historial por fecha y seccion</span>
             </div>
         </a>
     </div>

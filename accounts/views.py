@@ -1,10 +1,14 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView
 from django.contrib import messages
+from django.db.models import Sum
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
+from django.utils import timezone
+from datetime import datetime
 
 from academic.models import AcademicYear, Course, GradeRecord, Period, TeacherCourseAssignment
+from finance.models import Payment
 from schools.models import School
 from enrollment.models import Enrollment
 from students.models import Student
@@ -33,12 +37,57 @@ class RoleLoginView(LoginView):
 
 @login_required
 def dashboard(request):
+    today = timezone.localdate()
     active_year = AcademicYear.objects.filter(is_active=True).select_related('school').first()
     recent_enrollments = Enrollment.objects.select_related(
         'student',
         'section__grade',
         'academic_year'
     ).order_by('-enrolled_at')[:6]
+    revenue_range = request.GET.get('revenue_range', 'month')
+    revenue_day = request.GET.get('revenue_day') or today.isoformat()
+    revenue_month = request.GET.get('revenue_month') or today.strftime('%Y-%m')
+    revenue_year = request.GET.get('revenue_year') or str(today.year)
+
+    revenue_qs = Payment.objects.all()
+    revenue_scope_label = ''
+
+    if revenue_range == 'day':
+        try:
+            selected_day = datetime.strptime(revenue_day, '%Y-%m-%d').date()
+        except ValueError:
+            selected_day = today
+            revenue_day = today.isoformat()
+        revenue_qs = revenue_qs.filter(payment_date=selected_day)
+        revenue_scope_label = selected_day.strftime('%d/%m/%Y')
+    elif revenue_range == 'year':
+        try:
+            selected_year = int(revenue_year)
+        except ValueError:
+            selected_year = today.year
+            revenue_year = str(today.year)
+        revenue_qs = revenue_qs.filter(payment_date__year=selected_year)
+        revenue_scope_label = str(selected_year)
+    else:
+        try:
+            year_value, month_value = revenue_month.split('-')
+            selected_year = int(year_value)
+            selected_month = int(month_value)
+        except ValueError:
+            selected_year = today.year
+            selected_month = today.month
+            revenue_month = today.strftime('%Y-%m')
+        revenue_qs = revenue_qs.filter(payment_date__year=selected_year, payment_date__month=selected_month)
+        revenue_scope_label = f"{selected_month:02d}/{selected_year}"
+
+    revenue_total_filtered = revenue_qs.aggregate(total=Sum('amount'))['total'] or 0
+    revenue_count_filtered = revenue_qs.count()
+    revenue_total_day = Payment.objects.filter(payment_date=today).aggregate(total=Sum('amount'))['total'] or 0
+    revenue_total_month = Payment.objects.filter(
+        payment_date__year=today.year,
+        payment_date__month=today.month
+    ).aggregate(total=Sum('amount'))['total'] or 0
+    revenue_total_year = Payment.objects.filter(payment_date__year=today.year).aggregate(total=Sum('amount'))['total'] or 0
 
     context = {
         'active_year': active_year,
@@ -47,6 +96,16 @@ def dashboard(request):
         'total_courses': Course.objects.count(),
         'total_grade_records': GradeRecord.objects.count(),
         'recent_enrollments': recent_enrollments,
+        'revenue_range': revenue_range,
+        'revenue_day': revenue_day,
+        'revenue_month': revenue_month,
+        'revenue_year': revenue_year,
+        'revenue_scope_label': revenue_scope_label,
+        'revenue_total_filtered': revenue_total_filtered,
+        'revenue_count_filtered': revenue_count_filtered,
+        'revenue_total_day': revenue_total_day,
+        'revenue_total_month': revenue_total_month,
+        'revenue_total_year': revenue_total_year,
     }
     return render(request, 'accounts/dashboard.html', context)
 
@@ -106,6 +165,9 @@ def user_management(request):
     users = User.objects.select_related(
         'teaching_grade',
         'teaching_section__grade',
+    ).prefetch_related(
+        'teaching_courses',
+        'teaching_sections',
     ).order_by('username')
     return render(
         request,

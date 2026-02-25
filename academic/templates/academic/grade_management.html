@@ -14,7 +14,6 @@
             <thead>
                 <tr>
                     <th>Grado</th>
-                    <th>Nivel</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
@@ -22,13 +21,12 @@
                 {% for grade in grades %}
                     <tr {% if edit_grade.id == grade.id %}style="background-color: #fffde7;"{% endif %}>
                         <td>{{ grade.name }}</td>
-                        <td>{{ grade.level|default:"-" }}</td>
                         <td>
                             <a href="?edit_grade={{ grade.id }}#grade-form-section" class="btn btn-subtle btn-sm">Editar</a>
                         </td>
                     </tr>
                 {% empty %}
-                    <tr><td colspan="3">No hay grados registrados.</td></tr>
+                    <tr><td colspan="2">No hay grados registrados.</td></tr>
                 {% endfor %}
             </tbody>
         </table>

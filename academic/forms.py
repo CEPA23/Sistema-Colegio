@@ -2,7 +2,7 @@ from django import forms
 
 from accounts.models import User
 
-from .models import Competency, Course, Grade, GradeRecord, Indicator, Level, Section, TeacherCourseAssignment
+from .models import Competency, Course, Grade, GradeRecord, Indicator, Section, TeacherCourseAssignment
 
 
 class GradeRecordForm(forms.ModelForm):
@@ -29,8 +29,6 @@ class GradeRecordForm(forms.ModelForm):
                     q_sections |= Q(id=a.section_id)
                 elif a.grade_id:
                     q_sections |= Q(grade_id=a.grade_id)
-                elif a.level_id:
-                    q_sections |= Q(grade__level_id=a.level_id)
             
             from enrollment.models import Enrollment
             relevant_section_ids = Section.objects.filter(q_sections).values_list('id', flat=True)
@@ -43,40 +41,35 @@ class GradeRecordForm(forms.ModelForm):
 class CourseForm(forms.ModelForm):
     class Meta:
         model = Course
-        fields = ['name', 'is_poly_course']
+        fields = ['name', 'is_poly_course', 'has_book']
 
 
 class GradeForm(forms.ModelForm):
     class Meta:
         model = Grade
-        fields = ['name', 'level']
+        fields = ['name']
 
 
 class SectionForm(forms.ModelForm):
     class Meta:
         model = Section
-        fields = ['name', 'grade']
+        fields = ['name', 'grade', 'tutor_teacher']
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['tutor_teacher'].queryset = User.objects.filter(role='teacher').order_by('first_name', 'last_name')
 
 
 class TeacherCourseAssignmentForm(forms.ModelForm):
     class Meta:
         model = TeacherCourseAssignment
-        fields = ['academic_year', 'level', 'grade', 'section', 'course', 'teacher']
+        fields = ['academic_year', 'grade', 'section', 'course', 'teacher']
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['teacher'].queryset = User.objects.filter(role='teacher').order_by('first_name', 'last_name')
-        self.fields['level'].queryset = Level.objects.order_by('name')
         self.fields['grade'].queryset = Grade.objects.order_by('name')
         self.fields['section'].queryset = Section.objects.select_related('grade').order_by('grade__name', 'name')
-
-        level = None
-        if self.is_bound:
-            level = self.data.get('level')
-        elif self.instance.pk and self.instance.level_id:
-            level = str(self.instance.level_id)
-        if level:
-            self.fields['grade'].queryset = Grade.objects.filter(level_id=level).order_by('name')
 
         grade = None
         if self.is_bound:

@@ -31,16 +31,8 @@ def enrollment_list(request):
 
 @role_required('admin', 'director', 'secretary')
 def enrollment_create(request):
-    if request.method == 'POST':
-        form = EnrollmentForm(request.POST)
-        if form.is_valid():
-            enrollment = form.save()
-            messages.success(request, f"Matricula creada para {enrollment.student}.")
-            return redirect('enrollment_list')
-    else:
-        form = EnrollmentForm(initial={'status': 'active'})
-
-    return render(request, 'enrollment/enrollment_form.html', {'form': form})
+    messages.info(request, "La matricula nueva se registra desde Pagos > Registrar pago.")
+    return redirect('payment_create')
 
 
 @role_required('admin', 'director', 'secretary')

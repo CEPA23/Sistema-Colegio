@@ -96,6 +96,39 @@
 .module-btn .mod-icon { font-size: 1.8rem; }
 
 .recent-table-section { margin-top: 4px; }
+.revenue-grid {
+    display: grid;
+    grid-template-columns: 1.3fr 1fr;
+    gap: 16px;
+    margin-bottom: 24px;
+}
+.revenue-stats {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+    margin-top: 10px;
+}
+.revenue-chip {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 10px 12px;
+}
+.revenue-chip strong {
+    display: block;
+    color: #0f172a;
+    font-size: 1rem;
+}
+.revenue-chip span {
+    color: #64748b;
+    font-size: .78rem;
+}
+@media (max-width: 980px) {
+    .revenue-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 640px) {
+    .revenue-stats { grid-template-columns: 1fr; }
+}
 </style>
 
 <!-- Hero -->
@@ -140,6 +173,69 @@
         <p>Registros de nota</p>
     </div>
 </div>
+
+{% if request.user.role == 'admin' or request.user.role == 'director' or request.user.is_superuser %}
+<section class="revenue-grid">
+    <div class="card">
+        <div class="section-head">
+            <h2>Recaudacion filtrada</h2>
+        </div>
+        <form method="get" class="form-grid" id="revenue-filter-form">
+            <div>
+                <label for="revenue_range">Periodo</label>
+                <select id="revenue_range" name="revenue_range">
+                    <option value="day" {% if revenue_range == 'day' %}selected{% endif %}>Diaria</option>
+                    <option value="month" {% if revenue_range == 'month' %}selected{% endif %}>Mensual</option>
+                    <option value="year" {% if revenue_range == 'year' %}selected{% endif %}>Anual</option>
+                </select>
+            </div>
+            <div id="wrap-revenue-day">
+                <label for="revenue_day">Fecha</label>
+                <input id="revenue_day" type="date" name="revenue_day" value="{{ revenue_day }}">
+            </div>
+            <div id="wrap-revenue-month">
+                <label for="revenue_month">Mes</label>
+                <input id="revenue_month" type="month" name="revenue_month" value="{{ revenue_month }}">
+            </div>
+            <div id="wrap-revenue-year">
+                <label for="revenue_year">Año</label>
+                <input id="revenue_year" type="number" min="2000" max="2100" name="revenue_year" value="{{ revenue_year }}">
+            </div>
+            <div class="action-row">
+                <button type="submit" class="btn btn-primary">Aplicar filtro</button>
+            </div>
+        </form>
+    </div>
+    <div class="card">
+        <div class="section-head">
+            <h2>Resumen</h2>
+        </div>
+        <p class="muted">Periodo consultado: <strong>{{ revenue_scope_label }}</strong></p>
+        <div class="revenue-chip">
+            <span>Total recaudado</span>
+            <strong>S/ {{ revenue_total_filtered }}</strong>
+        </div>
+        <div class="revenue-chip" style="margin-top:8px;">
+            <span>Pagos registrados</span>
+            <strong>{{ revenue_count_filtered }}</strong>
+        </div>
+        <div class="revenue-stats">
+            <div class="revenue-chip">
+                <span>Hoy</span>
+                <strong>S/ {{ revenue_total_day }}</strong>
+            </div>
+            <div class="revenue-chip">
+                <span>Mes actual</span>
+                <strong>S/ {{ revenue_total_month }}</strong>
+            </div>
+            <div class="revenue-chip">
+                <span>Año actual</span>
+                <strong>S/ {{ revenue_total_year }}</strong>
+            </div>
+        </div>
+    </div>
+</section>
+{% endif %}
 
 <!-- Módulos según rol -->
 <section class="card" style="margin-bottom:24px;">
@@ -207,5 +303,25 @@
         </table>
     </div>
 </section>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const rangeField = document.getElementById('revenue_range');
+    const wrapDay = document.getElementById('wrap-revenue-day');
+    const wrapMonth = document.getElementById('wrap-revenue-month');
+    const wrapYear = document.getElementById('wrap-revenue-year');
+    if (!rangeField || !wrapDay || !wrapMonth || !wrapYear) return;
+
+    function syncRevenueInputs() {
+        const value = rangeField.value;
+        wrapDay.style.display = value === 'day' ? '' : 'none';
+        wrapMonth.style.display = value === 'month' ? '' : 'none';
+        wrapYear.style.display = value === 'year' ? '' : 'none';
+    }
+
+    rangeField.addEventListener('change', syncRevenueInputs);
+    syncRevenueInputs();
+});
+</script>
 
 {% endblock %}

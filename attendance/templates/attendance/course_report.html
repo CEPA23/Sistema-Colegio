@@ -1,30 +1,22 @@
 {% extends 'base.html' %}
 
-{% block title %}Reporte de asistencia por curso | Gestion Escolar{% endblock %}
+{% block title %}Reporte de asistencia por seccion | Gestion Escolar{% endblock %}
 
 {% block content %}
 <section class="card">
     <div class="section-head">
-        <h1>Reporte por curso/seccion</h1>
+        <h1>Reporte por seccion</h1>
         <a href="{% url 'attendance_dashboard' %}" class="btn btn-subtle">Panel asistencia</a>
     </div>
 
     <form method="get" class="form-grid" style="margin-bottom: 14px;">
         <div>
-            <label for="assignment">Curso</label>
-            <select id="assignment" name="assignment">
+            <label for="section">Seccion</label>
+            <select id="section" name="section">
                 <option value="">Todos</option>
-                {% for item in assignments %}
-                    <option value="{{ item.id }}" {% if assignment_id == item.id|stringformat:'s' %}selected{% endif %}>
-                        {{ item.course.name }} | 
-                        {% if item.section %}
-                            {{ item.section.grade.name }} {{ item.section.name }}
-                        {% elif item.grade %}
-                            {{ item.grade.name }}
-                        {% else %}
-                            {{ item.level.name }}
-                        {% endif %}
-                        ({{ item.academic_year.year }})
+                {% for item in sections %}
+                    <option value="{{ item.id }}" {% if section_id == item.id|stringformat:'s' %}selected{% endif %}>
+                        {{ item.grade.name }} {{ item.name }}
                     </option>
                 {% endfor %}
             </select>
@@ -39,10 +31,10 @@
         <table>
             <thead>
                 <tr>
-                    <th>Curso</th>
-                    <th>Nivel</th>
+                    <th>Fecha</th>
                     <th>Grado</th>
                     <th>Seccion</th>
+                    <th>Registrado por</th>
                     <th>Total</th>
                     <th>Asistio</th>
                     <th>Falto</th>
@@ -52,10 +44,16 @@
             <tbody>
                 {% for row in summary %}
                     <tr>
-                        <td>{{ row.assignment__course__name|default:"-" }}</td>
-                        <td>{{ row.assignment__level__name|default:"-" }}</td>
-                        <td>{{ row.assignment__grade__name|default:"-" }}</td>
-                        <td>{{ row.assignment__section__name|default:"-" }}</td>
+                        <td>{{ row.date }}</td>
+                        <td>{{ row.enrollment__section__grade__name|default:"-" }}</td>
+                        <td>{{ row.enrollment__section__name|default:"-" }}</td>
+                        <td>
+                            {% if row.recorded_by__first_name or row.recorded_by__last_name %}
+                                {{ row.recorded_by__first_name }} {{ row.recorded_by__last_name }}
+                            {% else %}
+                                {{ row.recorded_by__username|default:"-" }}
+                            {% endif %}
+                        </td>
                         <td>{{ row.total }}</td>
                         <td>{{ row.present }}</td>
                         <td>{{ row.absent }}</td>

@@ -14,7 +14,8 @@
             <thead>
                 <tr>
                     <th>Fecha</th>
-                    <th>Curso</th>
+                    <th>Seccion</th>
+                    <th>Registrado por</th>
                     <th>Estado</th>
                     <th>Observacion</th>
                 </tr>
@@ -24,8 +25,11 @@
                     <tr>
                         <td>{{ record.date }}</td>
                         <td>
-                            {% if record.assignment_id %}
-                                {{ record.assignment.course.name }} - {{ record.assignment.section.grade.name }} {{ record.assignment.section.name }}
+                            {{ record.enrollment.section.grade.name }} {{ record.enrollment.section.name }}
+                        </td>
+                        <td>
+                            {% if record.recorded_by %}
+                                {{ record.recorded_by.get_full_name|default:record.recorded_by.username }}
                             {% else %}
                                 -
                             {% endif %}
@@ -38,7 +42,7 @@
                         <td>{{ record.note|default:"-" }}</td>
                     </tr>
                 {% empty %}
-                    <tr><td colspan="4">No hay registros de asistencia.</td></tr>
+                    <tr><td colspan="5">No hay registros de asistencia.</td></tr>
                 {% endfor %}
             </tbody>
         </table>

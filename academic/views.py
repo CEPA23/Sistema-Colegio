@@ -6,9 +6,10 @@ from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 
 from accounts.decorators import role_required
+from accounts.models import User
 from enrollment.models import Enrollment
 
-from .forms import CompetencyForm, CourseForm, GradeForm, GradeRecordForm, IndicatorForm, SectionForm, TeacherCourseAssignmentForm
+from .forms import CompetencyForm, CourseForm, GradeForm, GradeRecordForm, IndicatorForm, SectionForm
 from .models import (
     AcademicYear,
     Competency,
@@ -17,7 +18,6 @@ from .models import (
     GradeRecord,
     Indicator,
     IndicatorGrade,
-    Level,
     Period,
     Section,
     TeacherCourseAssignment,
@@ -25,7 +25,7 @@ from .models import (
 )
 
 
-@role_required('admin', 'director', 'teacher', 'secretary')
+@role_required('admin', 'director', 'teacher')
 def academic_dashboard(request):
     context = {
         'total_courses': Course.objects.count(),
@@ -36,7 +36,7 @@ def academic_dashboard(request):
     return render(request, 'academic/academic_dashboard.html', context)
 
 
-@role_required('admin', 'director', 'secretary')
+@role_required('admin', 'director')
 def course_management(request):
     edit_course = None
     edit_id = request.GET.get('edit_course')
@@ -44,65 +44,27 @@ def course_management(request):
         edit_course = get_object_or_404(Course, id=edit_id)
 
     if request.method == 'POST':
-        form_type = request.POST.get('form_type')
-        if form_type == 'course':
-            course_form = CourseForm(request.POST, instance=edit_course)
-            assignment_form = TeacherCourseAssignmentForm()
-            if course_form.is_valid():
-                course = course_form.save()
-                if edit_course:
-                    messages.success(request, f"Curso '{course.name}' actualizado.")
-                else:
-                    messages.success(request, f"Curso '{course.name}' creado correctamente.")
-                return redirect('course_management')
-        else:
-            course_form = CourseForm(instance=edit_course)
-            assignment_form = TeacherCourseAssignmentForm(request.POST)
-            if assignment_form.is_valid():
-                assignment = assignment_form.save()
-                target_desc = ""
-                if assignment.section:
-                    target_desc = f"{assignment.section.grade} / {assignment.section}"
-                elif assignment.grade:
-                    target_desc = f"{assignment.grade}"
-                else:
-                    target_desc = str(assignment.level or "Nivel desconocido")
-
-                messages.success(
-                    request,
-                    f"Curso '{assignment.course.name}' asignado a {target_desc}."
-                )
-                return redirect('course_management')
+        course_form = CourseForm(request.POST, instance=edit_course)
+        if course_form.is_valid():
+            course = course_form.save()
+            if edit_course:
+                messages.success(request, f"Curso '{course.name}' actualizado.")
+            else:
+                messages.success(request, f"Curso '{course.name}' creado correctamente.")
+            return redirect('course_management')
     else:
         course_form = CourseForm(instance=edit_course)
-        assignment_form = TeacherCourseAssignmentForm()
 
     courses = Course.objects.order_by('name')
-    assignments = TeacherCourseAssignment.objects.select_related(
-        'teacher',
-        'course',
-        'level',
-        'grade',
-        'section__grade',
-        'academic_year',
-    ).order_by(
-        '-academic_year__year',
-        'level__name',
-        'grade__name',
-        'section__name',
-        'course__name',
-    )
     context = {
         'course_form': course_form,
-        'assignment_form': assignment_form,
         'courses': courses,
-        'assignments': assignments,
         'edit_course': edit_course,
     }
     return render(request, 'academic/course_management.html', context)
 
 
-@role_required('admin', 'director', 'secretary')
+@role_required('admin', 'director')
 def grade_management(request):
     edit_grade = None
     edit_id = request.GET.get('edit_grade')
@@ -121,7 +83,7 @@ def grade_management(request):
     else:
         form = GradeForm(instance=edit_grade)
 
-    grades = Grade.objects.select_related('level').order_by('level__name', 'name')
+    grades = Grade.objects.order_by('name')
     return render(request, 'academic/grade_management.html', {
         'form': form,
         'grades': grades,
@@ -129,17 +91,37 @@ def grade_management(request):
     })
 
 
-@role_required('admin', 'director', 'secretary')
+@role_required('admin', 'director')
 def section_management(request):
     edit_section = None
+    previous_tutor_id = None
     edit_id = request.GET.get('edit_section')
     if edit_id:
         edit_section = get_object_or_404(Section, id=edit_id)
+        previous_tutor_id = edit_section.tutor_teacher_id
 
     if request.method == 'POST':
         form = SectionForm(request.POST, instance=edit_section)
         if form.is_valid():
             section = form.save()
+            tutor = section.tutor_teacher
+            if tutor:
+                # Sync tutor assignment with teacher classroom profile.
+                user_updates = {}
+                if tutor.teaching_grade_id != section.grade_id:
+                    user_updates['teaching_grade_id'] = section.grade_id
+                if tutor.teaching_section_id != section.id:
+                    user_updates['teaching_section_id'] = section.id
+                if user_updates:
+                    User.objects.filter(pk=tutor.pk).update(**user_updates)
+
+            if previous_tutor_id and previous_tutor_id != section.tutor_teacher_id:
+                # If previous tutor pointed to this section, clear stale profile section.
+                User.objects.filter(
+                    pk=previous_tutor_id,
+                    teaching_section_id=section.id,
+                ).update(teaching_section=None)
+
             if edit_section:
                 messages.success(request, f"Sección '{section.name}' actualizada.")
             else:
@@ -148,7 +130,7 @@ def section_management(request):
     else:
         form = SectionForm(instance=edit_section)
 
-    sections = Section.objects.select_related('grade__level').order_by('grade__level__name', 'grade__name', 'name')
+    sections = Section.objects.select_related('grade', 'tutor_teacher').order_by('grade__name', 'name')
     return render(request, 'academic/section_management.html', {
         'form': form,
         'sections': sections,
@@ -156,7 +138,7 @@ def section_management(request):
     })
 
 
-@role_required('admin', 'director', 'teacher', 'secretary')
+@role_required('admin', 'director', 'teacher')
 def grade_list(request):
     grades = GradeRecord.objects.select_related(
         'enrollment__student',
@@ -191,7 +173,7 @@ def grade_create(request):
     })
 
 
-@role_required('admin', 'director', 'teacher', 'secretary')
+@role_required('admin', 'director', 'teacher')
 def report_card(request):
     is_teacher = request.user.role == 'teacher' and not request.user.is_superuser
     
@@ -208,8 +190,6 @@ def report_card(request):
                 q_sections |= models.Q(id=a.section_id)
             elif a.grade_id:
                 q_sections |= models.Q(grade_id=a.grade_id)
-            elif a.level_id:
-                q_sections |= models.Q(grade__level_id=a.level_id)
         
         relevant_section_ids = Section.objects.filter(q_sections).values_list('id', flat=True)
         
@@ -242,7 +222,7 @@ def report_card(request):
     })
 
 
-@role_required('admin', 'director', 'teacher', 'secretary', 'parent')
+@role_required('admin', 'director', 'teacher', 'parent')
 def student_report(request, enrollment_id):
     enrollment = get_object_or_404(
         Enrollment.objects.select_related('student', 'section__grade', 'academic_year'),
@@ -271,7 +251,7 @@ def student_report(request, enrollment_id):
     })
 
 
-@role_required('admin', 'director', 'teacher', 'secretary')
+@role_required('admin', 'director', 'teacher')
 def course_report(request):
     courses = Course.objects.all().order_by('name')
     is_teacher = request.user.role == 'teacher' and not request.user.is_superuser
@@ -298,8 +278,6 @@ def course_report(request):
                     q_sections |= models.Q(id=a.section_id)
                 elif a.grade_id:
                     q_sections |= models.Q(grade_id=a.grade_id)
-                elif a.level_id:
-                    q_sections |= models.Q(grade__level_id=a.level_id)
             
             relevant_section_ids = Section.objects.filter(q_sections).values_list('id', flat=True)
             enrollments = Enrollment.objects.filter(section_id__in=relevant_section_ids).select_related('student')
@@ -321,7 +299,7 @@ def course_report(request):
     return render(request, 'academic/course_report.html', context)
 
 
-@role_required('admin', 'director', 'teacher', 'secretary')
+@role_required('admin', 'director', 'teacher')
 def period_report(request):
     periods = Period.objects.select_related('academic_year').order_by('-academic_year__year', 'start_date', 'name')
     selected_period = None
@@ -351,7 +329,7 @@ def period_report(request):
     return render(request, 'academic/period_report.html', context)
 
 
-@role_required('admin', 'director', 'teacher', 'secretary', 'parent')
+@role_required('admin', 'director', 'teacher', 'parent')
 def student_report_pdf(request, enrollment_id):
     enrollment = get_object_or_404(
         Enrollment.objects.select_related('student', 'section__grade', 'academic_year'),
@@ -478,8 +456,6 @@ def teacher_competency_gradebook(request):
             enrollment_filters['section'] = selected_assignment.section
         elif selected_assignment.grade:
             enrollment_filters['section__grade'] = selected_assignment.grade
-        elif selected_assignment.level:
-            enrollment_filters['section__grade__level'] = selected_assignment.level
 
         enrollments = Enrollment.objects.select_related('student').filter(
             **enrollment_filters

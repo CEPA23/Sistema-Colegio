@@ -9,17 +9,10 @@ from .models import (
     GradeRecord,
     Indicator,
     IndicatorGrade,
-    Level,
     Period,
     Section,
     TeacherCourseAssignment,
 )
-
-
-@admin.register(Level)
-class LevelAdmin(admin.ModelAdmin):
-    list_display = ('name',)
-    search_fields = ('name',)
 
 
 @admin.register(AcademicYear)
@@ -31,16 +24,15 @@ class AcademicYearAdmin(admin.ModelAdmin):
 
 @admin.register(Grade)
 class GradeAdmin(admin.ModelAdmin):
-    list_display = ('name', 'level')
-    list_filter = ('level',)
-    search_fields = ('name', 'level__name')
+    list_display = ('name',)
+    search_fields = ('name',)
 
 
 @admin.register(Section)
 class SectionAdmin(admin.ModelAdmin):
     list_display = ('name', 'grade')
-    list_filter = ('grade__level', 'grade')
-    search_fields = ('name', 'grade__name', 'grade__level__name')
+    list_filter = ('grade',)
+    search_fields = ('name', 'grade__name')
 
 
 class IndicatorInline(admin.TabularInline):
@@ -88,8 +80,8 @@ class PeriodAdmin(admin.ModelAdmin):
 
 @admin.register(TeacherCourseAssignment)
 class TeacherCourseAssignmentAdmin(admin.ModelAdmin):
-    list_display = ('course', 'teacher', 'level', 'grade', 'section', 'academic_year')
-    list_filter = ('academic_year__year', 'level', 'grade', 'section', 'teacher')
+    list_display = ('course', 'teacher', 'grade', 'section', 'academic_year')
+    list_filter = ('academic_year__year', 'grade', 'section', 'teacher')
     search_fields = (
         'course__name',
         'teacher__username',

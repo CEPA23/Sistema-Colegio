@@ -8,6 +8,10 @@ class Student(models.Model):
     address = models.TextField()
     parent_name = models.CharField(max_length=150)
     parent_phone = models.CharField(max_length=15)
+    father_name = models.CharField(max_length=150, blank=True, default='')
+    mother_name = models.CharField(max_length=150, blank=True, default='')
+    father_phone = models.CharField(max_length=15, blank=True, default='')
+    mother_phone = models.CharField(max_length=15, blank=True, default='')
 
     def __str__(self):
         return f"{self.first_name} {self.last_name}"

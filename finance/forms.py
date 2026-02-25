@@ -1,7 +1,7 @@
 from django import forms
 from django.db.models import Q
 
-from academic.models import Course
+from academic.models import Course, Grade, Section
 from enrollment.models import Enrollment
 
 from .models import Fee, Payment
@@ -21,7 +21,7 @@ class PaymentRegistrationForm(forms.Form):
         label='Mes de pension'
     )
     course = forms.ModelChoiceField(
-        queryset=Course.objects.all().order_by('name'),
+        queryset=Course.objects.none(),
         required=False,
         label='Libro de curso',
         empty_label="Selecciona un curso (para libros)"
@@ -34,6 +34,10 @@ class PaymentRegistrationForm(forms.Form):
         label='Comentario',
         widget=forms.Textarea(attrs={'rows': 3, 'placeholder': 'Comentario opcional antes de registrar el pago'})
     )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['course'].queryset = Course.objects.filter(has_book=True).order_by('name')
 
     def clean(self):
         cleaned_data = super().clean()
@@ -72,7 +76,63 @@ class PaymentRegistrationForm(forms.Form):
         if method in (Payment.METHOD_TRANSFER, Payment.METHOD_YAPE_PLIN) and not proof_image:
             self.add_error('proof_image', 'Debes adjuntar la captura del pago.')
 
-        if concept == 'libro' and not cleaned_data.get('course'):
-            self.add_error('course', 'Debes seleccionar el libro/curso correspondiente.')
+        if concept == Fee.CONCEPT_BOOK:
+            course = cleaned_data.get('course')
+            if not course:
+                self.add_error('course', 'Debes seleccionar el libro/curso correspondiente.')
+            elif not course.has_book:
+                self.add_error('course', 'El curso seleccionado no tiene libro configurado.')
 
+        return cleaned_data
+
+
+class QuickEnrollmentForm(forms.Form):
+    dni = forms.CharField(max_length=8, min_length=8, label='DNI')
+    first_name = forms.CharField(max_length=150, label='Nombres del alumno')
+    last_name = forms.CharField(max_length=150, label='Apellidos del alumno')
+    birth_date = forms.DateField(
+        label='Fecha de nacimiento',
+        widget=forms.DateInput(attrs={'type': 'date'}),
+    )
+    address = forms.CharField(max_length=500, label='Direccion')
+    parent_name = forms.CharField(max_length=150, label='Apoderado principal')
+    parent_phone = forms.CharField(max_length=15, label='Telefono del apoderado')
+    father_name = forms.CharField(max_length=150, label='Nombre del padre')
+    father_phone = forms.CharField(max_length=15, label='Telefono del padre')
+    mother_name = forms.CharField(max_length=150, label='Nombre de la madre')
+    mother_phone = forms.CharField(max_length=15, label='Telefono de la madre')
+    grade = forms.ModelChoiceField(queryset=Grade.objects.order_by('name'), label='Grado')
+    section = forms.ModelChoiceField(queryset=Section.objects.none(), label='Seccion')
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['section'].queryset = Section.objects.select_related('grade').order_by('grade__name', 'name')
+
+        grade = None
+        if self.is_bound:
+            grade = self.data.get('grade')
+        if grade:
+            self.fields['section'].queryset = Section.objects.filter(grade_id=grade).order_by('name')
+
+    def clean_dni(self):
+        dni = (self.cleaned_data.get('dni') or '').strip()
+        if not dni.isdigit():
+            raise forms.ValidationError('El DNI debe contener solo numeros.')
+        return dni
+
+    def clean_parent_phone(self):
+        return (self.cleaned_data.get('parent_phone') or '').strip()
+
+    def clean_father_phone(self):
+        return (self.cleaned_data.get('father_phone') or '').strip()
+
+    def clean_mother_phone(self):
+        return (self.cleaned_data.get('mother_phone') or '').strip()
+
+    def clean(self):
+        cleaned_data = super().clean()
+        grade = cleaned_data.get('grade')
+        section = cleaned_data.get('section')
+        if grade and section and section.grade_id != grade.id:
+            self.add_error('section', 'La seccion no pertenece al grado seleccionado.')
         return cleaned_data

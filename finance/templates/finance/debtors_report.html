@@ -3,18 +3,90 @@
 {% block title %}Reporte de deudores | Gestion Escolar{% endblock %}
 
 {% block content %}
+<style>
+    .debtors-filter-form {
+        display: grid;
+        grid-template-columns: 2fr repeat(5, minmax(150px, 1fr));
+        gap: 10px 12px;
+        align-items: end;
+    }
+    .debtors-filter-form .filter-span-2 {
+        grid-column: span 2;
+    }
+    .debtors-filter-form .action-row {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+    .debtors-filter-form .filter-actions {
+        grid-column: 1 / -1;
+        justify-content: flex-end;
+        margin-top: 2px;
+    }
+    .student-autocomplete {
+        position: relative;
+    }
+    .student-autocomplete .search-suggestions {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: calc(100% + 4px);
+        z-index: 20;
+        max-height: 220px;
+        overflow: auto;
+        background: #fff;
+        border: 1px solid #cbd5e1;
+        border-radius: 8px;
+        padding: 0;
+        margin: 0;
+        list-style: none;
+        box-shadow: 0 8px 20px rgba(15, 23, 42, 0.1);
+    }
+    .student-autocomplete .search-suggestions li {
+        padding: 8px 10px;
+        cursor: pointer;
+    }
+    .student-autocomplete .search-suggestions li:hover {
+        background: #f1f5f9;
+    }
+    @media (max-width: 1200px) {
+        .debtors-filter-form {
+            grid-template-columns: repeat(3, minmax(180px, 1fr));
+        }
+        .debtors-filter-form .filter-span-2 {
+            grid-column: span 3;
+        }
+    }
+    @media (max-width: 800px) {
+        .debtors-filter-form {
+            grid-template-columns: 1fr;
+        }
+        .debtors-filter-form .filter-span-2 {
+            grid-column: 1 / -1;
+        }
+        .debtors-filter-form .filter-actions {
+            justify-content: flex-start;
+        }
+    }
+</style>
 <section class="card">
     <div class="section-head">
         <h1>Reporte de deudores</h1>
         <div class="action-row">
-            <a href="{% url 'finance_dashboard' %}" class="btn btn-subtle">Panel financiero</a>
+            {% if request.user.role == 'secretary' and not request.user.is_superuser %}
+                <a href="{% url 'secretary_dashboard' %}" class="btn btn-subtle">Panel secretaria</a>
+            {% else %}
+                <a href="{% url 'finance_dashboard' %}" class="btn btn-subtle">Panel financiero</a>
+            {% endif %}
         </div>
     </div>
 
-    <form method="get" class="form-grid">
-        <div>
+    <form method="get" class="debtors-filter-form">
+        <div class="filter-span-2 student-autocomplete">
             <label for="student">Alumno</label>
-            <input id="student" name="student" type="text" value="{{ student_query }}" placeholder="Nombre o apellido">
+            <input id="student" name="student" type="text" value="{{ student_query }}" placeholder="Escribe el nombre del alumno" autocomplete="off">
+            <input id="student_id" name="student_id" type="hidden" value="{{ student_id }}">
+            <ul id="student_suggestions" class="search-suggestions"></ul>
         </div>
         <div>
             <label for="grade">Grado</label>
@@ -48,6 +120,14 @@
             </select>
         </div>
         <div>
+            <label for="debt_state">Estado deuda</label>
+            <select id="debt_state" name="debt_state">
+                {% for value, label in debt_state_choices %}
+                    <option value="{{ value }}" {% if debt_state == value %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div>
             <label for="month">Mes (pension)</label>
             <select id="month" name="month">
                 <option value="">Todos</option>
@@ -56,10 +136,10 @@
                 {% endfor %}
             </select>
         </div>
-        <div class="action-row">
+        <div class="action-row filter-actions">
             <button type="submit" class="btn btn-primary">Filtrar</button>
             <a href="{% url 'debtors_report' %}" class="btn btn-subtle">Limpiar</a>
-            <a href="{% url 'debtors_export_csv' %}?student={{ student_query|urlencode }}&grade={{ grade_id|urlencode }}&section={{ section_id|urlencode }}&concept={{ concept|urlencode }}&month={{ month|urlencode }}" class="btn btn-subtle">
+            <a href="{% url 'debtors_export_csv' %}?student={{ student_query|urlencode }}&student_id={{ student_id|urlencode }}&grade={{ grade_id|urlencode }}&section={{ section_id|urlencode }}&concept={{ concept|urlencode }}&month={{ month|urlencode }}&debt_state={{ debt_state|urlencode }}" class="btn btn-subtle">
                 Exportar Excel (CSV)
             </a>
         </div>
@@ -73,11 +153,13 @@
                 <tr>
                     <th>Alumno</th>
                     <th>Grado</th>
+                    <th>Seccion</th>
                     <th>Concepto</th>
-                    <th>Mes</th>
+                    <th>Detalle</th>
                     <th>Monto</th>
                     <th>Pagado</th>
                     <th>Pendiente</th>
+                    <th>Estado deuda</th>
                     <th>Vence</th>
                 </tr>
             </thead>
@@ -86,18 +168,93 @@
                     <tr>
                         <td>{{ fee.enrollment.student }}</td>
                         <td>{{ fee.enrollment.section.grade }}</td>
+                        <td>{{ fee.enrollment.section.name }}</td>
                         <td>{{ fee.get_concept_display }}</td>
-                        <td>{{ fee.get_pension_month_display|default:"-" }}</td>
+                        <td>
+                            {% if fee.concept == 'pension' %}
+                                {{ fee.get_pension_month_display|default:"-" }}
+                            {% elif fee.concept == 'libro' %}
+                                {{ fee.course.name|default:"-" }}
+                            {% else %}
+                                -
+                            {% endif %}
+                        </td>
                         <td>S/ {{ fee.amount }}</td>
                         <td>S/ {{ fee.paid_amount }}</td>
                         <td>S/ {{ fee.balance_amount }}</td>
+                        <td>
+                            {% if fee.paid_amount > 0 %}
+                                Fraccionado
+                            {% else %}
+                                Sin abono
+                            {% endif %}
+                        </td>
                         <td>{{ fee.due_date }}</td>
                     </tr>
                 {% empty %}
-                    <tr><td colspan="8">No se encontraron deudas para los filtros aplicados.</td></tr>
+                    <tr><td colspan="10">No se encontraron deudas para los filtros aplicados.</td></tr>
                 {% endfor %}
             </tbody>
         </table>
     </div>
 </section>
+<script>
+    (function () {
+        const studentField = document.getElementById('student');
+        const studentIdField = document.getElementById('student_id');
+        const suggestionList = document.getElementById('student_suggestions');
+        const searchUrl = "{% url 'debtors_student_search' %}";
+        let debounceTimer = null;
+
+        if (!studentField || !studentIdField || !suggestionList) return;
+
+        function clearSuggestions() {
+            suggestionList.innerHTML = '';
+        }
+
+        function renderSuggestions(results) {
+            clearSuggestions();
+            results.forEach(function (row) {
+                const item = document.createElement('li');
+                item.textContent = row.student_name;
+                item.addEventListener('click', function () {
+                    studentField.value = row.student_name;
+                    studentIdField.value = row.student_id;
+                    clearSuggestions();
+                });
+                suggestionList.appendChild(item);
+            });
+        }
+
+        studentField.addEventListener('input', function () {
+            studentIdField.value = '';
+            const query = studentField.value.trim();
+            clearTimeout(debounceTimer);
+
+            if (query.length < 2) {
+                clearSuggestions();
+                return;
+            }
+
+            debounceTimer = setTimeout(function () {
+                fetch(searchUrl + '?q=' + encodeURIComponent(query), {
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                })
+                    .then(function (response) { return response.json(); })
+                    .then(function (data) {
+                        renderSuggestions(data.results || []);
+                    })
+                    .catch(function () {
+                        clearSuggestions();
+                    });
+            }, 220);
+        });
+
+        document.addEventListener('click', function (event) {
+            if (!suggestionList.contains(event.target) && event.target !== studentField) {
+                clearSuggestions();
+            }
+        });
+    })();
+</script>
 {% endblock %}

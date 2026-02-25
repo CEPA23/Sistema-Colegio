@@ -1,61 +1,414 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Iniciar sesión | {{ system_school.name|default:"Gestión Escolar" }}{% endblock %}
+{% block title %}Iniciar sesion | {{ system_school.name|default:"Gestion Escolar" }}{% endblock %}
 
 {% block content %}
-<section class="auth-wrap">
-    <div class="auth-panel-premium">
-        <div class="auth-header">
-            <div class="auth-logo-box">
-                {% if system_school and system_school.logo %}
-                    <img src="{{ system_school.logo.url }}" alt="Logo {{ system_school.name }}" class="login-logo">
-                {% else %}
-                    <div class="login-logo-placeholder">GE</div>
-                {% endif %}
+<style>
+    .login-shell {
+        position: relative;
+        width: min(1020px, 96vw);
+        min-height: 620px;
+        border-radius: 24px;
+        overflow: hidden;
+        display: grid;
+        grid-template-columns: 1.05fr 0.95fr;
+        background:
+            radial-gradient(circle at 10% 5%, rgba(229, 143, 13, 0.2), transparent 48%),
+            radial-gradient(circle at 88% 95%, rgba(15, 95, 154, 0.2), transparent 45%),
+            #f4f8fd;
+        border: 1px solid rgba(15, 95, 154, 0.16);
+        box-shadow: 0 28px 55px rgba(15, 38, 68, 0.2);
+        animation: login-rise 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .login-showcase {
+        background: linear-gradient(165deg, #113a5a 0%, #0f5f9a 42%, #1b7aba 100%);
+        color: #f8fbff;
+        padding: 40px 36px;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        gap: 24px;
+    }
+
+    .login-showcase::after {
+        content: "";
+        position: absolute;
+        width: 240px;
+        height: 240px;
+        right: -90px;
+        top: -70px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.14);
+        filter: blur(2px);
+    }
+
+    .login-brand {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+    }
+
+    .login-brand-logo,
+    .login-brand-fallback {
+        width: 64px;
+        height: 64px;
+        border-radius: 16px;
+        background: rgba(255, 255, 255, 0.16);
+        border: 1px solid rgba(255, 255, 255, 0.4);
+        display: grid;
+        place-items: center;
+        overflow: hidden;
+        flex-shrink: 0;
+    }
+
+    .login-brand-logo img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        background: #fff;
+    }
+
+    .login-brand-fallback {
+        font-size: 1.1rem;
+        font-weight: 800;
+        letter-spacing: 0.04em;
+    }
+
+    .login-brand h1 {
+        margin: 0;
+        font-size: clamp(1.5rem, 2.2vw, 2rem);
+        line-height: 1.1;
+        color: #fff;
+    }
+
+    .login-brand p {
+        margin: 6px 0 0;
+        font-size: 0.92rem;
+        color: rgba(255, 255, 255, 0.85);
+    }
+
+    .login-message {
+        position: relative;
+        z-index: 1;
+        margin-top: 4px;
+    }
+
+    .login-message p {
+        margin: 0 0 8px;
+        font-size: 0.95rem;
+        color: rgba(255, 255, 255, 0.88);
+    }
+
+    .login-highlights {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: grid;
+        gap: 10px;
+    }
+
+    .login-highlights li {
+        font-size: 0.87rem;
+        font-weight: 700;
+        letter-spacing: 0.02em;
+        color: #fff;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .login-highlights li::before {
+        content: "";
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #ffcc7a;
+        box-shadow: 0 0 0 4px rgba(255, 204, 122, 0.24);
+        flex-shrink: 0;
+    }
+
+    .login-meta {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .login-chip {
+        border-radius: 999px;
+        padding: 7px 12px;
+        font-size: 0.76rem;
+        font-weight: 700;
+        background: rgba(255, 255, 255, 0.18);
+        border: 1px solid rgba(255, 255, 255, 0.33);
+        color: #f8fbff;
+    }
+
+    .login-panel {
+        background: rgba(255, 255, 255, 0.92);
+        backdrop-filter: blur(8px);
+        padding: 42px 34px 30px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        gap: 18px;
+    }
+
+    .login-panel-head h2 {
+        margin: 0;
+        font-size: 1.45rem;
+        color: #173a57;
+    }
+
+    .login-panel-head p {
+        margin: 8px 0 0;
+        color: #5f7286;
+        font-size: 0.92rem;
+    }
+
+    .login-form {
+        display: grid;
+        gap: 14px;
+    }
+
+    .login-error {
+        border: 1px solid #f1b4b3;
+        border-radius: 10px;
+        background: #fff1f1;
+        color: #8a1e1e;
+        padding: 10px 12px;
+        font-size: 0.88rem;
+        animation: shake 0.5s cubic-bezier(.36, .07, .19, .97) both;
+    }
+
+    .login-field {
+        display: grid;
+        gap: 6px;
+    }
+
+    .login-field label {
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.07em;
+        font-weight: 800;
+        color: #47607a;
+    }
+
+    .login-input-wrap {
+        position: relative;
+    }
+
+    .login-input {
+        width: 100%;
+        border: 1px solid #c9d6e5;
+        background: #fff;
+        border-radius: 11px;
+        padding: 12px 42px 12px 12px;
+        font-size: 0.96rem;
+        color: #1c2e42;
+        transition: border-color 0.18s, box-shadow 0.18s;
+    }
+
+    .login-input:focus {
+        border-color: #1b7aba;
+        box-shadow: 0 0 0 3px rgba(27, 122, 186, 0.15);
+        outline: none;
+    }
+
+    .login-toggle {
+        position: absolute;
+        top: 50%;
+        right: 8px;
+        transform: translateY(-50%);
+        border: none;
+        background: transparent;
+        color: #4e6a84;
+        cursor: pointer;
+        font-size: 0.82rem;
+        font-weight: 700;
+        padding: 4px 6px;
+        border-radius: 6px;
+    }
+
+    .login-toggle:hover {
+        background: rgba(15, 95, 154, 0.1);
+        color: #0f5f9a;
+    }
+
+    .login-submit {
+        margin-top: 4px;
+        border: none;
+        border-radius: 12px;
+        padding: 13px 16px;
+        font-weight: 800;
+        font-size: 0.95rem;
+        color: #fff;
+        background: linear-gradient(140deg, #0f5f9a, #1b7aba);
+        box-shadow: 0 10px 20px rgba(27, 122, 186, 0.3);
+        cursor: pointer;
+        transition: transform 0.15s, box-shadow 0.15s;
+    }
+
+    .login-submit:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 14px 24px rgba(27, 122, 186, 0.34);
+    }
+
+    .login-footer {
+        font-size: 0.78rem;
+        color: #6f8193;
+        border-top: 1px solid #d9e4f0;
+        padding-top: 14px;
+        text-align: center;
+    }
+
+    @keyframes login-rise {
+        from {
+            opacity: 0;
+            transform: translateY(12px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @media (max-width: 920px) {
+        .login-shell {
+            grid-template-columns: 1fr;
+            min-height: auto;
+        }
+
+        .login-showcase,
+        .login-panel {
+            padding: 28px 22px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .login-shell {
+            width: 100%;
+            border-radius: 14px;
+        }
+
+        .login-brand h1 {
+            font-size: 1.35rem;
+        }
+    }
+</style>
+
+<section class="login-shell">
+    <aside class="login-showcase">
+        <div class="login-brand">
+            {% if system_school and system_school.logo %}
+                <div class="login-brand-logo">
+                    <img src="{{ system_school.logo.url }}" alt="Logo {{ system_school.name }}">
+                </div>
+            {% else %}
+                <div class="login-brand-fallback">GE</div>
+            {% endif %}
+            <div>
+                <h1>{{ system_school.name|default:"Gestion Escolar" }}</h1>
+                <p>Plataforma academica y administrativa</p>
             </div>
-            <p class="eyebrow">{{ system_school.name|default:"Sistema de Gestión Escolar" }}</p>
-            <h1>Bienvenido</h1>
-            <p class="muted">Ingresa con tus credenciales institucionales</p>
         </div>
 
-        <form method="post" class="stack">
+        <div class="login-message">
+            <p>Accede de forma segura para gestionar alumnos, notas, pagos y reportes.</p>
+            <ul class="login-highlights">
+                <li>Acceso por rol y permisos</li>
+                <li>Registro academico centralizado</li>
+                <li>Panel de control en tiempo real</li>
+            </ul>
+        </div>
+
+        <div class="login-meta">
+            <span class="login-chip">Uso institucional</span>
+            <span class="login-chip">Sesiones protegidas</span>
+        </div>
+    </aside>
+
+    <div class="login-panel">
+        <div class="login-panel-head">
+            <h2>Inicia sesion</h2>
+            <p>Ingresa tus credenciales para continuar.</p>
+        </div>
+
+        <form method="post" class="login-form">
             {% csrf_token %}
             {% if next %}
                 <input type="hidden" name="next" value="{{ next }}">
             {% endif %}
-            
+
             {% if form.non_field_errors %}
-                <div class="error-box animate-shake">
+                <div class="login-error">
                     {% for error in form.non_field_errors %}
-                        <p>{{ error }}</p>
+                        <div>{{ error }}</div>
                     {% endfor %}
                 </div>
             {% endif %}
 
-            <div class="input-group">
+            <div class="login-field">
                 <label for="id_username">Usuario o correo</label>
-                <div class="input-with-icon">
-                    <input id="id_username" name="username" type="text" required autofocus placeholder="ej: usuario123">
+                <div class="login-input-wrap">
+                    <input
+                        id="id_username"
+                        class="login-input"
+                        name="username"
+                        type="text"
+                        required
+                        autofocus
+                        autocomplete="username"
+                        placeholder="ej: usuario123"
+                        value="{{ form.username.value|default:'' }}"
+                    >
                 </div>
             </div>
 
-            <div class="input-group">
-                <label for="id_password">Contraseña</label>
-                <div class="input-with-icon">
-                    <input id="id_password" name="password" type="password" required placeholder="••••••••">
+            <div class="login-field">
+                <label for="id_password">Contrasena</label>
+                <div class="login-input-wrap">
+                    <input
+                        id="id_password"
+                        class="login-input"
+                        name="password"
+                        type="password"
+                        required
+                        autocomplete="current-password"
+                        placeholder="********"
+                    >
+                    <button type="button" class="login-toggle" id="toggle-password">Mostrar</button>
                 </div>
             </div>
 
-            <button type="submit" class="btn btn-primary btn-block btn-lg">
-                <span>Acceder al Sistema</span>
-            </button>
+            <button type="submit" class="login-submit">Acceder al sistema</button>
         </form>
-        
-        <div class="auth-footer">
-            <p>© {% now "Y" %} {{ system_school.name|default:"Gestión Escolar" }} — Todos los derechos reservados.</p>
+
+        <div class="login-footer">
+            <p>© {% now "Y" %} {{ system_school.name|default:"Gestion Escolar" }}. Todos los derechos reservados.</p>
         </div>
     </div>
 </section>
+
+<script>
+    (function () {
+        const passwordInput = document.getElementById('id_password');
+        const toggleButton = document.getElementById('toggle-password');
+
+        if (!passwordInput || !toggleButton) return;
+
+        toggleButton.addEventListener('click', function () {
+            const nextType = passwordInput.type === 'password' ? 'text' : 'password';
+            passwordInput.type = nextType;
+            toggleButton.textContent = nextType === 'password' ? 'Mostrar' : 'Ocultar';
+        });
+    })();
+</script>
 {% endblock %}
 

@@ -15,7 +15,7 @@
                 <tr>
                     <th>Sección</th>
                     <th>Grado</th>
-                    <th>Nivel</th>
+                    <th>Tutora de aula</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
@@ -24,7 +24,7 @@
                     <tr {% if edit_section.id == section.id %}style="background-color: #fffde7;"{% endif %}>
                         <td>{{ section.name }}</td>
                         <td>{{ section.grade.name }}</td>
-                        <td>{{ section.grade.level|default:"-" }}</td>
+                        <td>{{ section.tutor_teacher.get_full_name|default:section.tutor_teacher.username|default:"-" }}</td>
                         <td>
                             <a href="?edit_section={{ section.id }}#section-form-section" class="btn btn-subtle btn-sm">Editar</a>
                         </td>

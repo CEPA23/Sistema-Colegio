@@ -296,7 +296,9 @@
                         <span class="nav-icon">🏠</span> Inicio
                     </a>
                 {% elif request.user.role == 'secretary' and not request.user.is_superuser %}
-                    <a href="{% url 'secretary_dashboard' %}"><span class="nav-icon">🏠</span> Inicio</a>
+                    <a href="{% url 'secretary_dashboard' %}" {% if request.resolver_match.url_name == 'secretary_dashboard' %}class="active"{% endif %}>
+                        <span class="nav-icon">🏠</span> Inicio
+                    </a>
                 {% else %}
                     <a href="{% url 'dashboard' %}" {% if request.resolver_match.url_name == 'dashboard' %}class="active"{% endif %}>
                         <span class="nav-icon">🏠</span> Inicio
@@ -334,7 +336,7 @@
 
                 <!-- MATRÍCULA -->
                 {% if request.user.role == 'admin' or request.user.role == 'director' or request.user.role == 'secretary' or request.user.is_superuser %}
-                <details class="menu-group" data-urls="enrollment_dashboard enrollment_list enrollment_create enrollment_detail enrollment_renew enrollment_history">
+                <details class="menu-group" data-urls="enrollment_dashboard enrollment_list enrollment_detail enrollment_renew enrollment_history">
                     <summary>
                         <span class="nav-icon">📋</span> Matrícula
                         <span class="chevron">▶</span>
@@ -346,24 +348,23 @@
                         <a href="{% url 'enrollment_list' %}" {% if request.resolver_match.url_name == 'enrollment_list' %}class="active"{% endif %}>
                             <span class="nav-icon">📑</span> Matriculados
                         </a>
-                        <a href="{% url 'enrollment_create' %}" {% if request.resolver_match.url_name == 'enrollment_create' %}class="active"{% endif %}>
-                            <span class="nav-icon">➕</span> Nueva matrícula
-                        </a>
                     </div>
                 </details>
                 {% endif %}
 
                 <!-- PAGOS -->
                 {% if request.user.role == 'admin' or request.user.role == 'director' or request.user.role == 'secretary' or request.user.role == 'parent' or request.user.is_superuser %}
-                <details class="menu-group" data-urls="account_status payment_history finance_dashboard payment_create debtors_report monthly_report cash_report">
+                <details class="menu-group" data-urls="account_status payment_history finance_dashboard payment_create debtors_report monthly_report cash_report secretary_dashboard">
                     <summary>
                         <span class="nav-icon">💰</span> Pagos
                         <span class="chevron">▶</span>
                     </summary>
                     <div class="menu-links">
-                        <a href="{% url 'account_status' %}" {% if request.resolver_match.url_name == 'account_status' %}class="active"{% endif %}>
-                            <span class="nav-icon">💳</span> Estado de cuenta
-                        </a>
+                        {% if request.user.role == 'parent' or request.user.role == 'admin' or request.user.role == 'director' or request.user.is_superuser %}
+                            <a href="{% url 'account_status' %}" {% if request.resolver_match.url_name == 'account_status' %}class="active"{% endif %}>
+                                <span class="nav-icon">💳</span> Estado de cuenta
+                            </a>
+                        {% endif %}
                         <a href="{% url 'payment_history' %}" {% if request.resolver_match.url_name == 'payment_history' %}class="active"{% endif %}>
                             <span class="nav-icon">🕐</span> Historial
                         </a>

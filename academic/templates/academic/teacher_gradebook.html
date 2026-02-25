@@ -21,8 +21,8 @@
                             {{ assignment.section.grade.name }} {{ assignment.section.name }}
                         {% elif assignment.grade %}
                             {{ assignment.grade.name }} (Todo)
-                        {% elif assignment.level %}
-                            {{ assignment.level.name }} (Todo)
+                        {% else %}
+                            Sin seccion
                         {% endif %}
                         ({{ assignment.academic_year.year }})
                     </option>
@@ -69,7 +69,7 @@
                     {% elif selected_assignment.grade %}
                         {{ selected_assignment.grade.name }} (Todo)
                     {% else %}
-                        {{ selected_assignment.level.name }}
+                        Sin seccion
                     {% endif %}
                 </h2>
                 <span class="muted">{{ selected_period.name }}</span>

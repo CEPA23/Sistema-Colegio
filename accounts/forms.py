@@ -1,7 +1,7 @@
 from django import forms
 from django.core.exceptions import ValidationError
 
-from academic.models import AcademicYear, Course, Grade, Level, Section, TeacherCourseAssignment
+from academic.models import AcademicYear, Course, Grade, Section, TeacherCourseAssignment
 from schools.models import School
 
 from .models import User
@@ -32,6 +32,7 @@ class UserCreateForm(forms.ModelForm):
             'is_polyteacher',
             'teaching_courses',
             'teaching_grades',
+            'teaching_sections',
             'phone',
             'is_active',
         ]
@@ -45,7 +46,8 @@ class UserCreateForm(forms.ModelForm):
             'teaching_section': 'Sección que enseña',
             'is_polyteacher': 'Es polidocente',
             'teaching_courses': 'Cursos que enseña (polidocente)',
-            'teaching_grades': 'Grados que enseña (polidocente)',
+            'teaching_grades': 'Grados que enseña (auto)',
+            'teaching_sections': 'Secciones que enseña (polidocente)',
             'phone': 'Teléfono',
             'is_active': 'Activo',
         }
@@ -63,6 +65,7 @@ class UserCreateForm(forms.ModelForm):
             'phone': forms.TextInput(attrs={'placeholder': '+1234567890'}),
             'teaching_courses': forms.SelectMultiple(attrs={'size': 5}),
             'teaching_grades': forms.SelectMultiple(attrs={'size': 5}),
+            'teaching_sections': forms.SelectMultiple(attrs={'size': 8}),
         }
 
     def __init__(self, *args, **kwargs):
@@ -71,15 +74,19 @@ class UserCreateForm(forms.ModelForm):
         self.fields['teaching_section'].queryset = Section.objects.select_related('grade').order_by('grade__name', 'name')
         self.fields['teaching_courses'].queryset = Course.objects.order_by('name')
         self.fields['teaching_grades'].queryset = Grade.objects.order_by('name')
+        self.fields['teaching_sections'].queryset = Section.objects.select_related('grade').order_by('grade__name', 'name')
         self.fields['teaching_grade'].required = False
         self.fields['teaching_section'].required = False
         self.fields['is_polyteacher'].required = False
         self.fields['teaching_courses'].required = False
         self.fields['teaching_grades'].required = False
+        self.fields['teaching_sections'].required = False
         self.fields['teaching_grade'].widget.attrs.update({'placeholder': 'Selecciona el grado'})
         self.fields['teaching_section'].widget.attrs.update({'placeholder': 'Selecciona la sección'})
         self.fields['teaching_courses'].widget.attrs.update({'placeholder': 'Selecciona los cursos'})
         self.fields['teaching_grades'].widget.attrs.update({'placeholder': 'Selecciona los grados'})
+        self.fields['teaching_sections'].widget.attrs.update({'placeholder': 'Selecciona las secciones'})
+        self.fields['teaching_grades'].widget = forms.MultipleHiddenInput()
 
         # Dependencias para sección basada en grado
         grade = None
@@ -118,14 +125,15 @@ class UserCreateForm(forms.ModelForm):
         teaching_grade = cleaned_data.get('teaching_grade')
         teaching_section = cleaned_data.get('teaching_section')
         teaching_courses = cleaned_data.get('teaching_courses')
-        teaching_grades = cleaned_data.get('teaching_grades')
+        teaching_sections = cleaned_data.get('teaching_sections')
 
         if role == 'teacher':
             if is_polyteacher:
                 if not teaching_courses:
                     self.add_error('teaching_courses', 'Debes seleccionar al menos un curso para un docente polidocente.')
-                if not teaching_grades:
-                    self.add_error('teaching_grades', 'Debes seleccionar al menos un grado para un docente polidocente.')
+                if not teaching_sections:
+                    self.add_error('teaching_sections', 'Debes seleccionar al menos una seccion para un docente polidocente.')
+                cleaned_data['teaching_grades'] = Grade.objects.filter(section__in=teaching_sections).distinct() if teaching_sections else []
                 # Limpiar campos no polidocentes
                 cleaned_data['teaching_grade'] = None
                 cleaned_data['teaching_section'] = None
@@ -139,24 +147,31 @@ class UserCreateForm(forms.ModelForm):
                 # Limpiar campos polidocentes
                 cleaned_data['teaching_courses'] = []
                 cleaned_data['teaching_grades'] = []
+                cleaned_data['teaching_sections'] = []
         if role != 'teacher':
             cleaned_data['teaching_grade'] = None
             cleaned_data['teaching_section'] = None
             cleaned_data['is_polyteacher'] = False
             cleaned_data['teaching_courses'] = []
             cleaned_data['teaching_grades'] = []
+            cleaned_data['teaching_sections'] = []
 
         return cleaned_data
 
     def save(self, commit=True):
         user = super().save(commit=False)
-        user.set_password(self.cleaned_data['password1'])
+        password = self.cleaned_data.get('password1')
+        if password:
+            user.set_password(password)
         if commit:
             user.save()
             # Asignar ManyToMany
             user.teaching_courses.set(self.cleaned_data.get('teaching_courses', []))
             user.teaching_grades.set(self.cleaned_data.get('teaching_grades', []))
+            user.teaching_sections.set(self.cleaned_data.get('teaching_sections', []))
             if user.role == 'teacher' and not user.is_polyteacher and user.teaching_section_id:
+                # Sync section tutor with classroom teacher assignment from user form.
+                Section.objects.filter(id=user.teaching_section_id).update(tutor_teacher=user)
                 active_year = AcademicYear.objects.filter(is_active=True).order_by('-year').first()
                 if active_year:
                     # Asumir que enseña todos los cursos en su grado/sección
@@ -171,16 +186,17 @@ class UserCreateForm(forms.ModelForm):
                             },
                         )
             elif user.is_polyteacher:
-                # Para polidocentes, asignar por cursos y grados
+                # Para polidocentes, asignar por cursos y secciones
                 active_year = AcademicYear.objects.filter(is_active=True).order_by('-year').first()
                 if active_year:
                     for course in user.teaching_courses.all():
-                        for grade in user.teaching_grades.all():
+                        for section in user.teaching_sections.select_related('grade').all():
                             # Asumir sección por defecto o algo, pero como no hay sección, quizás crear sin sección
                             TeacherCourseAssignment.objects.get_or_create(
                                 teacher=user,
                                 course=course,
-                                grade=grade,
+                                grade=section.grade,
+                                section=section,
                                 academic_year=active_year,
                                 defaults={},
                             )
@@ -191,3 +207,103 @@ class SchoolConfigForm(forms.ModelForm):
     class Meta:
         model = School
         fields = ['name', 'logo', 'address', 'phone', 'email']
+
+
+class UserUpdateForm(UserCreateForm):
+    password1 = forms.CharField(
+        label='Contraseña',
+        widget=forms.PasswordInput(attrs={'placeholder': 'Nueva contraseña (dejar en blanco para no cambiar)'}),
+        help_text='Opcional. Si se deja en blanco, se mantendrá la contraseña actual.',
+        required=False
+    )
+    password2 = forms.CharField(
+        label='Confirmar contraseña',
+        widget=forms.PasswordInput(attrs={'placeholder': 'Confirmar nueva contraseña'}),
+        help_text='Repite la nueva contraseña si deseas cambiarla.',
+        required=False
+    )
+
+    def clean_password2(self):
+        password1 = self.cleaned_data.get('password1')
+        password2 = self.cleaned_data.get('password2')
+        if password1:
+            if not password2:
+                raise forms.ValidationError("Debes confirmar la nueva contraseña.")
+            if password1 != password2:
+                raise forms.ValidationError("Las contraseñas no coinciden.")
+            if len(password1) < 8:
+                raise forms.ValidationError("La contraseña debe tener al menos 8 caracteres.")
+        return password2
+
+
+class SchoolIdentityForm(forms.ModelForm):
+    class Meta:
+        model = School
+        fields = ['name', 'ruc', 'logo', 'address', 'phone', 'email']
+
+
+class SchoolBusinessForm(forms.ModelForm):
+    class Meta:
+        model = School
+        fields = ['pension_price', 'enrollment_price', 'supplies_price']
+        widgets = {
+            'pension_price': forms.NumberInput(attrs={'step': '0.01', 'class': 'stat-price-input'}),
+            'enrollment_price': forms.NumberInput(attrs={'step': '0.01', 'class': 'stat-price-input'}),
+            'supplies_price': forms.NumberInput(attrs={'step': '0.01', 'class': 'stat-price-input'}),
+        }
+
+
+class CourseBookPriceForm(forms.ModelForm):
+    class Meta:
+        model = Course
+        fields = ['has_book', 'book_price']
+        widgets = {
+            'has_book': forms.CheckboxInput(attrs={'class': 'book-toggle'}),
+            'book_price': forms.NumberInput(attrs={'step': '0.01', 'class': 'form-control-sm'}),
+        }
+
+
+class SelfProfileForm(forms.ModelForm):
+    password1 = forms.CharField(
+        label='Nueva contraseña',
+        widget=forms.PasswordInput(attrs={'placeholder': 'Dejar en blanco para no cambiar'}),
+        required=False,
+        help_text='Opcional. Al menos 8 caracteres.'
+    )
+    password2 = forms.CharField(
+        label='Confirmar nueva contraseña',
+        widget=forms.PasswordInput(attrs={'placeholder': 'Confirmar nueva contraseña'}),
+        required=False
+    )
+
+    class Meta:
+        model = User
+        fields = ['profile_picture', 'first_name', 'last_name', 'email', 'phone']
+        labels = {
+            'profile_picture': 'Foto de perfil',
+            'first_name': 'Nombre',
+            'last_name': 'Apellido',
+            'email': 'Correo electrónico',
+            'phone': 'Teléfono',
+        }
+
+    def clean_password2(self):
+        p1 = self.cleaned_data.get('password1')
+        p2 = self.cleaned_data.get('password2')
+        if p1:
+            if not p2:
+                raise forms.ValidationError("Debes confirmar la nueva contraseña.")
+            if p1 != p2:
+                raise forms.ValidationError("Las contraseñas no coinciden.")
+            if len(p1) < 8:
+                raise forms.ValidationError("La contraseña debe ser de al menos 8 caracteres.")
+        return p2
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        p1 = self.cleaned_data.get('password1')
+        if p1:
+            user.set_password(p1)
+        if commit:
+            user.save()
+        return user

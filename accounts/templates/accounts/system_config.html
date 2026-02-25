@@ -425,6 +425,7 @@
                             <thead>
                                 <tr>
                                     <th>Curso</th>
+                                    <th>Usa libro</th>
                                     <th>Precio (S/)</th>
                                 </tr>
                             </thead>
@@ -435,6 +436,7 @@
                                         {{ form.id }}
                                         <span style="font-weight:500;">{{ form.instance.name }}</span>
                                     </td>
+                                    <td>{{ form.has_book }}</td>
                                     <td>
                                         <div class="book-price-input">
                                             <span>S/</span>
@@ -525,6 +527,27 @@ document.addEventListener('DOMContentLoaded', () => {
             reader.readAsDataURL(file);
         });
     }
+
+    const bookToggles = document.querySelectorAll('.book-toggle');
+    bookToggles.forEach(toggle => {
+        const row = toggle.closest('tr');
+        if (!row) return;
+        const priceInput = row.querySelector('input[name$="-book_price"]');
+        const priceWrap = row.querySelector('.book-price-input');
+        if (!priceInput || !priceWrap) return;
+
+        const syncBookRow = () => {
+            const enabled = toggle.checked;
+            priceInput.readOnly = !enabled;
+            priceWrap.style.opacity = enabled ? '1' : '.45';
+            if (!enabled) {
+                priceInput.value = '0.00';
+            }
+        };
+
+        toggle.addEventListener('change', syncBookRow);
+        syncBookRow();
+    });
 });
 </script>
 {% endblock %}
