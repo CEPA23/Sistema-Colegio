@@ -4,6 +4,7 @@ from django.db.models import Q
 from academic.models import Course, Grade, Section
 from enrollment.models import Enrollment
 
+from inventory.models import Product
 from .models import Fee, Payment
 
 
@@ -20,11 +21,12 @@ class PaymentRegistrationForm(forms.Form):
         choices=[('', 'Selecciona un mes')] + [(str(k), v) for k, v in Fee.MONTH_CHOICES],
         label='Mes de pension'
     )
-    course = forms.ModelChoiceField(
-        queryset=Course.objects.none(),
+
+    inventory_product = forms.ModelChoiceField(
+        queryset=Product.objects.filter(is_active=True),
         required=False,
-        label='Libro de curso',
-        empty_label="Selecciona un curso (para libros)"
+        label='Producto de Inventario',
+        empty_label="Selecciona un producto"
     )
     amount = forms.DecimalField(max_digits=10, decimal_places=2, min_value=0.01, label='Monto a pagar')
     method = forms.ChoiceField(choices=Payment.METHOD_CHOICES, label='Metodo de pago')
@@ -37,7 +39,8 @@ class PaymentRegistrationForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['course'].queryset = Course.objects.filter(has_book=True).order_by('name')
+
+        self.fields['inventory_product'].queryset = Product.objects.filter(is_active=True).order_by('name')
 
     def clean(self):
         cleaned_data = super().clean()
@@ -77,11 +80,12 @@ class PaymentRegistrationForm(forms.Form):
             self.add_error('proof_image', 'Debes adjuntar la captura del pago.')
 
         if concept == Fee.CONCEPT_BOOK:
-            course = cleaned_data.get('course')
-            if not course:
-                self.add_error('course', 'Debes seleccionar el libro/curso correspondiente.')
-            elif not course.has_book:
-                self.add_error('course', 'El curso seleccionado no tiene libro configurado.')
+            if not cleaned_data.get('inventory_product'):
+                 self.add_error('inventory_product', 'Debes seleccionar el libro desde el inventario.')
+        
+        if concept in [Fee.CONCEPT_BAND_UNIFORM, Fee.CONCEPT_SCHOOL_UNIFORM, Fee.CONCEPT_PRODUCT]:
+            if not cleaned_data.get('inventory_product'):
+                self.add_error('inventory_product', 'Debes seleccionar un producto del inventario.')
 
         return cleaned_data
 

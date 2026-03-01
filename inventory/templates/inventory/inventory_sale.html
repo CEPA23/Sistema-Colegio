@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+{% block title %}Venta Rápida | Inventario{% endblock %}
+{% block content %}
+<style>
+.sale-hero {
+    background: linear-gradient(135deg, #064e3b 0%, #047857 60%, #10b981 100%);
+    border-radius: 14px; padding: 24px 28px; color: #fff; margin-bottom: 24px;
+}
+.sale-hero h1 { margin: 0; font-size: 1.4rem; font-weight: 800; }
+.sale-hero p  { margin: 4px 0 0; color: rgba(255,255,255,.7); font-size: 0.85rem; }
+.sale-card { background: #fff; border-radius: 14px; border: 1.5px solid #e2e8f0; padding: 28px 32px; max-width: 520px; }
+.form-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
+.form-group label { font-size: 0.82rem; font-weight: 600; color: #374151; }
+.error-text { font-size: 0.78rem; color: #dc2626; }
+.total-preview { background: #f0fdf4; border: 1.5px solid #bbf7d0; border-radius: 10px; padding: 14px 18px; margin-top: 4px; font-size: 0.9rem; color: #166534; font-weight: 600; display: none; }
+.form-actions { display: flex; gap: 10px; margin-top: 24px; }
+.btn-save { background: #10b981; color: #fff; border: none; border-radius: 8px; padding: 10px 22px; font-size: 0.9rem; font-weight: 600; cursor: pointer; }
+.btn-save:hover { filter: brightness(.9); }
+.btn-cancel { background: #f1f5f9; color: #475569; border: 1.5px solid #e2e8f0; border-radius: 8px; padding: 10px 20px; font-size: 0.9rem; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; }
+</style>
+
+<div class="sale-hero">
+    <h1>🛒 Venta Rápida</h1>
+    <p>Registra la salida de un producto y descuenta el stock automáticamente.</p>
+</div>
+
+<div class="sale-card">
+    <form method="post" id="saleForm" novalidate>
+        {% csrf_token %}
+        <div class="form-group">
+            <label>{{ form.product.label }}</label>
+            {{ form.product }}
+            {% if form.product.errors %}<span class="error-text">{{ form.product.errors|join:", " }}</span>{% endif %}
+        </div>
+        <div class="form-group">
+            <label>{{ form.quantity.label }}</label>
+            {{ form.quantity }}
+            {% if form.quantity.errors %}<span class="error-text">{{ form.quantity.errors|join:", " }}</span>{% endif %}
+        </div>
+        <div class="total-preview" id="totalPreview">Total estimado: S/ <span id="totalVal">0.00</span></div>
+        <div class="form-group">
+            <label>{{ form.reference.label }}</label>
+            {{ form.reference }}
+        </div>
+
+        {% if form.non_field_errors %}
+        <div style="padding:10px;background:#fee2e2;border-radius:8px;font-size:0.85rem;color:#991b1b;">{{ form.non_field_errors }}</div>
+        {% endif %}
+
+        <div class="form-actions">
+            <button type="submit" class="btn-save">✅ Registrar venta</button>
+            <a href="{% url 'inventory_list' %}" class="btn-cancel">← Cancelar</a>
+        </div>
+    </form>
+</div>
+
+<script>
+// Build price map from Django context
+const prices = {
+    {% for product in form.product.field.queryset %}
+    "{{ product.pk }}": {{ product.price }},
+    {% endfor %}
+};
+
+const selProduct = document.getElementById('{{ form.product.auto_id }}');
+const selQty = document.getElementById('{{ form.quantity.auto_id }}');
+const preview = document.getElementById('totalPreview');
+const totalVal = document.getElementById('totalVal');
+
+function updatePreview() {
+    const pid = selProduct.value;
+    const qty = parseInt(selQty.value) || 0;
+    if (pid && prices[pid] && qty > 0) {
+        const total = (prices[pid] * qty).toFixed(2);
+        totalVal.textContent = total;
+        preview.style.display = 'block';
+    } else {
+        preview.style.display = 'none';
+    }
+}
+
+selProduct.addEventListener('change', updatePreview);
+selQty.addEventListener('input', updatePreview);
+</script>
+{% endblock %}

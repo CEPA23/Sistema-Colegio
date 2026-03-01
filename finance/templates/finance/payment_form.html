@@ -133,12 +133,14 @@
             {% endif %}
         </div>
 
-        <div id="course_wrap" style="display:none;">
-            <label for="{{ form.course.id_for_label }}">{{ form.course.label }}</label>
-            {{ form.course }}
-            {% if form.course.errors %}
+
+
+        <div id="inventory_product_wrap" class="field-group" style="display:none;">
+            <label for="{{ form.inventory_product.id_for_label }}">{{ form.inventory_product.label }}</label>
+            {{ form.inventory_product }}
+            {% if form.inventory_product.errors %}
                 <div class="field-errors">
-                    {% for error in form.course.errors %}
+                    {% for error in form.inventory_product.errors %}
                         <div>{{ error }}</div>
                     {% endfor %}
                 </div>
@@ -290,14 +292,17 @@
 </div>
 
 {{ suggested_prices|json_script:"suggested-prices-data" }}
+{{ inventory_by_category|json_script:"inventory-by-category-data" }}
 
 <script>
     (function () {
         const conceptField = document.getElementById('{{ form.concept.id_for_label }}');
         const methodField = document.getElementById('{{ form.method.id_for_label }}');
         const monthWrap = document.getElementById('pension_month_wrap');
-        const courseWrap = document.getElementById('course_wrap');
-        const courseField = document.getElementById('{{ form.course.id_for_label }}');
+
+        const invProductWrap = document.getElementById('inventory_product_wrap');
+
+        const invProductField = document.getElementById('{{ form.inventory_product.id_for_label }}');
         const amountField = document.getElementById('{{ form.amount.id_for_label }}');
         const proofWrap = document.getElementById('proof_wrap');
         const paymentForm = document.getElementById('payment-form');
@@ -321,6 +326,8 @@
 
         // Inyeccion segura de precios
         const suggestedPrices = JSON.parse(document.getElementById('suggested-prices-data').textContent);
+        // Precios desde el inventario (inyectados por la vista)
+        const inventoryByCategory = JSON.parse(document.getElementById('inventory-by-category-data').textContent);
 
         function updateSuggestedAmount() {
             const concept = conceptField.value;
@@ -329,10 +336,17 @@
             if (concept === 'pension') price = suggestedPrices.pension;
             else if (concept === 'matricula') price = suggestedPrices.matricula;
             else if (concept === 'material_escolar') price = suggestedPrices.material_escolar;
-            else if (concept === 'libro') {
-                const courseId = courseField.value;
-                if (courseId && suggestedPrices.books[courseId]) {
-                    price = suggestedPrices.books[courseId];
+            else {
+                // Para productos de inventario (incluyendo libros y uniformes), buscar el precio seleccionado
+                const productId = invProductField.value;
+                if (productId) {
+                    for (const cat in inventoryByCategory) {
+                        const prod = inventoryByCategory[cat].find(p => p.id == productId);
+                        if (prod) {
+                            price = prod.price;
+                            break;
+                        }
+                    }
                 }
             }
             
@@ -342,9 +356,64 @@
         }
 
         function toggleFields() {
-            const concept = conceptField ? conceptField.value : '';
+            if (!conceptField) return;
+            const concept = conceptField.value;
+            
             if (monthWrap) monthWrap.style.display = concept === 'pension' ? 'block' : 'none';
-            if (courseWrap) courseWrap.style.display = concept === 'libro' ? 'block' : 'none';
+            
+            const isInventoryConcept = ['libro', 'uniforme_banda', 'uniforme_colegio', 'producto_inventario'].includes(concept);
+            if (invProductWrap) invProductWrap.style.display = isInventoryConcept ? 'block' : 'none';
+            
+            // Reconstruir opciones del inventario segun el concepto
+            if (isInventoryConcept && invProductField) {
+                const categoryMap = {
+                    'libro': 'libro',
+                    'uniforme_banda': 'uniforme_banda',
+                    'uniforme_colegio': 'uniforme_colegio',
+                    'producto_inventario': 'otro'
+                };
+                const targetCat = categoryMap[concept];
+                const currentVal = invProductField.value;
+                
+                // Guardar el placeholder (opcion vacia)
+                const placeholderText = invProductField.options[0] ? invProductField.options[0].textContent : "Selecciona un producto";
+                
+                // Limpiar el select
+                invProductField.innerHTML = '';
+                
+                // Añadir placeholder
+                const emptyOpt = document.createElement('option');
+                emptyOpt.value = '';
+                emptyOpt.textContent = placeholderText;
+                invProductField.appendChild(emptyOpt);
+                
+                // Obtener productos a mostrar
+                let productsToShow = [];
+                if (targetCat === 'otro') {
+                    // Para Producto de Inventario, mostrar todo lo que no esté en las categorias principales?
+                    // O simplemente mostrar todo. Hagamos que muestre todo lo que NO es libro/uniforme para ser especificos.
+                    for (const cat in inventoryByCategory) {
+                        if (cat === 'otro') {
+                            productsToShow = productsToShow.concat(inventoryByCategory[cat]);
+                        }
+                    }
+                    // Si no hay nada en 'otro', tal vez mostrar todo? Mejor ser estrictos.
+                } else if (targetCat && inventoryByCategory[targetCat]) {
+                    productsToShow = inventoryByCategory[targetCat];
+                }
+                
+                // Poblar de nuevo
+                productsToShow.forEach(p => {
+                    const opt = document.createElement('option');
+                    opt.value = p.id;
+                    opt.textContent = p.name;
+                    invProductField.appendChild(opt);
+                });
+                
+                // Intentar restaurar valor
+                invProductField.value = currentVal;
+            }
+
             updateSuggestedAmount();
         }
 
@@ -425,8 +494,8 @@
         if (conceptField) {
             conceptField.addEventListener('change', toggleFields);
         }
-        if (courseField) {
-            courseField.addEventListener('change', updateSuggestedAmount);
+        if (invProductField) {
+            invProductField.addEventListener('change', updateSuggestedAmount);
         }
         if (methodField) {
             methodField.addEventListener('change', toggleProof);

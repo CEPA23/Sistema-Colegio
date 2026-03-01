@@ -210,17 +210,16 @@ def roles_permissions(request):
 @role_required('admin', 'director')
 def system_config(request):
     from django.forms import modelformset_factory
-    from .forms import CourseBookPriceForm, SchoolIdentityForm, SchoolBusinessForm
+    from .forms import SchoolIdentityForm, SchoolBusinessForm
     
     active_year = AcademicYear.objects.filter(is_active=True).select_related('school').first()
     school_instance = School.objects.order_by('id').first()
     
-    CourseFormSet = modelformset_factory(Course, form=CourseBookPriceForm, extra=0)
+
 
     # Inicializar formularios
     identity_form = SchoolIdentityForm(instance=school_instance)
     business_form = SchoolBusinessForm(instance=school_instance)
-    course_formset = CourseFormSet(queryset=Course.objects.all().order_by('name'))
 
     if request.method == 'POST':
         if 'identity_config' in request.POST:
@@ -237,12 +236,7 @@ def system_config(request):
                 messages.success(request, "Costos del negocio actualizados.")
                 return redirect('system_config')
         
-        elif 'course_config' in request.POST:
-            course_formset = CourseFormSet(request.POST)
-            if course_formset.is_valid():
-                course_formset.save()
-                messages.success(request, "Precios de libros actualizados.")
-                return redirect('system_config')
+
 
     periods = Period.objects.select_related('academic_year').order_by('-academic_year__year', 'start_date', 'name')
 
@@ -252,7 +246,6 @@ def system_config(request):
         'school_form': identity_form, # Mantenemos nombre para compatibilidad o renombramos
         'identity_form': identity_form,
         'business_form': business_form,
-        'course_formset': course_formset,
         'school_instance': school_instance,
     }
     return render(request, 'accounts/system_config.html', context)

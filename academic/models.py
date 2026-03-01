@@ -47,9 +47,7 @@ class Section(models.Model):
 
 class Course(models.Model):
     name = models.CharField(max_length=100)
-    has_book = models.BooleanField(default=False, verbose_name='Tiene libro')
     is_poly_course = models.BooleanField(default=False, verbose_name="¿Es curso de polidocencia?")
-    book_price = models.DecimalField(max_digits=10, decimal_places=2, default=0.00, verbose_name="Precio del Libro")
 
     def __str__(self):
         return self.name

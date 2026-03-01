@@ -41,7 +41,7 @@ class GradeRecordForm(forms.ModelForm):
 class CourseForm(forms.ModelForm):
     class Meta:
         model = Course
-        fields = ['name', 'is_poly_course', 'has_book']
+        fields = ['name', 'is_poly_course']
 
 
 class GradeForm(forms.ModelForm):

@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block title %}Desactivar Producto | Inventario{% endblock %}
+{% block content %}
+<style>
+.confirm-card { max-width: 480px; background: #fff; border-radius: 14px; border: 1.5px solid #fecdd3; padding: 32px; text-align: center; }
+.confirm-icon { font-size: 3rem; margin-bottom: 12px; }
+.confirm-card h2 { font-size: 1.2rem; font-weight: 800; color: #991b1b; margin: 0 0 8px; }
+.confirm-card p { color: #64748b; font-size: 0.9rem; margin: 0 0 24px; }
+.confirm-label { font-size: 1.05rem; font-weight: 700; color: #1e293b; display: block; margin-bottom: 6px; }
+.confirm-actions { display: flex; gap: 10px; justify-content: center; }
+.btn-confirm { background: #dc2626; color: #fff; border: none; border-radius: 8px; padding: 10px 22px; font-size: 0.9rem; font-weight: 600; cursor: pointer; }
+.btn-cancel { background: #f1f5f9; color: #475569; border: 1.5px solid #e2e8f0; border-radius: 8px; padding: 10px 20px; font-size: 0.9rem; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; }
+</style>
+
+<div class="confirm-card">
+    <div class="confirm-icon">🗑️</div>
+    <h2>¿Desactivar producto?</h2>
+    <span class="confirm-label">{{ product.name }}</span>
+    <p>El producto quedará inactivo y no aparecerá en ventas, pero se conservará el historial de movimientos.</p>
+    <div class="confirm-actions">
+        <form method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn-confirm">Sí, desactivar</button>
+        </form>
+        <a href="{% url 'inventory_list' %}" class="btn-cancel">Cancelar</a>
+    </div>
+</div>
+{% endblock %}

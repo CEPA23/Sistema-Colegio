@@ -12,11 +12,17 @@ class Fee(models.Model):
     CONCEPT_PENSION = 'pension'
     CONCEPT_SCHOOL_SUPPLIES = 'material_escolar'
     CONCEPT_BOOK = 'libro'
+    CONCEPT_BAND_UNIFORM = 'uniforme_banda'
+    CONCEPT_SCHOOL_UNIFORM = 'uniforme_colegio'
+    CONCEPT_PRODUCT = 'producto_inventario'
     CONCEPT_CHOICES = (
         (CONCEPT_ENROLLMENT, 'Matricula'),
         (CONCEPT_PENSION, 'Pension'),
         (CONCEPT_SCHOOL_SUPPLIES, 'Material escolar'),
         (CONCEPT_BOOK, 'Libro'),
+        (CONCEPT_BAND_UNIFORM, 'Uniforme de Banda'),
+        (CONCEPT_SCHOOL_UNIFORM, 'Uniforme del Colegio'),
+        (CONCEPT_PRODUCT, 'Producto de inventario'),
     )
 
     MONTH_CHOICES = (
@@ -38,6 +44,14 @@ class Fee(models.Model):
     concept = models.CharField(max_length=30, choices=CONCEPT_CHOICES)
     pension_month = models.PositiveSmallIntegerField(choices=MONTH_CHOICES, null=True, blank=True)
     course = models.ForeignKey('academic.Course', on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Curso (para libros)")
+    inventory_product = models.ForeignKey(
+        'inventory.Product',
+        on_delete=models.SET_NULL,
+        null=True, blank=True,
+        verbose_name='Producto de inventario',
+        related_name='fees',
+    )
+    inventory_quantity = models.PositiveIntegerField(default=1, verbose_name='Cantidad vendida')
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     amount_paid = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal('0.00'))
     due_date = models.DateField()

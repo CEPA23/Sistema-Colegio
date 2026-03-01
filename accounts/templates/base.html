@@ -391,6 +391,32 @@
                 </details>
                 {% endif %}
 
+                <!-- INVENTARIO -->
+                {% if request.user.role == 'admin' or request.user.role == 'director' or request.user.role == 'secretary' or request.user.is_superuser %}
+                <details class="menu-group" data-urls="inventory_list product_create product_edit stock_adjust inventory_sale movement_history movement_history_product">
+                    <summary>
+                        <span class="nav-icon">📦</span> Inventario
+                        <span class="chevron">▶</span>
+                    </summary>
+                    <div class="menu-links">
+                        <a href="{% url 'inventory_list' %}" {% if request.resolver_match.url_name == 'inventory_list' %}class="active"{% endif %}>
+                            <span class="nav-icon">🏷️</span> Productos
+                        </a>
+                        <a href="{% url 'inventory_sale' %}" {% if request.resolver_match.url_name == 'inventory_sale' %}class="active"{% endif %}>
+                            <span class="nav-icon">🛒</span> Venta rápida
+                        </a>
+                        <a href="{% url 'movement_history' %}" {% if request.resolver_match.url_name == 'movement_history' %}class="active"{% endif %}>
+                            <span class="nav-icon">📋</span> Movimientos
+                        </a>
+                        {% if request.user.role == 'admin' or request.user.role == 'director' or request.user.is_superuser %}
+                        <a href="{% url 'product_create' %}" {% if request.resolver_match.url_name == 'product_create' %}class="active"{% endif %}>
+                            <span class="nav-icon">➕</span> Nuevo producto
+                        </a>
+                        {% endif %}
+                    </div>
+                </details>
+                {% endif %}
+
                 <!-- ASISTENCIA -->
                 {% if request.user.role != 'parent' and request.user.role != 'secretary' or request.user.is_superuser %}
                 <details class="menu-group" data-urls="attendance_dashboard attendance_take attendance_student_history attendance_course_report">

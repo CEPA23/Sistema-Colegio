@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+{% block title %}{{ title }} | Inventario{% endblock %}
+{% block content %}
+<style>
+.form-hero {
+    background: linear-gradient(135deg, #1e1b4b 0%, #312e81 60%, #4338ca 100%);
+    border-radius: 14px;
+    padding: 24px 28px;
+    color: #fff;
+    margin-bottom: 24px;
+}
+.form-hero h1 { margin: 0; font-size: 1.4rem; font-weight: 800; }
+.form-hero p  { margin: 4px 0 0; color: rgba(255,255,255,.7); font-size: 0.85rem; }
+
+.form-card {
+    background: #fff;
+    border-radius: 14px;
+    border: 1.5px solid #e2e8f0;
+    padding: 28px 32px;
+    max-width: 720px;
+}
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+.form-group { display: flex; flex-direction: column; gap: 6px; }
+.form-group.full { grid-column: 1 / -1; }
+.form-group label { font-size: 0.82rem; font-weight: 600; color: #374151; }
+.form-group .form-control,
+.form-group .form-select { width: 100%; box-sizing: border-box; }
+.form-hint { font-size: 0.75rem; color: #94a3b8; }
+.error-text { font-size: 0.78rem; color: #dc2626; margin-top: 2px; }
+
+.form-actions { display: flex; gap: 10px; margin-top: 24px; }
+.btn-save { background: #4f46e5; color: #fff; border: none; border-radius: 8px; padding: 10px 22px; font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: filter .15s; }
+.btn-save:hover { filter: brightness(.9); }
+.btn-cancel { background: #f1f5f9; color: #475569; border: 1.5px solid #e2e8f0; border-radius: 8px; padding: 10px 20px; font-size: 0.9rem; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; transition: background .15s; }
+.btn-cancel:hover { background: #e2e8f0; }
+</style>
+
+<div class="form-hero">
+    <h1>📦 {{ title }}</h1>
+    <p>{% if product %}Modifica los datos del producto.{% else %}Completa el formulario para registrar un nuevo producto en el inventario.{% endif %}</p>
+</div>
+
+<div class="form-card">
+    <form method="post" novalidate>
+        {% csrf_token %}
+        <div class="form-grid">
+            <div class="form-group">
+                <label for="{{ form.code.id_for_label }}">{{ form.code.label }}</label>
+                {{ form.code }}
+                <span class="form-hint">Identificador único. Ej: LIB-001, UNIF-M-01</span>
+                {% if form.code.errors %}<span class="error-text">{{ form.code.errors|join:", " }}</span>{% endif %}
+            </div>
+            <div class="form-group">
+                <label for="{{ form.category.id_for_label }}">{{ form.category.label }}</label>
+                {{ form.category }}
+                {% if form.category.errors %}<span class="error-text">{{ form.category.errors|join:", " }}</span>{% endif %}
+            </div>
+            <div class="form-group full">
+                <label for="{{ form.name.id_for_label }}">{{ form.name.label }}</label>
+                {{ form.name }}
+                {% if form.name.errors %}<span class="error-text">{{ form.name.errors|join:", " }}</span>{% endif %}
+            </div>
+            <div class="form-group full">
+                <label for="{{ form.description.id_for_label }}">{{ form.description.label }}</label>
+                {{ form.description }}
+                {% if form.description.errors %}<span class="error-text">{{ form.description.errors|join:", " }}</span>{% endif %}
+            </div>
+            <div class="form-group">
+                <label for="{{ form.price.id_for_label }}">{{ form.price.label }}</label>
+                {{ form.price }}
+                {% if form.price.errors %}<span class="error-text">{{ form.price.errors|join:", " }}</span>{% endif %}
+            </div>
+            <div class="form-group">
+                <label for="{{ form.stock.id_for_label }}">{{ form.stock.label }}</label>
+                {{ form.stock }}
+                {% if form.stock.errors %}<span class="error-text">{{ form.stock.errors|join:", " }}</span>{% endif %}
+            </div>
+            <div class="form-group">
+                <label for="{{ form.stock_min.id_for_label }}">{{ form.stock_min.label }}</label>
+                {{ form.stock_min }}
+                <span class="form-hint">Cantidad mínima antes de alertar.</span>
+                {% if form.stock_min.errors %}<span class="error-text">{{ form.stock_min.errors|join:", " }}</span>{% endif %}
+            </div>
+            <div class="form-group">
+                <label for="{{ form.stock_max.id_for_label }}">{{ form.stock_max.label }}</label>
+                {{ form.stock_max }}
+                <span class="form-hint">Capacidad máxima de almacenamiento.</span>
+                {% if form.stock_max.errors %}<span class="error-text">{{ form.stock_max.errors|join:", " }}</span>{% endif %}
+            </div>
+            <div class="form-group full" style="flex-direction:row;align-items:center;gap:10px;">
+                {{ form.is_active }}
+                <label for="{{ form.is_active.id_for_label }}" style="margin:0;font-size:0.88rem;cursor:pointer;">{{ form.is_active.label }}</label>
+            </div>
+        </div>
+
+        {% if form.non_field_errors %}
+        <div style="margin-top:12px;padding:10px 14px;background:#fee2e2;border-radius:8px;font-size:0.85rem;color:#991b1b;">
+            {{ form.non_field_errors }}
+        </div>
+        {% endif %}
+
+        <div class="form-actions">
+            <button type="submit" class="btn-save">💾 Guardar</button>
+            <a href="{% url 'inventory_list' %}" class="btn-cancel">← Cancelar</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

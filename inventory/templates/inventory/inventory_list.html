@@ -1,0 +1,199 @@
+{% extends 'base.html' %}
+{% block title %}Inventario | Gestión Escolar{% endblock %}
+{% block content %}
+<style>
+.inv-hero {
+    background: linear-gradient(135deg, #1e1b4b 0%, #312e81 55%, #4338ca 100%);
+    border-radius: 16px;
+    padding: 28px 32px;
+    color: #fff;
+    margin-bottom: 24px;
+    position: relative;
+    overflow: hidden;
+}
+.inv-hero::after { content: '📦'; position: absolute; right: 28px; top: 50%; transform: translateY(-50%); font-size: 5rem; opacity: .08; pointer-events: none; }
+.inv-hero .eyebrow { font-size: 0.72rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: rgba(255,255,255,.6); margin: 0 0 6px; }
+.inv-hero h1 { margin: 0 0 6px; font-size: 1.6rem; font-weight: 800; }
+.inv-hero p  { margin: 0; color: rgba(255,255,255,.7); font-size: 0.9rem; }
+
+/* Alert banner */
+.alert-stock {
+    background: linear-gradient(135deg, #fef3c7, #fef9c3);
+    border: 1.5px solid #f59e0b;
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+.alert-stock.danger { background: linear-gradient(135deg,#fee2e2,#fef2f2); border-color:#ef4444; }
+.alert-stock .as-icon { font-size: 1.6rem; flex-shrink: 0; }
+.alert-stock .as-body strong { display: block; font-size: 0.9rem; font-weight: 700; color: #92400e; }
+.alert-stock .as-body span  { font-size: 0.8rem; color: #78350f; }
+.alert-stock.danger .as-body strong { color: #991b1b; }
+.alert-stock.danger .as-body span  { color: #7f1d1d; }
+
+.inv-toolbar { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 18px; }
+.inv-toolbar .search-box { flex: 1; min-width: 200px; }
+.inv-toolbar input, .inv-toolbar select { height: 38px; border: 1.5px solid #e2e8f0; border-radius: 8px; padding: 0 12px; font-size: 0.875rem; outline: none; }
+.inv-toolbar input:focus, .inv-toolbar select:focus { border-color: #6366f1; box-shadow: 0 0 0 3px rgba(99,102,241,.12); }
+.inv-toolbar .btn-inv { height: 38px; padding: 0 16px; border-radius: 8px; font-size: 0.875rem; font-weight: 600; border: none; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; transition: filter .15s; }
+.inv-toolbar .btn-inv:hover { filter: brightness(.93); }
+.btn-primary-inv { background: #4f46e5; color: #fff; }
+.btn-sale-inv { background: #10b981; color: #fff; }
+.btn-history-inv { background: #f1f5f9; color: #475569; border: 1.5px solid #e2e8f0 !important; }
+
+/* Table */
+.inv-table-wrap { overflow-x: auto; border-radius: 14px; border: 1.5px solid #e2e8f0; background: #fff; }
+.inv-table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
+.inv-table thead tr { background: #f8fafc; border-bottom: 1.5px solid #e2e8f0; }
+.inv-table th { padding: 12px 16px; font-size: 0.72rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: #64748b; text-align: left; }
+.inv-table td { padding: 12px 16px; border-bottom: 1px solid #f1f5f9; vertical-align: middle; }
+.inv-table tbody tr:last-child td { border-bottom: none; }
+.inv-table tbody tr:hover { background: #f8fafc; }
+
+/* Stock badges */
+.stock-pill {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 3px 10px; border-radius: 20px; font-size: 0.78rem; font-weight: 700;
+}
+.stock-normal  { background: #dcfce7; color: #166534; }
+.stock-minimo  { background: #fef3c7; color: #92400e; }
+.stock-agotado { background: #fee2e2; color: #991b1b; }
+.stock-maximo  { background: #ede9fe; color: #4c1d95; }
+
+.category-pill {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 3px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; background: #f1f5f9; color: #475569;
+}
+
+.action-btns { display: flex; gap: 6px; align-items: center; }
+.ab { display: inline-flex; align-items: center; justify-content: center; width: 30px; height: 30px; border-radius: 7px; font-size: 0.85rem; text-decoration: none; border: 1.5px solid #e2e8f0; transition: all .15s; }
+.ab:hover { transform: translateY(-1px); }
+.ab-edit  { background: #eff6ff; border-color: #bfdbfe; color: #1d4ed8; }
+.ab-adj   { background: #f0fdf4; border-color: #bbf7d0; color: #15803d; }
+.ab-hist  { background: #faf5ff; border-color: #e9d5ff; color: #7e22ce; }
+.ab-del   { background: #fff1f2; border-color: #fecdd3; color: #be123c; }
+
+.empty-state { text-align: center; padding: 60px 20px; color: #94a3b8; }
+.empty-state .es-icon { font-size: 3rem; margin-bottom: 12px; }
+.empty-state p { font-size: 0.9rem; margin: 4px 0; }
+</style>
+
+<div class="inv-hero">
+    <p class="eyebrow">Módulo de inventario</p>
+    <h1>📦 Inventario</h1>
+    <p>Control de stock de libros, uniformes y artículos del colegio</p>
+</div>
+
+{% if low_stock_count > 0 %}
+<div class="alert-stock {% if out_of_stock.count > 0 %}danger{% endif %}">
+    <span class="as-icon">{% if out_of_stock.count > 0 %}🚨{% else %}⚠️{% endif %}</span>
+    <div class="as-body">
+        <strong>
+            {% if out_of_stock.count > 0 %}
+                {{ out_of_stock.count }} producto(s) sin stock · {{ low_stock_count }} producto(s) en nivel mínimo
+            {% else %}
+                {{ low_stock_count }} producto(s) han alcanzado el stock mínimo
+            {% endif %}
+        </strong>
+        <span>
+            {% for p in low_stock %}{{ p.name }} (stock: {{ p.stock }}){% if not forloop.last %},  {% endif %}{% endfor %}
+        </span>
+    </div>
+</div>
+{% endif %}
+
+<div class="inv-toolbar">
+    <form method="get" style="display:flex;gap:8px;flex-wrap:wrap;flex:1;">
+        <input class="search-box" type="text" name="q" value="{{ query }}" placeholder="Buscar por nombre o código…">
+        <select name="category">
+            <option value="">Todas las categorías</option>
+            {% for val, label in category_choices %}
+                <option value="{{ val }}" {% if category == val %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+        </select>
+        <button type="submit" class="btn-inv btn-primary-inv">🔍 Buscar</button>
+        {% if query or category %}
+            <a href="{% url 'inventory_list' %}" class="btn-inv btn-history-inv">✕ Limpiar</a>
+        {% endif %}
+    </form>
+    <a href="{% url 'inventory_sale' %}" class="btn-inv btn-sale-inv">🛒 Venta rápida</a>
+    <a href="{% url 'movement_history' %}" class="btn-inv btn-history-inv">📋 Movimientos</a>
+    {% if request.user.role == 'admin' or request.user.role == 'director' or request.user.is_superuser %}
+    <a href="{% url 'product_create' %}" class="btn-inv btn-primary-inv">＋ Nuevo producto</a>
+    {% endif %}
+</div>
+
+<div class="inv-table-wrap">
+    <table class="inv-table">
+        <thead>
+            <tr>
+                <th>ID / Código</th>
+                <th>Producto</th>
+                <th>Categoría</th>
+                <th>Precio</th>
+                <th>Stock</th>
+                <th>Mín.</th>
+                <th>Máx.</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for product in products %}
+            <tr>
+                <td><code style="background:#f1f5f9;padding:2px 6px;border-radius:5px;font-size:0.8rem;">{{ product.code }}</code></td>
+                <td>
+                    <strong style="display:block;">{{ product.name }}</strong>
+                    {% if product.description %}
+                        <span style="font-size:0.75rem;color:#94a3b8;">{{ product.description|truncatechars:50 }}</span>
+                    {% endif %}
+                </td>
+                <td><span class="category-pill">{{ product.get_category_display }}</span></td>
+                <td><strong>S/ {{ product.price }}</strong></td>
+                <td>
+                    <strong style="font-size:1rem;{% if product.stock_status == 'agotado' %}color:#dc2626;{% elif product.stock_status == 'minimo' %}color:#d97706;{% else %}color:#16a34a;{% endif %}">
+                        {{ product.stock }}
+                    </strong>
+                </td>
+                <td style="color:#64748b;">{{ product.stock_min }}</td>
+                <td style="color:#64748b;">{{ product.stock_max }}</td>
+                <td>
+                    {% if product.stock_status == 'agotado' %}
+                        <span class="stock-pill stock-agotado">🚫 Agotado</span>
+                    {% elif product.stock_status == 'minimo' %}
+                        <span class="stock-pill stock-minimo">⚠️ Mínimo</span>
+                    {% elif product.stock_status == 'maximo' %}
+                        <span class="stock-pill stock-maximo">📦 Máx.</span>
+                    {% else %}
+                        <span class="stock-pill stock-normal">✅ Normal</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <div class="action-btns">
+                        <a href="{% url 'movement_history_product' product.pk %}" class="ab ab-hist" title="Movimientos">📋</a>
+                        <a href="{% url 'stock_adjust' product.pk %}" class="ab ab-adj" title="Ajustar stock">➕</a>
+                        {% if request.user.role == 'admin' or request.user.role == 'director' or request.user.is_superuser %}
+                        <a href="{% url 'product_edit' product.pk %}" class="ab ab-edit" title="Editar">✏️</a>
+                        <a href="{% url 'product_delete' product.pk %}" class="ab ab-del" title="Desactivar" onclick="return confirm('¿Desactivar este producto?')">🗑️</a>
+                        {% endif %}
+                    </div>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="9">
+                    <div class="empty-state">
+                        <div class="es-icon">📭</div>
+                        <p><strong>No hay productos registrados</strong></p>
+                        <p>Agrega el primer producto con el botón "Nuevo producto".</p>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

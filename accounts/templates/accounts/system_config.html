@@ -186,48 +186,7 @@
     font-size: 0.95rem;
 }
 
-/* ══ Book prices table ══ */
-.book-table { width: 100%; border-collapse: collapse; }
-.book-table th {
-    font-size: 0.72rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: .07em;
-    color: #94a3b8;
-    padding: 8px 12px;
-    border-bottom: 1px solid #f1f5f9;
-    text-align: left;
-}
-.book-table td {
-    padding: 8px 12px;
-    border-bottom: 1px solid #f8fafc;
-    font-size: 0.875rem;
-    color: #334155;
-}
-.book-table tr:last-child td { border-bottom: none; }
-.book-table tr:hover td { background: #fafbff; }
-.book-price-input {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    background: #f8fafc;
-    border: 1px solid #e2e8f0;
-    border-radius: 7px;
-    padding: 0 8px;
-    transition: border-color .15s;
-}
-.book-price-input:focus-within { border-color: #6366f1; background: #fff; }
-.book-price-input span { font-size: 0.75rem; color: #94a3b8; font-weight: 700; }
-.book-price-input input {
-    border: none !important;
-    outline: none !important;
-    padding: 5px 0 !important;
-    width: 70px;
-    font-size: 0.875rem;
-    font-weight: 600;
-    background: transparent;
-    color: #1e293b;
-}
+
 
 /* ══ Save button full ══ */
 .btn-save {
@@ -405,57 +364,9 @@
                 <button type="submit" class="btn btn-primary btn-save">💾 Guardar Costos</button>
             </form>
 
-            <!-- Prices by book -->
-            <div style="margin-top: 28px; padding-top: 22px; border-top: 1px dashed #e2e8f0;">
-                <div style="display:flex; align-items:center; gap:10px; margin-bottom:14px;">
-                    <div class="cfg-card-icon icon-amber" style="width:32px;height:32px;border-radius:8px;font-size:1rem;">📚</div>
-                    <div>
-                        <strong style="font-size:0.92rem;color:#1e293b;">Precios de Libros por Curso</strong>
-                        <div style="font-size:0.75rem;color:#94a3b8;">Costo del material bibliográfico por materia</div>
-                    </div>
-                </div>
-
-                <form method="post" id="course-price-form">
-                    {% csrf_token %}
-                    <input type="hidden" name="course_config" value="1">
-                    {{ course_formset.management_form }}
-
-                    <div style="max-height: 320px; overflow-y: auto; border-radius: 10px; border: 1px solid #e2e8f0;">
-                        <table class="book-table">
-                            <thead>
-                                <tr>
-                                    <th>Curso</th>
-                                    <th>Usa libro</th>
-                                    <th>Precio (S/)</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for form in course_formset %}
-                                <tr>
-                                    <td>
-                                        {{ form.id }}
-                                        <span style="font-weight:500;">{{ form.instance.name }}</span>
-                                    </td>
-                                    <td>{{ form.has_book }}</td>
-                                    <td>
-                                        <div class="book-price-input">
-                                            <span>S/</span>
-                                            {{ form.book_price }}
-                                        </div>
-                                    </td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <button type="submit" class="btn btn-subtle btn-save" style="margin-top:14px;">
-                        📚 Actualizar Precios de Libros
-                    </button>
-                </form>
-            </div>
         </div>
     </div>
+
 </div>
 
 <!-- ═══ PERIODOS ═══ -->
@@ -528,26 +439,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    const bookToggles = document.querySelectorAll('.book-toggle');
-    bookToggles.forEach(toggle => {
-        const row = toggle.closest('tr');
-        if (!row) return;
-        const priceInput = row.querySelector('input[name$="-book_price"]');
-        const priceWrap = row.querySelector('.book-price-input');
-        if (!priceInput || !priceWrap) return;
 
-        const syncBookRow = () => {
-            const enabled = toggle.checked;
-            priceInput.readOnly = !enabled;
-            priceWrap.style.opacity = enabled ? '1' : '.45';
-            if (!enabled) {
-                priceInput.value = '0.00';
-            }
-        };
-
-        toggle.addEventListener('change', syncBookRow);
-        syncBookRow();
-    });
 });
 </script>
 {% endblock %}

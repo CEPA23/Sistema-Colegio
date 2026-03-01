@@ -253,14 +253,7 @@ class SchoolBusinessForm(forms.ModelForm):
         }
 
 
-class CourseBookPriceForm(forms.ModelForm):
-    class Meta:
-        model = Course
-        fields = ['has_book', 'book_price']
-        widgets = {
-            'has_book': forms.CheckboxInput(attrs={'class': 'book-toggle'}),
-            'book_price': forms.NumberInput(attrs={'step': '0.01', 'class': 'form-control-sm'}),
-        }
+
 
 
 class SelfProfileForm(forms.ModelForm):

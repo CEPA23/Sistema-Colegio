@@ -91,6 +91,7 @@ def _ensure_debt(
     due_date,
     pension_month=None,
     course=None,
+    inventory_product=None,
 ):
     if amount_total is None or amount_total <= Decimal('0.00'):
         return None
@@ -103,11 +104,17 @@ def _ensure_debt(
         filters['pension_month'] = pension_month
         filters['course__isnull'] = True
     elif concept == Fee.CONCEPT_BOOK:
-        filters['course'] = course
+        filters['inventory_product'] = inventory_product
         filters['pension_month__isnull'] = True
+        filters['course__isnull'] = True
+    elif concept in [Fee.CONCEPT_BAND_UNIFORM, Fee.CONCEPT_SCHOOL_UNIFORM, Fee.CONCEPT_PRODUCT]:
+        filters['inventory_product'] = inventory_product
+        filters['pension_month__isnull'] = True
+        filters['course__isnull'] = True
     else:
         filters['pension_month__isnull'] = True
         filters['course__isnull'] = True
+        filters['inventory_product__isnull'] = True
 
     debt = Fee.objects.filter(**filters).order_by('id').first()
     if not debt:
@@ -115,7 +122,7 @@ def _ensure_debt(
             enrollment=enrollment,
             concept=concept,
             pension_month=pension_month if concept == Fee.CONCEPT_PENSION else None,
-            course=course if concept == Fee.CONCEPT_BOOK else None,
+            inventory_product=inventory_product,
             amount=amount_total,
             due_date=due_date,
             amount_paid=Decimal('0.00'),
@@ -136,40 +143,43 @@ def _ensure_debt(
     return debt
 
 
-def _ensure_debts_for_enrollment(enrollment, target_month=None, selected_book_course=None):
+def _ensure_debts_for_enrollment(enrollment, target_month=None, selected_product=None, concept=None):
     prices = _school_prices()
     debt_month = _safe_month(target_month, timezone.localdate().month)
     debt_year = enrollment.academic_year.year
     due_date_pension = date(debt_year, debt_month, 1)
     enrollment_due = enrollment.enrolled_at.date()
 
-    _ensure_debt(
-        enrollment=enrollment,
-        concept=Fee.CONCEPT_PENSION,
-        amount_total=prices['pension'],
-        due_date=due_date_pension,
-        pension_month=debt_month,
-    )
-    _ensure_debt(
-        enrollment=enrollment,
-        concept=Fee.CONCEPT_ENROLLMENT,
-        amount_total=prices['matricula'],
-        due_date=enrollment_due,
-    )
-    _ensure_debt(
-        enrollment=enrollment,
-        concept=Fee.CONCEPT_SCHOOL_SUPPLIES,
-        amount_total=prices['material'],
-        due_date=enrollment_due,
-    )
-
-    if selected_book_course and selected_book_course.has_book and selected_book_course.book_price > 0:
+    # Standard debts if not explicitly registering a specific product payment
+    if not concept:
         _ensure_debt(
             enrollment=enrollment,
-            concept=Fee.CONCEPT_BOOK,
-            amount_total=selected_book_course.book_price,
+            concept=Fee.CONCEPT_PENSION,
+            amount_total=prices['pension'],
             due_date=due_date_pension,
-            course=selected_book_course,
+            pension_month=debt_month,
+        )
+        _ensure_debt(
+            enrollment=enrollment,
+            concept=Fee.CONCEPT_ENROLLMENT,
+            amount_total=prices['matricula'],
+            due_date=enrollment_due,
+        )
+        _ensure_debt(
+            enrollment=enrollment,
+            concept=Fee.CONCEPT_SCHOOL_SUPPLIES,
+            amount_total=prices['material'],
+            due_date=enrollment_due,
+        )
+    
+    # Specific debt for Books or Uniforms
+    if concept in [Fee.CONCEPT_BOOK, Fee.CONCEPT_BAND_UNIFORM, Fee.CONCEPT_SCHOOL_UNIFORM, Fee.CONCEPT_PRODUCT] and selected_product:
+        _ensure_debt(
+            enrollment=enrollment,
+            concept=concept,
+            amount_total=selected_product.price,
+            due_date=timezone.localdate(),
+            inventory_product=selected_product,
         )
 
 
@@ -291,7 +301,7 @@ def payment_create(request):
             enrollment = form.cleaned_data['enrollment']
             concept = form.cleaned_data['concept']
             pension_month = form.cleaned_data['pension_month']
-            course = form.cleaned_data['course']
+            inventory_product = form.cleaned_data.get('inventory_product')
             amount = form.cleaned_data['amount']
             method = form.cleaned_data['method']
             proof_image = form.cleaned_data['proof_image']
@@ -301,16 +311,19 @@ def payment_create(request):
             _ensure_debts_for_enrollment(
                 enrollment=enrollment,
                 target_month=month_int or today.month,
-                selected_book_course=course if concept == Fee.CONCEPT_BOOK else None,
+                selected_product=inventory_product,
+                concept=concept,
             )
 
             fee_qs = Fee.objects.filter(enrollment=enrollment, concept=concept)
             if concept == Fee.CONCEPT_PENSION:
                 fee_qs = fee_qs.filter(pension_month=month_int)
             elif concept == Fee.CONCEPT_BOOK:
-                fee_qs = fee_qs.filter(course=course)
+                fee_qs = fee_qs.filter(inventory_product=inventory_product)
+            elif concept in [Fee.CONCEPT_BAND_UNIFORM, Fee.CONCEPT_SCHOOL_UNIFORM, Fee.CONCEPT_PRODUCT]:
+                fee_qs = fee_qs.filter(inventory_product=inventory_product)
             else:
-                fee_qs = fee_qs.filter(pension_month__isnull=True, course__isnull=True)
+                fee_qs = fee_qs.filter(pension_month__isnull=True, course__isnull=True, inventory_product__isnull=True)
 
             fee = None
             candidates = list(fee_qs.order_by('due_date', 'id'))
@@ -339,6 +352,20 @@ def payment_create(request):
                     proof_image=proof_image,
                     comment=comment,
                 )
+                # ── Descontar stock de inventario si el concepto es de inventario ──
+                is_inv_concept = concept in [Fee.CONCEPT_PRODUCT, Fee.CONCEPT_BOOK, Fee.CONCEPT_BAND_UNIFORM, Fee.CONCEPT_SCHOOL_UNIFORM]
+                if is_inv_concept and fee.inventory_product:
+                    from inventory.views import _discount_stock
+                    try:
+                        _discount_stock(
+                            product=fee.inventory_product,
+                            quantity=fee.inventory_quantity,
+                            reference=f'Pago #{payment.id} – {fee.enrollment.student}',
+                            payment=payment,
+                            user=request.user,
+                        )
+                    except ValueError as stock_err:
+                        messages.warning(request, f'Pago registrado, pero no se pudo descontar stock: {stock_err}')
                 from django.utils.safestring import mark_safe
                 from django.urls import reverse
                 receipt_url = reverse('payment_receipt_pdf', args=[payment.id])
@@ -351,19 +378,36 @@ def payment_create(request):
         form = PaymentRegistrationForm()
 
     school = School.objects.first()
-    courses = Course.objects.filter(has_book=True)
     grades = Grade.objects.order_by('name')
     sections = Section.objects.select_related('grade').order_by('grade__name', 'name')
+
+    # Prices for config-based concepts (matricula, pension, material escolar)
     suggested_prices = {
-        'pension': str(school.pension_price) if school else "200.00",
-        'matricula': str(school.enrollment_price) if school else "300.00",
-        'material_escolar': str(school.supplies_price) if school else "50.00",
-        'books': {str(c.id): str(c.book_price) for c in courses}
+        'pension': str(school.pension_price) if school else '200.00',
+        'matricula': str(school.enrollment_price) if school else '300.00',
+        'material_escolar': str(school.supplies_price) if school else '50.00',
     }
+
+    # Load inventory products for libro, uniforme_banda, uniforme_colegio
+    from inventory.models import Product
+    inv_products = Product.objects.filter(is_active=True).values('id', 'name', 'category', 'price', 'stock')
+
+    inventory_by_category = {}
+    for p in inv_products:
+        cat = p['category']
+        if cat not in inventory_by_category:
+            inventory_by_category[cat] = []
+        inventory_by_category[cat].append({
+            'id': p['id'],
+            'name': p['name'],
+            'price': str(p['price']),
+            'stock': p['stock'],
+        })
 
     return render(request, 'finance/payment_form.html', {
         'form': form,
         'suggested_prices': suggested_prices,
+        'inventory_by_category': inventory_by_category,
         'grades': grades,
         'sections': sections,
     })
