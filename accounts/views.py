@@ -15,6 +15,7 @@ from students.models import Student
 from .decorators import role_required
 from .forms import SchoolIdentityForm, SchoolBusinessForm, UserCreateForm, UserUpdateForm
 from .models import ActivityLog, User
+from events.views import get_upcoming_events
 
 
 class RoleLoginView(LoginView):
@@ -106,6 +107,7 @@ def dashboard(request):
         'revenue_total_day': revenue_total_day,
         'revenue_total_month': revenue_total_month,
         'revenue_total_year': revenue_total_year,
+        'upcoming_events': get_upcoming_events(3),
     }
     return render(request, 'accounts/dashboard.html', context)
 
@@ -131,6 +133,7 @@ def teacher_dashboard(request):
         'total_courses': total_courses,
         'total_grade_records': total_grade_records,
         'assignments': assignments,
+        'upcoming_events': get_upcoming_events(3),
     }
     return render(request, 'accounts/teacher_dashboard.html', context)
 

@@ -11,4 +11,6 @@ urlpatterns = [
     path('movimientos/', views.movement_history, name='movement_history'),
     path('movimientos/<int:pk>/', views.movement_history, name='movement_history_product'),
     path('api/alertas/', views.low_stock_alert_api, name='low_stock_alert_api'),
+    path('exportar/', views.inventory_export_csv, name='inventory_export_csv'),
+    path('producto/<int:pk>/codigo-barras/', views.product_barcode_download, name='product_barcode_download'),
 ]

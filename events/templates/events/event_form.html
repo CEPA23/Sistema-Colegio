@@ -1,0 +1,306 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<!-- Preload & Import Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+<!-- Animate.css for smooth transitions -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+
+<style>
+    /* Absolute Font Force */
+    #content-wrapper, #content-wrapper *, .container, .container *, #master-container, #master-container * { 
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important; 
+    }
+
+    body { background-color: #f8fafc !important; }
+
+    #master-container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 40px 20px;
+    }
+
+    .glass-card {
+        background: #ffffff;
+        border-radius: 28px;
+        border: 1px solid rgba(255, 255, 255, 0.7);
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.05);
+        overflow: hidden;
+    }
+
+    .card-accent-header {
+        background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+        padding: 50px 40px;
+        text-align: center;
+        color: white;
+    }
+
+    .card-accent-header h1 {
+        font-weight: 800 !important;
+        letter-spacing: -1.5px !important;
+        margin-bottom: 8px !important;
+        font-size: 2.5rem !important;
+        color: #ffffff !important;
+    }
+
+    .card-accent-header p {
+        font-size: 1.1rem !important;
+        opacity: 0.9 !important;
+        font-weight: 500 !important;
+        color: rgba(255,255,255,0.9) !important;
+    }
+
+    .form-section {
+        padding: 40px 50px;
+    }
+
+    .modern-label {
+        font-weight: 700 !important;
+        font-size: 0.8rem !important;
+        color: #475569 !important;
+        text-transform: uppercase !important;
+        letter-spacing: 0.05em !important;
+        margin-bottom: 10px !important;
+        display: block !important;
+    }
+
+    .modern-input {
+        width: 100% !important;
+        background: #f1f5f9 !important;
+        border: 2px solid transparent !important;
+        border-radius: 16px !important;
+        padding: 16px 20px !important;
+        font-size: 1rem !important;
+        font-weight: 500 !important;
+        color: #1e293b !important;
+        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        box-sizing: border-box !important;
+        display: block !important; outline: none !important;
+    }
+
+    .modern-input:focus {
+        background: #ffffff !important;
+        border-color: #4f46e5 !important;
+        box-shadow: 0 0 0 5px rgba(79, 70, 229, 0.1) !important;
+    }
+
+    /* Modern Toggle Switch */
+    .toggle-wrapper {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        background: #f8fafc;
+        padding: 16px 24px;
+        border-radius: 20px;
+        border: 1px solid #e2e8f0;
+        cursor: pointer;
+        transition: all 0.2s;
+        height: 60px;
+    }
+
+    .toggle-wrapper:hover {
+        border-color: #4f46e5;
+        background: #ffffff;
+    }
+
+    .switch-v3 {
+        position: relative;
+        display: inline-block;
+        width: 52px;
+        height: 28px;
+    }
+
+    .switch-v3 input { opacity: 0; width: 0; height: 0; }
+
+    .slider-v3 {
+        position: absolute; cursor: pointer;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background-color: #cbd5e1;
+        transition: .4s;
+        border-radius: 34px;
+    }
+
+    .slider-v3:before {
+        position: absolute; content: "";
+        height: 20px; width: 20px;
+        left: 4px; bottom: 4px;
+        background-color: white;
+        transition: .4s;
+        border-radius: 50%;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    input:checked + .slider-v3 { background-color: #4f46e5; }
+    input:checked + .slider-v3:before { transform: translateX(24px); }
+
+    /* Button Styling */
+    .btn-lux {
+        background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+        color: #fff !important;
+        font-weight: 700 !important;
+        font-size: 1.1rem !important;
+        padding: 16px 40px !important;
+        border-radius: 18px !important;
+        border: none !important;
+        box-shadow: 0 10px 25px rgba(79, 70, 229, 0.3) !important;
+        transition: all 0.3s !important;
+        cursor: pointer !important;
+        display: flex !important;
+        align-items: center !important;
+        text-decoration: none !important;
+    }
+
+    .btn-lux:hover {
+        transform: translateY(-3px) !important;
+        box-shadow: 0 15px 35px rgba(79, 70, 229, 0.4) !important;
+        filter: brightness(1.1) !important;
+    }
+
+    .btn-secondary-lux {
+        color: #64748b !important;
+        font-weight: 600 !important;
+        text-decoration: none !important;
+        padding: 12px 24px !important;
+        border-radius: 14px !important;
+        transition: all 0.2s !important;
+        display: inline-flex !important;
+        align-items: center !important;
+    }
+
+    .btn-secondary-lux:hover {
+        color: #1e293b !important;
+        background: #f1f5f9 !important;
+    }
+
+    .error-lux {
+        color: #ef4444 !important;
+        font-size: 0.85rem !important;
+        margin-top: 8px !important;
+        font-weight: 600 !important;
+        display: flex !important;
+        align-items: center !important;
+    }
+
+    #div_end_date {
+        margin-top: 20px;
+        padding-top: 20px;
+        border-top: 2px dashed #f1f5f9;
+    }
+</style>
+
+<div id="master-container">
+    <div class="glass-card animate__animated animate__fadeInUp">
+        <!-- Header -->
+        <div class="card-accent-header">
+            <div class="mb-3">
+                <i class="fas fa-calendar-star fa-3x" style="color:rgba(255,255,255,0.9)"></i>
+            </div>
+            <h1>Crear Nuevo Evento</h1>
+            <p>Define una nueva actividad en el calendario escolar</p>
+        </div>
+
+        <!-- Form Body -->
+        <div class="form-section">
+            <form method="post" id="eventForm" novalidate>
+                {% csrf_token %}
+
+                <!-- Título -->
+                <div class="mb-5">
+                    <label class="modern-label">Nombre del Evento</label>
+                    {{ form.title }}
+                    {% if form.title.errors %}
+                        <div class="error-lux"><i class="fas fa-exclamation-circle mr-2"></i>{{ form.title.errors.0 }}</div>
+                    {% endif %}
+                </div>
+
+                <!-- Descripción -->
+                <div class="mb-5">
+                    <label class="modern-label">Descripción Detallada</label>
+                    {{ form.description }}
+                </div>
+
+                <!-- Fechas / Toggle -->
+                <div class="row align-items-end mb-2">
+                    <div class="col-md-6 mb-4 mb-md-0">
+                        <label class="modern-label">Fecha de Inicio</label>
+                        {{ form.start_date }}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="modern-label">¿Evento de varios días?</label>
+                        <div class="toggle-wrapper" id="toggle-trigger">
+                            <span class="font-weight-bold text-gray-700 small">Duración extendida</span>
+                            <span class="switch-v3">
+                                <input type="checkbox" name="has_end_date" id="id_has_end_date" {% if form.has_end_date.value %}checked{% endif %}>
+                                <span class="slider-v3"></span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Fecha de Fin (Dinámica) -->
+                <div id="div_end_date" style="display: none;">
+                    <div class="mb-4">
+                        <label class="modern-label text-indigo">Fecha de Finalización</label>
+                        {{ form.end_date }}
+                        {% if form.end_date.errors %}
+                            <div class="error-lux"><i class="fas fa-exclamation-circle mr-2"></i>{{ form.end_date.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Bottom Actions -->
+                <div class="d-flex align-items-center justify-content-between mt-5 pt-4 border-top">
+                    <a href="{% url 'events:calendar' %}" class="btn-secondary-lux">
+                        <i class="fas fa-arrow-left mr-2"></i> Volver
+                    </a>
+                    <button type="submit" class="btn-lux">
+                        <i class="fas fa-save mr-2"></i> Guardar Actividad
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="text-center mt-5">
+        <p class="text-muted font-weight-bold small">SISTEMA INTEGRADO ESCOLAR v3.0</p>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const hasEndDateSwitch = document.getElementById('id_has_end_date');
+        const endDateDiv = document.getElementById('div_end_date');
+        const toggleTrigger = document.getElementById('toggle-trigger');
+        const inputs = document.querySelectorAll('input:not([type="checkbox"]), textarea');
+        
+        // Force modern classes on Django widgets
+        inputs.forEach(input => {
+            input.classList.add('modern-input');
+        });
+
+        function updateEndDateState() {
+            if (hasEndDateSwitch.checked) {
+                endDateDiv.style.display = 'block';
+                endDateDiv.classList.remove('animate__fadeOutUp');
+                endDateDiv.classList.add('animate__animated', 'animate__fadeInDown');
+            } else {
+                endDateDiv.classList.remove('animate__fadeInDown');
+                endDateDiv.classList.add('animate__animated', 'animate__fadeOutUp');
+                setTimeout(() => { if(!hasEndDateSwitch.checked) endDateDiv.style.display = 'none'; }, 500);
+            }
+        }
+
+        toggleTrigger.addEventListener('click', function(e) {
+            if (e.target !== hasEndDateSwitch) {
+                hasEndDateSwitch.checked = !hasEndDateSwitch.checked;
+                updateEndDateState();
+            }
+        });
+
+        hasEndDateSwitch.addEventListener('change', updateEndDateState);
+        updateEndDateState();
+    });
+</script>
+{% endblock %}

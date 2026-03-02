@@ -22,7 +22,72 @@ from .models import (
     Section,
     TeacherCourseAssignment,
     calculate_mode_grade,
+    GradeSubmissionLock,
 )
+
+
+@role_required('admin', 'director')
+def manage_grade_locks(request):
+    """View for Director to see and toggle submission locks."""
+    active_year = AcademicYear.objects.filter(is_active=True).first()
+    if not active_year:
+        messages.error(request, "No hay un año académico activo.")
+        return redirect('academic_dashboard')
+
+    assignments = TeacherCourseAssignment.objects.filter(academic_year=active_year).select_related('teacher', 'course', 'section__grade')
+    periods = Period.objects.filter(academic_year=active_year).order_by('name')
+    
+    # Pre-build a lookup dictionary for locks: (teacher_id, course_id, section_id, period_id) -> is_locked
+    locks_qs = GradeSubmissionLock.objects.filter(period__academic_year=active_year)
+    lock_lookup = {
+        (l.teacher_id, l.course_id, l.section_id, l.period_id): l.is_locked
+        for l in locks_qs
+    }
+
+    # Flatten data for the template to avoid nested loops with complex lookups
+    lock_data = []
+    for assignment in assignments:
+        for period in periods:
+            key = (assignment.teacher_id, assignment.course_id, assignment.section_id, period.id)
+            is_locked = lock_lookup.get(key, False)
+            lock_data.append({
+                'assignment': assignment,
+                'period': period,
+                'is_locked': is_locked,
+                'key': f"{assignment.teacher_id}_{assignment.course_id}_{assignment.section_id}_{period.id}"
+            })
+    
+    context = {
+        'lock_data': lock_data,
+    }
+    return render(request, 'academic/manage_grade_locks.html', context)
+
+
+@role_required('admin', 'director')
+def toggle_grade_lock(request):
+    """Director toggles the lock for a specific submission."""
+    if request.method == 'POST':
+        teacher_id = request.POST.get('teacher_id')
+        course_id = request.POST.get('course_id')
+        section_id = request.POST.get('section_id')
+        period_id = request.POST.get('period_id')
+        action = request.POST.get('action') # 'lock' or 'unlock'
+
+        lock, created = GradeSubmissionLock.objects.update_or_create(
+            teacher_id=teacher_id,
+            course_id=course_id,
+            section_id=section_id,
+            period_id=period_id,
+            defaults={'is_locked': (action == 'lock')}
+        )
+        if action == 'unlock':
+            from django.utils import timezone
+            lock.last_unlocked_at = timezone.now()
+            lock.save()
+            
+        messages.success(request, f"Estado {'bloqueado' if action == 'lock' else 'habilitado'} correctamente.")
+    
+    return redirect('manage_grade_locks')
 
 
 @role_required('admin', 'director', 'teacher')
@@ -473,9 +538,24 @@ def teacher_competency_gradebook(request):
                 )
             }
 
+        # Check Lock Status
+        lock = GradeSubmissionLock.objects.filter(
+            teacher=selected_assignment.teacher,
+            course=selected_assignment.course,
+            section=selected_assignment.section,
+            period=selected_period
+        ).first()
+        is_locked = lock.is_locked if lock else False
+
         if request.method == 'POST':
+            if is_locked and request.user.role == 'teacher' and not request.user.is_superuser:
+                messages.error(request, "Las notas para esta unidad están bloquedas. Contacte al director.")
+                return redirect(f"{request.path}?assignment={selected_assignment.id}&period={selected_period.id}")
+
             valid_grades = {'AD', 'A', 'B', 'C'}
             with transaction.atomic():
+                # ... existing save logic ...
+                # (Keep the logic but wrap it in the lock check)
                 existing_records = {
                     (record.enrollment_id, record.indicator_id): record
                     for record in IndicatorGrade.objects.filter(
@@ -492,7 +572,6 @@ def teacher_competency_gradebook(request):
                             value = request.POST.get(field_name, '').strip().upper()
                             key = (enrollment.id, indicator.id)
                             current = existing_records.get(key)
-
                             if value in valid_grades:
                                 if current:
                                     if current.grade != value:
@@ -500,70 +579,59 @@ def teacher_competency_gradebook(request):
                                         current.save(update_fields=['grade'])
                                 else:
                                     IndicatorGrade.objects.create(
-                                        enrollment=enrollment,
-                                        indicator=indicator,
-                                        period=selected_period,
-                                        grade=value,
+                                        enrollment=enrollment, indicator=indicator,
+                                        period=selected_period, grade=value
                                     )
                             elif current:
                                 current.delete()
 
+                # Calculate final course grades
                 for enrollment in enrollments:
                     final_grade = _calculate_course_grade_from_indicators(
-                        enrollment,
-                        selected_assignment.course,
-                        selected_period
+                        enrollment, selected_assignment.course, selected_period
                     )
                     if final_grade:
                         GradeRecord.objects.update_or_create(
-                            enrollment=enrollment,
-                            course=selected_assignment.course,
-                            period=selected_period,
-                            defaults={'grade': final_grade}
+                            enrollment=enrollment, course=selected_assignment.course,
+                            period=selected_period, defaults={'grade': final_grade}
                         )
                     else:
                         GradeRecord.objects.filter(
-                            enrollment=enrollment,
-                            course=selected_assignment.course,
+                            enrollment=enrollment, course=selected_assignment.course,
                             period=selected_period
                         ).delete()
+                
+                # Automatically LOCK if finalizing (checking for a 'finalize' button)
+                if request.POST.get('finalize'):
+                    lock_obj, _ = GradeSubmissionLock.objects.get_or_create(
+                        teacher=selected_assignment.teacher, course=selected_assignment.course,
+                        section=selected_assignment.section, period=selected_period
+                    )
+                    lock_obj.is_locked = True
+                    lock_obj.save()
+                    messages.success(request, "Notas finalizadas y bloqueadas.")
+                else:
+                    messages.success(request, "Borrador de notas guardado.")
 
-            messages.success(request, "Notas por indicadores guardadas correctamente.")
-            return redirect(
-                f"{request.path}?assignment={selected_assignment.id}&period={selected_period.id}"
-            )
+            return redirect(f"{request.path}?assignment={selected_assignment.id}&period={selected_period.id}")
 
         for enrollment in enrollments:
             blocks = []
             competency_grades = []
             for block in competency_blocks:
+                # ... Cell logic ...
                 cells = []
                 indicator_grades = []
                 for indicator in block['indicators']:
                     score_key = f"{enrollment.id}_{indicator.id}"
                     value = score_values.get(score_key, '')
-                    if value:
-                        indicator_grades.append(value)
-                    cells.append({
-                        'indicator': indicator,
-                        'field_name': f"score_{score_key}",
-                        'value': value,
-                    })
-
+                    if value: indicator_grades.append(value)
+                    cells.append({'indicator': indicator, 'field_name': f"score_{score_key}", 'value': value})
                 competency_grade = calculate_mode_grade(indicator_grades) or '-'
-                if competency_grade != '-':
-                    competency_grades.append(competency_grade)
-                blocks.append({
-                    'competency': block['competency'],
-                    'cells': cells,
-                    'competency_grade': competency_grade,
-                })
+                if competency_grade != '-': competency_grades.append(competency_grade)
+                blocks.append({'competency': block['competency'], 'cells': cells, 'competency_grade': competency_grade})
 
-            rows.append({
-                'enrollment': enrollment,
-                'blocks': blocks,
-                'course_grade': calculate_mode_grade(competency_grades) or '-',
-            })
+            rows.append({'enrollment': enrollment, 'blocks': blocks, 'course_grade': calculate_mode_grade(competency_grades) or '-'})
 
     context = {
         'assignments': assignments,
@@ -574,6 +642,7 @@ def teacher_competency_gradebook(request):
         'rows': rows,
         'grade_options': GradeRecord.GRADE_SCALE,
         'has_competencies': bool(competencies),
+        'is_locked': is_locked,
     }
     return render(request, 'academic/teacher_gradebook.html', context)
 

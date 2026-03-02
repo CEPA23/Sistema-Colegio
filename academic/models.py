@@ -220,3 +220,20 @@ class IndicatorGrade(models.Model):
 
     def __str__(self):
         return f"{self.enrollment} - {self.indicator} - {self.grade}"
+
+
+class GradeSubmissionLock(models.Model):
+    teacher = models.ForeignKey('accounts.User', on_delete=models.CASCADE)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    section = models.ForeignKey(Section, on_delete=models.CASCADE)
+    period = models.ForeignKey(Period, on_delete=models.CASCADE)
+    is_locked = models.BooleanField(default=False, verbose_name="¿Bloqueado?")
+    last_unlocked_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        unique_together = ('teacher', 'course', 'section', 'period')
+        verbose_name = "Bloqueo de Notas"
+        verbose_name_plural = "Bloqueos de Notas"
+
+    def __str__(self):
+        return f"{self.teacher} - {self.course} - {self.period} - {'Locked' if self.is_locked else 'Free'}"

@@ -28,6 +28,7 @@ urlpatterns = [
     path('payments/', include('finance.urls')),
     path('attendance/', include('attendance.urls')),
     path('inventario/', include('inventory.urls')),
+    path('eventos/', include('events.urls')),
 ]
 
 if settings.DEBUG:

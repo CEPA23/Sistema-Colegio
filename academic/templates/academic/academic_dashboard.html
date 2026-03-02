@@ -137,6 +137,11 @@
         <a href="{% url 'report_card' %}" class="module-btn">
             <span class="mb-icon">📄</span> Generar Boletas
         </a>
+        {% if request.user.role == 'admin' or request.user.role == 'director' or request.user.is_superuser %}
+        <a href="{% url 'manage_grade_locks' %}" class="module-btn" style="border-color: #fca5a5; background: #fff1f2;">
+            <span class="mb-icon">🔒</span> Control de Bloqueos
+        </a>
+        {% endif %}
     </div>
 </section>
 {% endblock %}

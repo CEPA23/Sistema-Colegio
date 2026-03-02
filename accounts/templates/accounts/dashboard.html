@@ -174,6 +174,23 @@
     </div>
 </div>
 
+{% if upcoming_events %}
+<div class="calendar-reminder" style="background: #fff; border: 1px solid #e0e7ff; border-left: 5px solid #4f46e5; border-radius: 12px; padding: 18px 24px; box-shadow: 0 4px 15px rgba(0,0,0,0.04); margin-bottom: 24px; display: flex; align-items: center; gap: 16px;">
+    <div style="font-size: 1.8rem; background: #f5f3ff; width: 52px; height: 52px; display: flex; align-items: center; justify-content: center; border-radius: 12px;">📅</div>
+    <div style="flex: 1;">
+        <p style="margin: 0 0 4px; font-weight: 700; font-size: 0.95rem; color: #1e1b4b;">Recordatorio de Eventos Próximos (3 días)</p>
+        <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+            {% for event in upcoming_events %}
+            <span style="background: #f8fafc; color: #475569; border: 1px solid #e2e8f0; padding: 5px 12px; border-radius: 8px; font-size: 0.8rem;">
+                <strong style="color: #4f46e5;">{{ event.title }}</strong> - {{ event.start_date|date:"l d" }}
+            </span>
+            {% endfor %}
+        </div>
+    </div>
+    <a href="{% url 'events:calendar' %}" style="background: #4f46e5; color: #fff; font-weight: 700; border-radius: 10px; padding: 10px 20px; font-size: 0.85rem; text-decoration: none;">Ver Calendario</a>
+</div>
+{% endif %}
+
 {% if request.user.role == 'admin' or request.user.role == 'director' or request.user.is_superuser %}
 <section class="revenue-grid">
     <div class="card">

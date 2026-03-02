@@ -18,6 +18,8 @@ from .views import (
     student_report_pdf,
     teacher_competency_gradebook,
     auto_assign_poly_courses,
+    manage_grade_locks,
+    toggle_grade_lock,
 )
 
 
@@ -38,5 +40,7 @@ urlpatterns = [
     path('report-course/', course_report, name='course_report'),
     path('report-period/', period_report, name='period_report'),
     path('teacher/competencies/', teacher_competency_gradebook, name='teacher_competency_gradebook'),
+    path('teacher/locks/', manage_grade_locks, name='manage_grade_locks'),
+    path('teacher/locks/toggle/', toggle_grade_lock, name='toggle_grade_lock'),
     path('courses/auto-assign-poly/', auto_assign_poly_courses, name='auto_assign_poly_courses'),
 ]

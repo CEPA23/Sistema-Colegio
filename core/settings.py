@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'finance',
     'attendance',
     'inventory',
+    'events',
 ]
 
 MIDDLEWARE = [

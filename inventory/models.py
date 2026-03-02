@@ -26,6 +26,7 @@ class Product(models.Model):
     stock = models.PositiveIntegerField(default=0, verbose_name='Stock actual')
     stock_min = models.PositiveIntegerField(default=5, verbose_name='Stock mínimo')
     stock_max = models.PositiveIntegerField(default=100, verbose_name='Stock máximo')
+    barcode = models.ImageField(upload_to='barcodes/', blank=True, null=True, verbose_name='Código de Barras')
     is_active = models.BooleanField(default=True, verbose_name='Activo')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -37,6 +38,38 @@ class Product(models.Model):
 
     def __str__(self):
         return f'[{self.code}] {self.name}'
+
+    def save(self, *args, **kwargs):
+        # Si ya existe el objeto, verificamos si el código cambió
+        if self.pk:
+            old_instance = Product.objects.get(pk=self.pk)
+            code_changed = old_instance.code != self.code
+        else:
+            code_changed = True
+
+        if code_changed or not self.barcode:
+            import barcode
+            from barcode.writer import ImageWriter
+            from io import BytesIO
+            from django.core.files import File
+            
+            try:
+                # Usar Code128 para mayor compatibilidad con cualquier texto
+                CODE128 = barcode.get_barcode_class('code128')
+                code_obj = CODE128(str(self.code), writer=ImageWriter())
+                buffer = BytesIO()
+                code_obj.write(buffer)
+                
+                # Nombre del archivo
+                filename = f'barcode_{self.code}.png'
+                
+                # Importante: save=False para evitar recursión infinita
+                self.barcode.save(filename, File(buffer), save=False)
+            except Exception as e:
+                # Si falla (ej: caracteres no soportados), loguear y continuar
+                print(f"Error generando código de barras para {self.code}: {e}")
+
+        super().save(*args, **kwargs)
 
     @property
     def is_low_stock(self):

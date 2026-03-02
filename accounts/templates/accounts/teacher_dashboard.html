@@ -125,7 +125,73 @@
             <p>Genera las boletas de rendimiento de tus alumnos.</p>
         </div>
     </a>
+    <a href="{% url 'events:calendar' %}" class="big-action-card">
+        <div class="action-icon" style="background:#fff7ed; color:#ea580c;">📅</div>
+        <div class="action-info">
+            <h3>Eventos</h3>
+            <p>Calendario escolar y actividades programadas.</p>
+        </div>
+    </a>
 </div>
+
+{% if upcoming_events %}
+<div class="alert-calendar-notification mb-4">
+    <div class="d-flex align-items-center gap-3">
+        <div class="notif-icon">🔔</div>
+        <div>
+            <h4 class="mb-1 font-weight-bold" style="font-size: 0.95rem; color: #1e1b4b;">Recordatorio de Eventos Próximos</h4>
+            <div class="d-flex flex-wrap gap-2">
+                {% for event in upcoming_events %}
+                <span class="badge badge-event-reminder">
+                    <strong>{{ event.title }}</strong> - {{ event.start_date|date:"D d M" }}
+                </span>
+                {% endfor %}
+            </div>
+        </div>
+        <a href="{% url 'events:calendar' %}" class="btn btn-sm btn-indigo ml-auto">Ver Calendario</a>
+    </div>
+</div>
+
+<style>
+    .alert-calendar-notification {
+        background: linear-gradient(135deg, #eef2ff 0%, #e0e7ff 100%);
+        border: 1px solid #c7d2fe;
+        border-radius: 12px;
+        padding: 16px 20px;
+        box-shadow: 0 4px 12px rgba(99, 102, 241, 0.08);
+    }
+    .notif-icon {
+        font-size: 1.8rem;
+        background: #fff;
+        width: 48px;
+        height: 48px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 12px;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    }
+    .badge-event-reminder {
+        background: #fff;
+        color: #4338ca;
+        border: 1px solid #e0e7ff;
+        padding: 6px 12px;
+        border-radius: 8px;
+        font-size: 0.8rem;
+    }
+    .btn-indigo {
+        background: #4f46e5;
+        color: #fff;
+        font-weight: 600;
+        border-radius: 8px;
+        padding: 6px 16px;
+    }
+    .btn-indigo:hover {
+        background: #4338ca;
+        color: #fff;
+    }
+</style>
+{% endif %}
 
 <!-- Assigned courses -->
 <section id="mis-cursos" class="card">

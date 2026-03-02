@@ -1,0 +1,364 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<!-- Fonts & Icons -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<style>
+    /* Absolute Font Force */
+    /* Absolute Font Force - EXCLUDING ICONS & FullCalendar */
+    #calendar-master-container :not(i):not([class*="fa-"]):not(.fc-icon):not([class*="fc-"]) { 
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important; 
+    }
+
+    body { background-color: #f8fafc !important; }
+
+    #calendar-master-container {
+        padding: 40px 20px;
+    }
+
+    /* Premium Header */
+    .header-lux {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 40px;
+        padding: 0 10px;
+    }
+
+    .header-lux-title h1 {
+        font-weight: 800 !important;
+        letter-spacing: -1.5px !important;
+        color: #1e293b !important;
+        margin-bottom: 5px !important;
+        font-size: 2.2rem !important;
+    }
+
+    .header-lux-title p {
+        color: #64748b !important;
+        font-weight: 500 !important;
+        font-size: 1.05rem !important;
+        margin: 0 !important;
+    }
+
+    .icon-symbol {
+        background: #eff6ff;
+        color: #3b82f6;
+        width: 64px;
+        height: 64px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 20px;
+        margin-right: 20px;
+        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.1);
+    }
+
+    /* Button Styling */
+    .btn-create-lux {
+        background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+        color: #fff !important;
+        font-weight: 700 !important;
+        padding: 12px 24px !important;
+        border-radius: 16px !important;
+        border: none !important;
+        box-shadow: 0 8px 16px rgba(79, 70, 229, 0.25) !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        gap: 12px !important; /* Proper spacing using gap */
+        text-decoration: none !important;
+        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+        cursor: pointer !important;
+    }
+
+    .btn-create-lux i {
+        font-size: 1.25rem !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+    }
+
+    .btn-create-lux:hover {
+        transform: translateY(-2px) !important;
+        box-shadow: 0 12px 24px rgba(79, 70, 229, 0.35) !important;
+        filter: brightness(1.1) !important;
+    }
+
+    /* Layout Grid */
+    .calendar-layout {
+        display: grid;
+        grid-template-columns: 1fr 320px;
+        gap: 30px;
+    }
+
+    @media (max-width: 1200px) {
+        .calendar-layout { grid-template-columns: 1fr; }
+    }
+
+    /* Calendar Card */
+    .calendar-card {
+        background: #ffffff;
+        border-radius: 28px;
+        border: none;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.04);
+        padding: 30px;
+        overflow: hidden;
+    }
+
+    /* Sidebar / Notification Styling */
+    .sidebar-lux {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .sidebar-card {
+        background: #ffffff;
+        border-radius: 24px;
+        padding: 24px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+        border: 1px solid rgba(0,0,0,0.02);
+        transition: all 0.3s ease;
+    }
+
+    .sidebar-card h3 {
+        display: flex !important;
+        align-items: center !important;
+        gap: 12px !important;
+        margin-bottom: 24px !important;
+        font-size: 1.15rem !important;
+        color: #1e293b !important;
+        font-weight: 800 !important;
+    }
+
+    .sidebar-card h3 i {
+        min-width: 24px;
+        display: flex;
+        justify-content: center;
+    }
+
+    .sidebar-card-alt {
+        background: linear-gradient(135deg, #f8fafc 0%, #eff6ff 100%) !important;
+        border: 1px solid #dbeafe !important;
+    }
+
+    .stat-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 5px 0;
+        margin-bottom: 8px;
+    }
+
+    .stat-label {
+        font-size: 0.88rem;
+        font-weight: 700;
+        color: #475569;
+    }
+
+    .stat-badge {
+        background: #3b82f6;
+        color: white;
+        padding: 6px 14px;
+        border-radius: 12px;
+        font-weight: 800;
+        font-size: 0.9rem;
+        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25);
+        transition: transform 0.2s;
+    }
+
+    .stat-badge:hover {
+        transform: scale(1.1);
+    }
+
+    .upcoming-item {
+        padding: 15px;
+        border-radius: 16px;
+        background: #f8fafc;
+        margin-bottom: 12px;
+        border-left: 4px solid #4f46e5;
+        transition: all 0.2s;
+    }
+
+    .upcoming-item:hover {
+        transform: translateX(5px);
+        background: #eff6ff;
+    }
+
+    .upcoming-item .date-tag {
+        font-size: 0.7rem;
+        font-weight: 800;
+        color: #4f46e5;
+        text-transform: uppercase;
+        margin-bottom: 4px;
+        display: block;
+    }
+
+    .upcoming-item h4 {
+        font-size: 0.95rem;
+        font-weight: 700;
+        color: #1e293b;
+        margin: 0;
+    }
+
+    /* FullCalendar Customization */
+    .fc { font-family: 'Inter', sans-serif !important; border: none !important; }
+    
+    .fc .fc-toolbar-title {
+        font-weight: 800 !important;
+        color: #1e293b !important;
+        font-size: 1.5rem !important;
+        text-transform: capitalize !important;
+    }
+
+    .fc .fc-button-primary {
+        background: #f8fafc !important;
+        border: 1px solid #e2e8f0 !important;
+        color: #64748b !important;
+        font-weight: 600 !important;
+        border-radius: 12px !important;
+        padding: 8px 16px !important;
+        transition: all 0.2s !important;
+    }
+
+    .fc .fc-button-primary:hover {
+        background: #f1f5f9 !important;
+        color: #1e293b !important;
+    }
+
+    .fc .fc-button-active {
+        background: #4f46e5 !important;
+        border-color: #4f46e5 !important;
+        color: white !important;
+    }
+
+    .fc-col-header-cell {
+        background: #f8fafc !important;
+        padding: 15px 0 !important;
+        border: none !important;
+        text-transform: uppercase !important;
+        font-size: 0.7rem !important;
+        letter-spacing: 1px !important;
+        font-weight: 700 !important;
+        color: #64748b !important;
+    }
+
+    .fc-theme-standard td, .fc-theme-standard th {
+        border-color: #f1f5f9 !important;
+    }
+
+    .fc-event {
+        border-radius: 8px !important;
+        padding: 2px 8px !important;
+        font-size: 0.8rem !important;
+        font-weight: 600 !important;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.05) !important;
+        border: none !important;
+    }
+    .fc-event:hover {
+        transform: scale(1.02) !important;
+        filter: brightness(1.05);
+        z-index: 99 !important;
+    }
+
+    /* Small Screen Adjustments */
+    @media (max-width: 640px) {
+        .header-lux { flex-direction: column; align-items: flex-start; gap: 20px; }
+        .icon-symbol { display: none; }
+        .btn-create-lux { width: 100%; justify-content: center; }
+        #calendar-master-container { padding: 20px 10px; }
+    }
+</style>
+
+<div id="calendar-master-container">
+    <!-- Header -->
+    <div class="header-lux">
+        <div class="d-flex align-items-center header-lux-title">
+            <div class="icon-symbol">
+                <i class="fa-solid fa-calendar-days fa-2xl"></i>
+            </div>
+            <div>
+                <h1>Planificador de Eventos</h1>
+                <p>Gestiona todas las actividades escolares</p>
+            </div>
+        </div>
+        {% if is_director %}
+        <div>
+            <a href="{% url 'events:event_create' %}" class="btn-create-lux">
+                <i class="fa-solid fa-circle-plus mr-2 fa-lg"></i> Programar Actividad
+            </a>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Main Content Layout -->
+    <div class="calendar-layout">
+        <!-- Calendar Section -->
+        <div class="calendar-card">
+            <div id="calendar"></div>
+        </div>
+
+        <!-- Sidebar Section -->
+        <div class="sidebar-lux">
+            <div class="sidebar-card">
+                <h3><i class="fa-solid fa-bell text-warning"></i>Próximos (3 días)</h3>
+                {% if upcoming_events %}
+                    {% for event in upcoming_events %}
+                    <div class="upcoming-item">
+                        <span class="date-tag">{{ event.start_date|date:"d M" }}</span>
+                        <h4>{{ event.title }}</h4>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="text-center py-4">
+                        <i class="fa-solid fa-calendar-check fa-3x text-muted opacity-25 mb-3" style="display:block;"></i>
+                        <p class="text-muted small px-3">No hay eventos próximos en los siguientes 3 días.</p>
+                    </div>
+                {% endif %}
+            </div>
+            
+            <div class="sidebar-card sidebar-card-alt">
+                <h3><i class="fa-solid fa-chart-simple text-primary"></i>Estadísticas</h3>
+                <div class="stat-row">
+                    <span class="stat-label">Eventos del mes</span>
+                    <span class="stat-badge">{{ month_events_count|default:0 }}</span>
+                </div>
+                <p class="small text-muted mt-3 mb-0" style="font-size: 0.75rem; line-height: 1.4;">Resumen mensual total del calendario escolar activo.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- FullCalendar Dependencies -->
+<link href='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css' rel='stylesheet' />
+<script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js'></script>
+<script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/locales/es.js'></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var calendarEl = document.getElementById('calendar');
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            locale: 'es',
+            initialView: 'dayGridMonth',
+            headerToolbar: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'dayGridMonth,timeGridWeek'
+            },
+            themeSystem: 'standard',
+            events: '{% url "events:event_json" %}',
+            eventDisplay: 'block',
+            height: 'auto',
+            dayMaxEvents: true,
+            nowIndicator: true,
+            eventClick: function(info) {
+                alert('Detalles: ' + info.event.title);
+            }
+        });
+        calendar.render();
+    });
+</script>
+{% endblock %}

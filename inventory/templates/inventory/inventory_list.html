@@ -63,6 +63,11 @@
 .stock-agotado { background: #fee2e2; color: #991b1b; }
 .stock-maximo  { background: #ede9fe; color: #4c1d95; }
 
+.stock-value { font-size: 1rem; }
+.status-agotado { color: #dc2626; }
+.status-minimo  { color: #d97706; }
+.status-normal, .status-maximo { color: #16a34a; }
+
 .category-pill {
     display: inline-flex; align-items: center; gap: 5px;
     padding: 3px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; background: #f1f5f9; color: #475569;
@@ -122,6 +127,7 @@
     <a href="{% url 'inventory_sale' %}" class="btn-inv btn-sale-inv">🛒 Venta rápida</a>
     <a href="{% url 'movement_history' %}" class="btn-inv btn-history-inv">📋 Movimientos</a>
     {% if request.user.role == 'admin' or request.user.role == 'director' or request.user.is_superuser %}
+    <a href="{% url 'inventory_export_csv' %}" class="btn-inv btn-history-inv" style="background:#fff;">📥 Exportar CSV</a>
     <a href="{% url 'product_create' %}" class="btn-inv btn-primary-inv">＋ Nuevo producto</a>
     {% endif %}
 </div>
@@ -133,6 +139,7 @@
                 <th>ID / Código</th>
                 <th>Producto</th>
                 <th>Categoría</th>
+                <th>Barras</th>
                 <th>Precio</th>
                 <th>Stock</th>
                 <th>Mín.</th>
@@ -152,9 +159,19 @@
                     {% endif %}
                 </td>
                 <td><span class="category-pill">{{ product.get_category_display }}</span></td>
+                <td>
+                    {% if product.barcode %}
+                        <div class="d-flex flex-column align-items-center">
+                            <img src="{{ product.barcode.url }}" alt="BC" style="height:35px; min-width:80px; filter: contrast(1.2);">
+                            <a href="{% url 'product_barcode_download' product.pk %}" class="text-primary x-small mt-1" style="font-size:0.6rem; font-weight:700; text-decoration:none;">⬇ DESCARGAR</a>
+                        </div>
+                    {% else %}
+                        <span style="color:#94a3b8; font-size:0.7rem;">N/A</span>
+                    {% endif %}
+                </td>
                 <td><strong>S/ {{ product.price }}</strong></td>
                 <td>
-                    <strong style="font-size:1rem;{% if product.stock_status == 'agotado' %}color:#dc2626;{% elif product.stock_status == 'minimo' %}color:#d97706;{% else %}color:#16a34a;{% endif %}">
+                    <strong class="stock-value status-{{ product.stock_status }}">
                         {{ product.stock }}
                     </strong>
                 </td>
@@ -184,7 +201,7 @@
             </tr>
             {% empty %}
             <tr>
-                <td colspan="9">
+                <td colspan="10">
                     <div class="empty-state">
                         <div class="es-icon">📭</div>
                         <p><strong>No hay productos registrados</strong></p>

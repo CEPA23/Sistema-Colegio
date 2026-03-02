@@ -1,8 +1,8 @@
 from django.contrib import messages
 from django.db import transaction
-from django.db.models import Q
+from django.db.models import Q, F
 from django.shortcuts import get_object_or_404, redirect, render
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse, FileResponse
 
 from accounts.decorators import role_required
 from .forms import ProductForm, StockAdjustmentForm, SaleForm
@@ -13,15 +13,8 @@ from .models import Product, StockMovement
 # Helpers
 # ──────────────────────────────────────────────
 
-def _low_stock_products():
-    """Return products at or below minimum stock."""
-    return Product.objects.filter(is_active=True, stock__lte=Q(stock_min=None)).none() or \
-           Product.objects.filter(is_active=True).extra(where=['stock <= stock_min'])
-
-
-def get_low_stock_products():
-    """Products whose stock is at or below stock_min."""
-    from django.db.models import F
+def get_low_stock_products_qs():
+    """Returns the queryset of active products that are at or below minimum stock."""
     return Product.objects.filter(is_active=True, stock__lte=F('stock_min'))
 
 
@@ -65,9 +58,8 @@ def _increase_stock(product, quantity, movement_type=StockMovement.TYPE_IN, refe
 # Inventory dashboard / product list
 # ──────────────────────────────────────────────
 
-@role_required('admin', 'director', 'secretary')
+@role_required('admin', 'director', 'secretary', 'teacher')
 def inventory_list(request):
-    from django.db.models import F
     query = request.GET.get('q', '').strip()
     category = request.GET.get('category', '').strip()
 
@@ -77,7 +69,8 @@ def inventory_list(request):
     if category:
         products = products.filter(category=category)
 
-    low_stock = products.filter(stock__lte=F('stock_min'))
+    # Use the helper for consistency
+    low_stock = get_low_stock_products_qs()
     out_of_stock = products.filter(stock=0)
 
     context = {
@@ -101,7 +94,6 @@ def product_create(request):
     form = ProductForm(request.POST or None)
     if request.method == 'POST' and form.is_valid():
         product = form.save()
-        # Log initial stock as entry movement
         if product.stock > 0:
             StockMovement.objects.create(
                 product=product,
@@ -124,7 +116,6 @@ def product_edit(request, pk):
     form = ProductForm(request.POST or None, instance=product)
     if request.method == 'POST' and form.is_valid():
         product = form.save()
-        # If admin manually changed stock through form, record adjustment
         new_stock = product.stock
         if new_stock != old_stock:
             diff = new_stock - old_stock
@@ -185,7 +176,7 @@ def stock_adjust(request, pk):
 
 
 # ──────────────────────────────────────────────
-# Quick Sale (venta directa desde inventario)
+# Quick Sale
 # ──────────────────────────────────────────────
 
 @role_required('admin', 'director', 'secretary')
@@ -198,7 +189,7 @@ def inventory_sale(request):
         try:
             with transaction.atomic():
                 _discount_stock(product, qty, reference=ref or 'Venta directa', user=request.user)
-            messages.success(request, f'Venta registrada: {qty} x "{product.name}". Stock restante: {product.stock}.')
+            messages.success(request, f'Venta registrada: {qty} x "{product.name}".')
         except ValueError as exc:
             form.add_error('quantity', str(exc))
             return render(request, 'inventory/inventory_sale.html', {'form': form})
@@ -207,34 +198,48 @@ def inventory_sale(request):
 
 
 # ──────────────────────────────────────────────
-# Movement history
+# History
 # ──────────────────────────────────────────────
 
 @role_required('admin', 'director', 'secretary')
 def movement_history(request, pk=None):
     if pk:
         product = get_object_or_404(Product, pk=pk)
-        movements = StockMovement.objects.filter(product=product).select_related('product', 'created_by')
+        movements = StockMovement.objects.filter(product=product).select_related('product', 'created_by').order_by('-created_at')
         title = f'Movimientos: {product.name}'
     else:
         product = None
-        movements = StockMovement.objects.select_related('product', 'created_by').all()[:200]
+        movements = StockMovement.objects.select_related('product', 'created_by').order_by('-created_at')[:200]
         title = 'Historial de Movimientos'
-    return render(request, 'inventory/movement_history.html', {
-        'movements': movements,
-        'product': product,
-        'title': title,
-    })
+    return render(request, 'inventory/movement_history.html', {'movements': movements, 'product': product, 'title': title})
 
 
 # ──────────────────────────────────────────────
-# Alert API – used to show badge in navbar
+# APIs & Exports
 # ──────────────────────────────────────────────
 
 @role_required('admin', 'director', 'secretary')
 def low_stock_alert_api(request):
-    from django.db.models import F
-    low = Product.objects.filter(is_active=True, stock__lte=F('stock_min')).values(
-        'id', 'code', 'name', 'stock', 'stock_min'
-    )
+    low = get_low_stock_products_qs().values('id', 'code', 'name', 'stock', 'stock_min')
     return JsonResponse({'count': low.count(), 'products': list(low)})
+
+
+@role_required('admin', 'director', 'secretary')
+def inventory_export_csv(request):
+    import csv
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="inventario_escolar.csv"'
+    writer = csv.writer(response)
+    writer.writerow(['Código', 'Producto', 'Categoría', 'Precio', 'Stock', 'Mínimo', 'Estado'])
+    for p in Product.objects.filter(is_active=True):
+        writer.writerow([p.code, p.name, p.get_category_display(), p.price, p.stock, p.stock_min, p.stock_status.upper()])
+    return response
+
+
+@role_required('admin', 'director', 'secretary')
+def product_barcode_download(request, pk):
+    product = get_object_or_404(Product, pk=pk)
+    if not product.barcode:
+        messages.error(request, "Sin código de barras.")
+        return redirect('inventory_list')
+    return FileResponse(product.barcode.open(), content_type='image/png', as_attachment=True, filename=f"barcode_{product.code}.png")

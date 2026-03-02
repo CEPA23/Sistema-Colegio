@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+
+{% block title %}Gestión de Bloqueos de Notas | Sistema Escolar{% endblock %}
+
+{% block content %}
+<section class="card">
+    <div class="section-head">
+        <div>
+            <h1>Gestión de Bloqueos de Notas</h1>
+            <p class="muted">Habilita o deshabilita la subida de notas para los docentes.</p>
+        </div>
+        <a href="{% url 'academic_dashboard' %}" class="btn btn-subtle">Volver al Panel</a>
+    </div>
+
+    <div class="table-wrap">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Docente</th>
+                    <th>Curso</th>
+                    <th>Sección</th>
+                    <th>Periodo</th>
+                    <th>Estado</th>
+                    <th>Acción</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in lock_data %}
+                <tr>
+                    <td><strong>{{ item.assignment.teacher.get_full_name|default:item.assignment.teacher.username }}</strong></td>
+                    <td>{{ item.assignment.course.name }}</td>
+                    <td>{{ item.assignment.section.grade.name }} {{ item.assignment.section.name }}</td>
+                    <td>{{ item.period.name }}</td>
+                    <td>
+                        {% if item.is_locked %}
+                            <span class="badge badge-error"><i class="fas fa-lock mr-1"></i> BLOQUEADO</span>
+                        {% else %}
+                            <span class="badge badge-success"><i class="fas fa-unlock mr-1"></i> HABILITADO</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <form method="post" action="{% url 'toggle_grade_lock' %}" style="margin:0;">
+                            {% csrf_token %}
+                            <input type="hidden" name="teacher_id" value="{{ item.assignment.teacher_id }}">
+                            <input type="hidden" name="course_id" value="{{ item.assignment.course_id }}">
+                            <input type="hidden" name="section_id" value="{{ item.assignment.section_id }}">
+                            <input type="hidden" name="period_id" value="{{ item.period.id }}">
+                            
+                            {% if item.is_locked %}
+                                <button type="submit" name="action" value="unlock" class="btn btn-sm btn-subtle" style="color:#059669; border-color:#059669;">
+                                    <i class="fas fa-key mr-1"></i> Habilitar Edición
+                                </button>
+                            {% else %}
+                                <button type="submit" name="action" value="lock" class="btn btn-sm btn-error">
+                                    <i class="fas fa-lock mr-1"></i> Bloquear Ahora
+                                </button>
+                            {% endif %}
+                        </form>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="6" class="empty-state">No hay datos de asignaciones.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<style>
+    .badge-error { background: #fee2e2; color: #991b1b; padding: 4px 8px; border-radius: 6px; font-weight: 700; font-size: 0.75rem; }
+    .badge-success { background: #dcfce7; color: #166534; padding: 4px 8px; border-radius: 6px; font-weight: 700; font-size: 0.75rem; }
+    .btn-error { background: #ef4444; color: white; border: none; padding: 6px 12px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+    .btn-error:hover { background: #dc2626; color: white; transform: scale(1.05); }
+    .btn-sm { font-size: 0.8rem; }
+</style>
+{% endblock %}
