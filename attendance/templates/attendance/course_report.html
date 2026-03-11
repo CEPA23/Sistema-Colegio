@@ -11,59 +11,104 @@
 
     <form method="get" class="form-grid" style="margin-bottom: 14px;">
         <div>
-            <label for="section">Seccion</label>
-            <select id="section" name="section">
-                <option value="">Todos</option>
-                {% for item in sections %}
-                    <option value="{{ item.id }}" {% if section_id == item.id|stringformat:'s' %}selected{% endif %}>
-                        {{ item.grade.name }} {{ item.name }}
-                    </option>
-                {% endfor %}
-            </select>
+            <label for="{{ filter_form.date.id_for_label }}">{{ filter_form.date.label }}</label>
+            {{ filter_form.date }}
+            {% if filter_form.date.errors %}
+                <div class="field-errors">
+                    {% for error in filter_form.date.errors %}
+                        <div>{{ error }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
         </div>
+
+        {% if not auto_section_mode %}
+            <div>
+                <label for="{{ filter_form.section.id_for_label }}">{{ filter_form.section.label }}</label>
+                {{ filter_form.section }}
+                {% if filter_form.section.errors %}
+                    <div class="field-errors">
+                        {% for error in filter_form.section.errors %}
+                            <div>{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+        {% elif selected_section %}
+            <div>
+                <label>Grado / Seccion asignada</label>
+                <input type="text" value="{{ selected_section.grade.name }} {{ selected_section.name }}" readonly>
+            </div>
+        {% endif %}
+
         <div class="action-row">
             <button type="submit" class="btn btn-primary">Filtrar</button>
             <a href="{% url 'attendance_course_report' %}" class="btn btn-subtle">Limpiar</a>
+            {% if rows %}
+                <a href="{% url 'attendance_export_csv' %}?section={{ selected_section.id }}&date={{ selected_date|date:'Y-m-d' }}" class="btn btn-subtle">Exportar CSV</a>
+            {% endif %}
         </div>
     </form>
 
-    <div class="table-wrap">
-        <table>
-            <thead>
-                <tr>
-                    <th>Fecha</th>
-                    <th>Grado</th>
-                    <th>Seccion</th>
-                    <th>Registrado por</th>
-                    <th>Total</th>
-                    <th>Asistio</th>
-                    <th>Falto</th>
-                    <th>Justificado</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for row in summary %}
+    {% if selected_section %}
+        <div class="section-head" style="margin-top: 6px; margin-bottom: 10px;">
+            <h2>{{ selected_section.grade.name }} {{ selected_section.name }}</h2>
+            <span class="muted">{{ selected_date }}</span>
+        </div>
+
+        <div class="action-row" style="margin-bottom: 12px; gap: 12px;">
+            <span class="status-pill attendance-present">&#10003; {{ totals.present }} presentes</span>
+            <span class="status-pill attendance-absent">&#10005; {{ totals.absent }} faltas</span>
+            <span class="status-pill attendance-justified">&#10003; {{ totals.justified }} justificados</span>
+            <span class="status-pill attendance-missing">- {{ totals.missing }} sin registro</span>
+        </div>
+
+        <div class="table-wrap">
+            <table class="attendance-sheet">
+                <thead>
                     <tr>
-                        <td>{{ row.date }}</td>
-                        <td>{{ row.enrollment__section__grade__name|default:"-" }}</td>
-                        <td>{{ row.enrollment__section__name|default:"-" }}</td>
-                        <td>
-                            {% if row.recorded_by__first_name or row.recorded_by__last_name %}
-                                {{ row.recorded_by__first_name }} {{ row.recorded_by__last_name }}
-                            {% else %}
-                                {{ row.recorded_by__username|default:"-" }}
-                            {% endif %}
-                        </td>
-                        <td>{{ row.total }}</td>
-                        <td>{{ row.present }}</td>
-                        <td>{{ row.absent }}</td>
-                        <td>{{ row.justified }}</td>
+                        <th style="min-width: 240px;">Alumno</th>
+                        <th style="width: 120px;">Presente</th>
+                        <th style="width: 120px;">Falta</th>
+                        <th style="width: 150px;">Justificado</th>
+                        <th style="min-width: 320px;">Justificacion</th>
                     </tr>
-                {% empty %}
-                    <tr><td colspan="8">No hay informacion para mostrar.</td></tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
+                </thead>
+                <tbody>
+                    {% for row in rows %}
+                        <tr class="attendance-row">
+                            <td class="student-name">{{ row.enrollment.student }}</td>
+                            <td>
+                                <span class="attendance-choice attendance-choice-present {% if row.status == 'present' %}is-active{% endif %}" aria-hidden="true">
+                                    &#10003;
+                                </span>
+                            </td>
+                            <td>
+                                <span class="attendance-choice attendance-choice-absent {% if row.status == 'absent' %}is-active{% endif %}" aria-hidden="true">
+                                    &#10005;
+                                </span>
+                            </td>
+                            <td>
+                                <span class="attendance-choice attendance-choice-justified {% if row.status == 'justified' %}is-active{% endif %}" aria-hidden="true">
+                                    &#10003;
+                                </span>
+                            </td>
+                            <td>
+                                {% if row.note %}
+                                    <div class="attendance-note-text">{{ row.note }}</div>
+                                {% else %}
+                                    <span class="muted">-</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr><td colspan="5">No hay alumnos activos en esta seccion.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <p class="muted">Selecciona fecha y grado/seccion para ver el detalle de asistencia.</p>
+    {% endif %}
 </section>
 {% endblock %}

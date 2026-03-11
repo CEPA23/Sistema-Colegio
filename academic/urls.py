@@ -3,6 +3,7 @@ from django.urls import path
 from .views import (
     academic_dashboard,
     course_report,
+    course_report_export_excel,
     course_management,
     grade_management,
     section_management,
@@ -38,6 +39,7 @@ urlpatterns = [
     path('report/<int:enrollment_id>/', student_report, name='student_report'),
     path('report/<int:enrollment_id>/pdf/', student_report_pdf, name='student_report_pdf'),
     path('report-course/', course_report, name='course_report'),
+    path('report-course/export-excel/', course_report_export_excel, name='course_report_export_excel'),
     path('report-period/', period_report, name='period_report'),
     path('teacher/competencies/', teacher_competency_gradebook, name='teacher_competency_gradebook'),
     path('teacher/locks/', manage_grade_locks, name='manage_grade_locks'),

@@ -79,7 +79,7 @@
             </a>
         </div>
 
-        <form method="post">
+        <form method="post" id="gradebook-form">
             {% csrf_token %}
             <input type="hidden" name="assignment" value="{{ selected_assignment.id }}">
             <input type="hidden" name="period" value="{{ selected_period.id }}">
@@ -90,8 +90,26 @@
                     <i class="fas fa-lock fa-2x"></i>
                     <div>
                         <strong style="display:block;">REGISTRO BLOQUEADO</strong>
-                        <span style="font-size: 0.85rem; opacity: 0.8;">Estas notas ya han sido finalizadas y no pueden modificarse. Consulte al director para habilitar cambios.</span>
+                        <span style="font-size: 0.85rem; opacity: 0.8;">Estas notas ya han sido finalizadas y no pueden modificarse. Solo director o admin pueden habilitar edicion.</span>
                     </div>
+                    {% if can_unlock_lock %}
+                        <input type="hidden" name="teacher_id" value="{{ selected_assignment.teacher_id }}">
+                        <input type="hidden" name="course_id" value="{{ selected_assignment.course_id }}">
+                        <input type="hidden" name="section_id" value="{{ selected_assignment.section_id }}">
+                        <input type="hidden" name="period_id" value="{{ selected_period.id }}">
+                        <input type="hidden" name="next" value="{{ lock_next_url }}">
+                        <button
+                            type="submit"
+                            name="action"
+                            value="unlock"
+                            formaction="{% url 'toggle_grade_lock' %}"
+                            formmethod="post"
+                            class="btn btn-subtle"
+                            style="color:#059669; border-color:#059669; margin-left:auto;"
+                        >
+                            Habilitar edicion (Admin/Director)
+                        </button>
+                    {% endif %}
                 </div>
                 {% endif %}
 
@@ -109,18 +127,18 @@
                                 {% for indicator in block.indicators %}
                                     <th>{{ indicator.name }}</th>
                                 {% endfor %}
-                                <th>Moda comp.</th>
+                                <th>Promedio comp.</th>
                             {% endfor %}
                         </tr>
                     </thead>
                     <tbody>
                         {% for row in rows %}
-                            <tr>
+                            <tr data-enrollment="{{ row.enrollment.id }}">
                                 <td>{{ row.enrollment.student }}</td>
                                     {% for block in row.blocks %}
                                         {% for cell in block.cells %}
                                             <td>
-                                                <select name="{{ cell.field_name }}" class="grade-select" style="min-width:72px;" {% if is_locked %}disabled{% endif %}>
+                                                <select name="{{ cell.field_name }}" class="grade-select" style="min-width:72px;" data-enrollment="{{ row.enrollment.id }}" data-competency="{{ block.competency.id }}" {% if not can_edit %}disabled{% endif %}>
                                                     <option value="">-</option>
                                                     {% for value, label in grade_options %}
                                                         <option value="{{ value }}" {% if cell.value == value %}selected{% endif %}>{{ label }}</option>
@@ -129,13 +147,13 @@
                                             </td>
                                         {% endfor %}
                                         <td>
-                                            <span class="badge badge-grade-{{ block.competency_grade|lower|default:'none' }}">
+                                            <span class="badge badge-grade-{{ block.competency_grade|lower|default:'none' }}" data-competency-grade data-enrollment="{{ row.enrollment.id }}" data-competency="{{ block.competency.id }}">
                                                 {{ block.competency_grade|default:'-' }}
                                             </span>
                                         </td>
                                     {% endfor %}
                                     <td>
-                                        <span class="badge badge-grade-{{ row.course_grade|lower|default:'none' }}">
+                                        <span class="badge badge-grade-{{ row.course_grade|lower|default:'none' }}" data-course-grade data-enrollment="{{ row.enrollment.id }}">
                                             {{ row.course_grade|default:'-' }}
                                         </span>
                                     </td>
@@ -149,11 +167,11 @@
 
             <div class="sticky-action-row">
                 <div class="container-action">
-                    {% if not is_locked %}
+                    {% if can_edit %}
                         <p class="muted" style="margin:0; font-size: 0.85rem;"><i class="fas fa-info-circle mr-1"></i> Borrador editable</p>
                         <div style="display: flex; gap: 10px;">
                             <button type="submit" name="save_draft" value="1" class="btn btn-subtle">Guardar Borrador</button>
-                            <button type="submit" name="finalize" value="1" class="btn btn-primary" onclick="return confirm('¿Está seguro de finalizar? No podrá editar después.')" style="background: #4f46e5;">📤 Subir y Bloquear Notas</button>
+                            <button type="button" id="finalize-btn" class="btn btn-primary" style="background: #4f46e5;">Subir y Bloquear Notas</button>
                         </div>
                     {% else %}
                         <p class="text-danger font-weight-bold" style="margin:0;"><i class="fas fa-shield-alt mr-1"></i> Bloqueado por seguridad</p>
@@ -162,6 +180,17 @@
                 </div>
             </div>
         </form>
+
+        <div id="finalize-modal" class="modal-backdrop is-hidden" role="dialog" aria-modal="true" aria-labelledby="finalize-modal-title">
+            <div class="modal-card">
+                <h3 id="finalize-modal-title">Confirmar finalizacion</h3>
+                <p>Esta seguro de finalizar? No podra editar despues.</p>
+                <div class="action-row" style="justify-content: flex-end;">
+                    <button type="button" class="btn btn-subtle" id="cancel-finalize">Cancelar</button>
+                    <button type="button" class="btn btn-primary" id="confirm-finalize" style="background: #4f46e5;">Aceptar y finalizar</button>
+                </div>
+            </div>
+        </div>
     </section>
     {% endif %}
 {% endif %}
@@ -204,18 +233,164 @@
         border-color: var(--primary);
         box-shadow: 0 0 0 3px rgba(15, 95, 154, 0.1);
     }
+    .modal-backdrop {
+        position: fixed;
+        inset: 0;
+        background: rgba(13, 21, 34, 0.45);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 2000;
+        padding: 16px;
+    }
+    .modal-backdrop.is-hidden {
+        display: none;
+    }
+    .modal-card {
+        width: min(460px, 100%);
+        background: #fff;
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.24);
+        padding: 18px;
+    }
+    .modal-card h3 {
+        margin-bottom: 8px;
+    }
+    .modal-card p {
+        margin-bottom: 14px;
+        color: var(--muted);
+    }
 </style>
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const inputs = document.querySelectorAll('.grade-select');
+        const form = document.getElementById('gradebook-form');
+        const finalizeBtn = document.getElementById('finalize-btn');
+        const modal = document.getElementById('finalize-modal');
+        const confirmFinalizeBtn = document.getElementById('confirm-finalize');
+        const cancelFinalizeBtn = document.getElementById('cancel-finalize');
+
+        const gradePriority = { 'C': 1, 'B': 2, 'A': 3, 'AD': 4 };
+
+        const computeModeGrade = function(values) {
+            const valid = values.filter(v => v && gradePriority[v] !== undefined);
+            if (!valid.length) return null;
+
+            const counts = {};
+            valid.forEach(v => { counts[v] = (counts[v] || 0) + 1; });
+            const topFrequency = Math.max(...Object.values(counts));
+            const candidates = Object.keys(counts).filter(k => counts[k] === topFrequency);
+            return candidates.reduce((best, current) => (
+                gradePriority[current] > gradePriority[best] ? current : best
+            ), candidates[0]);
+        };
+
+        const setBadge = function(badge, grade) {
+            if (!badge) return;
+            badge.textContent = grade || '-';
+            badge.dataset.grade = grade || '';
+
+            const prefix = 'badge-grade-';
+            Array.from(badge.classList).forEach(cls => {
+                if (cls.startsWith(prefix)) badge.classList.remove(cls);
+            });
+            badge.classList.add(prefix + (grade ? grade.toLowerCase() : 'none'));
+        };
+
+        const recomputeCompetency = function(enrollmentId, competencyId) {
+            const selects = document.querySelectorAll(
+                `.grade-select[data-enrollment="${enrollmentId}"][data-competency="${competencyId}"]`
+            );
+            const grades = Array.from(selects).map(s => s.value).filter(Boolean);
+            const mode = computeModeGrade(grades);
+            const badge = document.querySelector(
+                `[data-competency-grade][data-enrollment="${enrollmentId}"][data-competency="${competencyId}"]`
+            );
+            setBadge(badge, mode);
+        };
+
+        const recomputeCourse = function(enrollmentId) {
+            const competencyBadges = document.querySelectorAll(
+                `[data-competency-grade][data-enrollment="${enrollmentId}"]`
+            );
+            const grades = Array.from(competencyBadges)
+                .map(b => b.dataset.grade || '')
+                .filter(Boolean);
+            const mode = computeModeGrade(grades);
+            const badge = document.querySelector(
+                `[data-course-grade][data-enrollment="${enrollmentId}"]`
+            );
+            setBadge(badge, mode);
+        };
+
+        const recomputeAllForEnrollment = function(enrollmentId) {
+            const selects = document.querySelectorAll(`.grade-select[data-enrollment="${enrollmentId}"]`);
+            const competencyIds = new Set(Array.from(selects).map(s => s.dataset.competency).filter(Boolean));
+            competencyIds.forEach(cid => recomputeCompetency(enrollmentId, cid));
+            recomputeCourse(enrollmentId);
+        };
         
         inputs.forEach(input => {
             input.addEventListener('focus', function() {
                 document.querySelectorAll('tr').forEach(tr => tr.classList.remove('highlight-row'));
                 this.closest('tr').classList.add('highlight-row');
             });
+
+            input.addEventListener('change', function() {
+                const enrollmentId = this.dataset.enrollment;
+                const competencyId = this.dataset.competency;
+                if (!enrollmentId || !competencyId) return;
+                recomputeCompetency(enrollmentId, competencyId);
+                recomputeCourse(enrollmentId);
+            });
         });
+
+        // Initial calculation on page load.
+        const enrollmentIds = new Set(Array.from(inputs).map(i => i.dataset.enrollment).filter(Boolean));
+        enrollmentIds.forEach(eid => recomputeAllForEnrollment(eid));
+
+        if (form && finalizeBtn && modal && confirmFinalizeBtn && cancelFinalizeBtn) {
+            const openModal = function () {
+                modal.classList.remove('is-hidden');
+            };
+
+            const closeModal = function () {
+                modal.classList.add('is-hidden');
+            };
+
+            finalizeBtn.addEventListener('click', openModal);
+            cancelFinalizeBtn.addEventListener('click', closeModal);
+
+            confirmFinalizeBtn.addEventListener('click', function () {
+                closeModal();
+                confirmFinalizeBtn.disabled = true;
+                cancelFinalizeBtn.disabled = true;
+
+                let finalizeInput = form.querySelector('input[name="finalize"]');
+                if (!finalizeInput) {
+                    finalizeInput = document.createElement('input');
+                    finalizeInput.type = 'hidden';
+                    finalizeInput.name = 'finalize';
+                    form.appendChild(finalizeInput);
+                }
+                finalizeInput.value = '1';
+                form.submit();
+            });
+
+            modal.addEventListener('click', function (event) {
+                if (event.target === modal) {
+                    closeModal();
+                }
+            });
+
+            document.addEventListener('keydown', function (event) {
+                if (event.key === 'Escape' && !modal.classList.contains('is-hidden')) {
+                    closeModal();
+                }
+            });
+        }
     });
 </script>
 {% endblock %}

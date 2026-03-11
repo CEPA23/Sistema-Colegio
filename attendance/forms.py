@@ -12,11 +12,14 @@ class AttendanceRecordForm(forms.ModelForm):
 
 
 class AttendanceSheetFilterForm(forms.Form):
-    date = forms.DateField(label='Fecha')
+    date = forms.DateField(
+        label='Fecha',
+        widget=forms.DateInput(attrs={'type': 'date'}),
+    )
     section = forms.ModelChoiceField(
-        label='Seccion',
+        label='Grado / Seccion',
         queryset=Section.objects.none(),
-        empty_label='Selecciona seccion',
+        empty_label='Selecciona grado y seccion',
     )
 
     def __init__(self, *args, user=None, **kwargs):

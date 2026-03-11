@@ -24,7 +24,13 @@
                     <tr {% if edit_section.id == section.id %}style="background-color: #fffde7;"{% endif %}>
                         <td>{{ section.name }}</td>
                         <td>{{ section.grade.name }}</td>
-                        <td>{{ section.tutor_teacher.get_full_name|default:section.tutor_teacher.username|default:"-" }}</td>
+                        <td>
+                            {% if section.tutor_teacher %}
+                                {{ section.tutor_teacher.get_full_name|default:section.tutor_teacher.username }}
+                            {% else %}
+                                -
+                            {% endif %}
+                        </td>
                         <td>
                             <a href="?edit_section={{ section.id }}#section-form-section" class="btn btn-subtle btn-sm">Editar</a>
                         </td>

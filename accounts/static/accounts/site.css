@@ -481,6 +481,85 @@ thead th {
     background: #fff4cf;
 }
 
+.attendance-missing {
+    color: #4b5f74;
+    background: #e9eef4;
+}
+
+.attendance-sheet td {
+    vertical-align: middle;
+}
+
+.attendance-inline-btn {
+    margin-left: 8px;
+    padding: 4px 8px;
+    font-size: 0.72rem;
+}
+
+.attendance-choice {
+    min-width: 50px;
+    height: 34px;
+    border: 1px solid #c8d4e2;
+    border-radius: 999px;
+    background: #fff;
+    color: #5d6e80;
+    font-size: 1.1rem;
+    font-weight: 800;
+    line-height: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s ease;
+}
+
+button.attendance-choice {
+    cursor: pointer;
+}
+
+button.attendance-choice:disabled {
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+.attendance-choice-present {
+    border-color: #2c9a5b;
+    color: #2c9a5b;
+}
+
+.attendance-choice-absent {
+    border-color: #d94f4f;
+    color: #d94f4f;
+}
+
+.attendance-choice-justified {
+    border-color: #d29d16;
+    color: #d29d16;
+}
+
+.attendance-choice-present.is-active {
+    background: #198d52;
+    border-color: #198d52;
+    color: #fff;
+}
+
+.attendance-choice-absent.is-active {
+    background: #d94f4f;
+    border-color: #d94f4f;
+    color: #fff;
+}
+
+.attendance-choice-justified.is-active {
+    background: #d29d16;
+    border-color: #d29d16;
+    color: #fff;
+}
+
+.attendance-note-text {
+    white-space: pre-wrap;
+    word-break: break-word;
+    color: #2a3f57;
+}
+
 .excel-table td {
     vertical-align: middle;
 }

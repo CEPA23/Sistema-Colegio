@@ -21,6 +21,7 @@
                 </div>
             {% endif %}
         </div>
+
         {% if not auto_section_mode %}
             <div>
                 <label for="{{ filter_form.section.id_for_label }}">{{ filter_form.section.label }}</label>
@@ -35,30 +36,21 @@
             </div>
         {% elif selected_section %}
             <div>
-                <label>Seccion asignada</label>
+                <label>Grado / Seccion asignada</label>
                 <input type="text" value="{{ selected_section.grade.name }} {{ selected_section.name }}" readonly>
             </div>
         {% endif %}
+
         <div class="action-row">
-            <button type="submit" class="btn btn-primary">
-                {% if auto_section_mode %}Cargar alumnos{% else %}Cargar seccion{% endif %}
-            </button>
+            <button type="submit" class="btn btn-primary">Cargar alumnos</button>
         </div>
     </form>
-
-    <div style="margin-top: 12px;">
-        <span class="status-pill attendance-present">✔ Asistio</span>
-        <span class="status-pill attendance-absent">❌ Falto</span>
-        <span class="status-pill attendance-justified">✔ Justificado</span>
-    </div>
 </section>
 
 {% if selected_section %}
 <section class="card">
     <div class="section-head">
-        <h2>
-            {{ selected_section.grade.name }} {{ selected_section.name }}
-        </h2>
+        <h2>{{ selected_section.grade.name }} {{ selected_section.name }}</h2>
         <span class="muted">{{ selected_date }}</span>
     </div>
 
@@ -70,107 +62,172 @@
         </div>
     {% endif %}
 
-    <form method="post">
+    <form method="post" id="attendance-sheet-form">
         {% csrf_token %}
         <input type="hidden" name="section" value="{{ selected_section.id }}">
         <input type="hidden" name="date" value="{{ selected_date|date:'Y-m-d' }}">
 
         <div class="table-wrap">
-            <table class="excel-table">
+            <table class="attendance-sheet">
                 <thead>
                     <tr>
-                        <th style="min-width: 250px;">Alumno</th>
-                        <th style="min-width: 180px;">
-                            Estado 
+                        <th style="min-width: 240px;">Alumno</th>
+                        <th style="width: 140px;">
+                            Presente
                             {% if can_edit %}
-                                <button type="button" id="mark-all-present" class="btn btn-subtle btn-sm" style="font-size: 0.65rem; padding: 2px 6px; margin-left: 8px;">Marcar todos (✔)</button>
+                                <button type="button" id="mark-all-present" class="btn btn-subtle attendance-inline-btn">
+                                    Marcar todos presente
+                                </button>
                             {% endif %}
                         </th>
-                        <th>Visual</th>
-                        <th>Observacion</th>
+                        <th style="width: 120px;">Falta</th>
+                        <th style="width: 150px;">Justificado</th>
+                        <th style="min-width: 340px;">Justificacion (si es justificado)</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for row in rows %}
-                        <tr class="attendance-row">
+                        <tr class="attendance-row" data-row-id="{{ row.enrollment.id }}">
                             <td class="student-name">{{ row.enrollment.student }}</td>
+
                             <td>
-                                <select name="status_{{ row.enrollment.id }}" class="attendance-select status-dropdown" data-row-id="{{ row.enrollment.id }}" {% if not can_edit %}disabled{% endif %}>
-                                    {% for value, label in status_choices %}
-                                        <option value="{{ value }}" {% if row.status == value %}selected{% endif %}>{{ label }}</option>
-                                    {% endfor %}
-                                </select>
-                                {% if not can_edit %}
-                                    <input type="hidden" name="status_{{ row.enrollment.id }}" value="{{ row.status }}">
-                                {% endif %}
+                                <button
+                                    type="button"
+                                    class="attendance-choice attendance-choice-present {% if row.status == 'present' %}is-active{% endif %}"
+                                    data-row-id="{{ row.enrollment.id }}"
+                                    data-status="present"
+                                    aria-label="Marcar presente"
+                                    {% if not can_edit %}disabled{% endif %}
+                                >
+                                    &#10003;
+                                </button>
                             </td>
+
                             <td>
-                                <span id="ui-badge-{{ row.enrollment.id }}" class="status-pill {{ row.ui.css }}">
-                                    {{ row.ui.icon }} {{ row.ui.label }}
-                                </span>
+                                <button
+                                    type="button"
+                                    class="attendance-choice attendance-choice-absent {% if row.status == 'absent' %}is-active{% endif %}"
+                                    data-row-id="{{ row.enrollment.id }}"
+                                    data-status="absent"
+                                    aria-label="Marcar falta"
+                                    {% if not can_edit %}disabled{% endif %}
+                                >
+                                    &#10005;
+                                </button>
                             </td>
+
+                            <td>
+                                <button
+                                    type="button"
+                                    class="attendance-choice attendance-choice-justified {% if row.status == 'justified' %}is-active{% endif %}"
+                                    data-row-id="{{ row.enrollment.id }}"
+                                    data-status="justified"
+                                    aria-label="Marcar justificado"
+                                    {% if not can_edit %}disabled{% endif %}
+                                >
+                                    &#10003;
+                                </button>
+                            </td>
+
                             <td>
                                 <input
-                                    type="text"
-                                    name="note_{{ row.enrollment.id }}"
-                                    value="{{ row.note }}"
-                                    placeholder="Opcional"
-                                    {% if not can_edit %}readonly{% endif %}
+                                    type="hidden"
+                                    name="status_{{ row.enrollment.id }}"
+                                    id="status-{{ row.enrollment.id }}"
+                                    value="{{ row.status }}"
                                 >
+                                <textarea
+                                    name="note_{{ row.enrollment.id }}"
+                                    id="note-{{ row.enrollment.id }}"
+                                    rows="2"
+                                    placeholder="Ej. Cita medica, tramite, etc."
+                                    {% if row.status != 'justified' %}disabled{% endif %}
+                                    {% if not can_edit %}readonly{% endif %}
+                                >{{ row.note }}</textarea>
+                                <small class="muted">Solo se usa cuando marcas "Justificado".</small>
                             </td>
                         </tr>
                     {% empty %}
-                        <tr><td colspan="4">No hay alumnos activos en esta seccion.</td></tr>
+                        <tr>
+                            <td colspan="5">No hay alumnos activos en esta seccion.</td>
+                        </tr>
                     {% endfor %}
                 </tbody>
             </table>
         </div>
 
-        <div class="action-row" style="margin-top: 14px;">
-            {% if can_edit %}
+        {% if can_edit %}
+            <div class="action-row" style="margin-top: 14px; justify-content: flex-end;">
                 <button type="submit" class="btn btn-primary">Guardar asistencia</button>
-            {% endif %}
-        </div>
+            </div>
+        {% endif %}
     </form>
 </section>
 {% endif %}
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
+        const form = document.getElementById('attendance-sheet-form');
+        if (!form) {
+            return;
+        }
+
+        const allChoiceButtons = Array.from(form.querySelectorAll('.attendance-choice'));
         const markAllPresentBtn = document.getElementById('mark-all-present');
-        const statusDropdowns = document.querySelectorAll('.status-dropdown');
-        
-        const uiMap = {
-            'present': { label: 'Asistio', icon: '✔', css: 'attendance-present' },
-            'absent': { label: 'Falto', icon: '❌', css: 'attendance-absent' },
-            'justified': { label: 'Justificado', icon: '✔', css: 'attendance-justified' }
-        };
+
+        function syncRowStatus(rowId, status, clearNoteWhenNotJustified = true) {
+            const hiddenStatus = document.getElementById(`status-${rowId}`);
+            const noteField = document.getElementById(`note-${rowId}`);
+            if (!hiddenStatus) {
+                return;
+            }
+
+            const buttons = form.querySelectorAll(`.attendance-choice[data-row-id="${rowId}"]`);
+            buttons.forEach(function (button) {
+                button.classList.toggle('is-active', button.dataset.status === status);
+            });
+
+            hiddenStatus.value = status;
+            if (!noteField) {
+                return;
+            }
+
+            const justified = status === 'justified';
+            if (noteField.hasAttribute('readonly')) {
+                noteField.disabled = !justified;
+                return;
+            }
+
+            noteField.disabled = !justified;
+            if (!justified && clearNoteWhenNotJustified) {
+                noteField.value = '';
+            }
+        }
+
+        allChoiceButtons.forEach(function (button) {
+            button.addEventListener('click', function () {
+                syncRowStatus(button.dataset.rowId, button.dataset.status);
+            });
+        });
 
         if (markAllPresentBtn) {
-            markAllPresentBtn.addEventListener('click', function() {
-                statusDropdowns.forEach(select => {
-                    select.value = 'present';
-                    updateBadge(select);
+            markAllPresentBtn.addEventListener('click', function () {
+                const rowIds = new Set(
+                    allChoiceButtons.map(function (button) {
+                        return button.dataset.rowId;
+                    })
+                );
+                rowIds.forEach(function (rowId) {
+                    syncRowStatus(rowId, 'present');
                 });
             });
         }
 
-        statusDropdowns.forEach(select => {
-            select.addEventListener('change', function() {
-                updateBadge(this);
-            });
+        const statusInputs = form.querySelectorAll('input[id^="status-"]');
+        statusInputs.forEach(function (input) {
+            const rowId = input.id.replace('status-', '');
+            syncRowStatus(rowId, input.value, false);
         });
-
-        function updateBadge(select) {
-            const enrollmentId = select.getAttribute('data-row-id');
-            const badge = document.getElementById(`ui-badge-${enrollmentId}`);
-            const config = uiMap[select.value];
-            
-            if (badge && config) {
-                badge.className = `status-pill ${config.css}`;
-                badge.innerHTML = `${config.icon} ${config.label}`;
-            }
-        }
     });
 </script>
 {% endblock %}

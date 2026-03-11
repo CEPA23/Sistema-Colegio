@@ -83,10 +83,10 @@ class TeacherCourseAssignmentForm(forms.ModelForm):
 class CompetencyForm(forms.ModelForm):
     class Meta:
         model = Competency
-        fields = ['name', 'order']
+        fields = ['name']
 
 
 class IndicatorForm(forms.ModelForm):
     class Meta:
         model = Indicator
-        fields = ['name', 'order']
+        fields = ['name']

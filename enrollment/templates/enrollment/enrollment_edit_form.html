@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block title %}Editar matricula | Gestion Escolar{% endblock %}
+
+{% block content %}
+<section class="card">
+    <div class="section-head">
+        <h1>Editar matricula</h1>
+        <div class="action-row">
+            <a href="{% url 'enrollment_detail' enrollment.id %}" class="btn btn-subtle">Volver a ficha</a>
+            <a href="{% url 'enrollment_list' %}" class="btn btn-subtle">Volver a lista</a>
+        </div>
+    </div>
+
+    <form method="post" class="form-grid">
+        {% csrf_token %}
+        {% for field in form %}
+            <div>
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% if field.help_text %}
+                    <div class="muted" style="font-size: 0.85rem; margin-top: 6px;">{{ field.help_text }}</div>
+                {% endif %}
+                {% if field.errors %}
+                    <div class="field-errors">
+                        {% for error in field.errors %}
+                            <div>{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+        {% endfor %}
+        <div class="action-row">
+            <button type="submit" class="btn btn-primary">Guardar cambios</button>
+        </div>
+    </form>
+</section>
+{% endblock %}
+

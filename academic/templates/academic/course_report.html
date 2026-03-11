@@ -1,43 +1,71 @@
 {% extends 'base.html' %}
 
-{% block title %}Reporte por curso | Gestion Escolar{% endblock %}
+{% block title %}Reporte de notas por grado y seccion | Gestion Escolar{% endblock %}
 
 {% block content %}
 <section class="card">
     <div class="section-head">
-        <h1>Reporte por curso</h1>
+        <h1>Reporte de notas por grado y seccion</h1>
         <a href="{% url 'academic_dashboard' %}" class="btn btn-subtle">Panel academico</a>
     </div>
 
     <form method="get" class="form-grid">
         <div>
-            <label for="course">Curso</label>
-            <select id="course" name="course">
+            <label for="grade">Grado</label>
+            <select id="grade" name="grade" onchange="this.form.submit()">
                 <option value="">Seleccionar</option>
-                {% for course in courses %}
-                    <option value="{{ course.id }}" {% if selected_course and selected_course.id == course.id %}selected{% endif %}>
-                        {{ course.name }}
+                {% for grade in grades %}
+                    <option value="{{ grade.id }}" {% if selected_grade and selected_grade.id == grade.id %}selected{% endif %}>
+                        {{ grade.name }}
                     </option>
                 {% endfor %}
             </select>
         </div>
+
+        <div>
+            <label for="section">Seccion</label>
+            <select id="section" name="section" onchange="this.form.submit()">
+                <option value="">Seleccionar</option>
+                {% for section in sections %}
+                    <option value="{{ section.id }}" {% if selected_section and selected_section.id == section.id %}selected{% endif %}>
+                        {{ section.name }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+
         <div class="action-row">
             <button type="submit" class="btn btn-primary">Consultar</button>
+            <a href="{% url 'course_report' %}" class="btn btn-subtle">Limpiar</a>
+            {% if selected_grade and selected_section %}
+                <a href="{% url 'course_report_export_excel' %}?grade={{ selected_grade.id }}&section={{ selected_section.id }}" class="btn btn-subtle">Exportar Excel</a>
+            {% endif %}
         </div>
     </form>
 </section>
 
-{% if selected_course %}
+{% if selected_grade and selected_section %}
 <section class="card">
     <div class="section-head">
-        <h2>{{ selected_course.name }}</h2>
+        <h2>
+            {{ selected_grade.name }}
+            - Seccion {{ selected_section.name }}
+        </h2>
+        {% if active_year %}
+            <span class="muted">Año {{ active_year.year }}</span>
+        {% endif %}
     </div>
+
     <div class="table-wrap">
         <table>
             <thead>
                 <tr>
                     <th>Alumno</th>
-                    <th>Nota final</th>
+                    <th>Grado</th>
+                    <th>Seccion</th>
+                    {% for course in courses %}
+                        <th>{{ course.name }}</th>
+                    {% endfor %}
                     <th>Detalle</th>
                 </tr>
             </thead>
@@ -45,11 +73,15 @@
                 {% for row in rows %}
                     <tr>
                         <td>{{ row.student }}</td>
-                        <td><span class="badge">{{ row.final_grade }}</span></td>
+                        <td>{{ row.grade_name }}</td>
+                        <td>{{ row.section_name }}</td>
+                        {% for value in row.grades %}
+                            <td><span class="badge">{{ value }}</span></td>
+                        {% endfor %}
                         <td><a href="{% url 'student_report' row.enrollment_id %}" class="btn btn-subtle">Ver boleta</a></td>
                     </tr>
                 {% empty %}
-                    <tr><td colspan="3">No hay registros.</td></tr>
+                    <tr><td colspan="100">No hay alumnos activos para este filtro.</td></tr>
                 {% endfor %}
             </tbody>
         </table>

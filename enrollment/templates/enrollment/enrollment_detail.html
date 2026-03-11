@@ -8,6 +8,7 @@
         <h1>Ficha individual de matricula</h1>
         <div class="action-row">
             <a href="{% url 'enrollment_history' enrollment.student.id %}" class="btn btn-subtle">Historial alumno</a>
+            <a href="{% url 'enrollment_edit' enrollment.id %}" class="btn btn-primary">Editar matricula</a>
             <a href="{% url 'enrollment_list' %}" class="btn btn-subtle">Volver</a>
         </div>
     </div>

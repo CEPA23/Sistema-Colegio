@@ -21,8 +21,11 @@
                     <th>Grado</th>
                     <th>Seccion</th>
                     <th>Estado</th>
-                    <th>Reporte</th>
+                    {% if request.user.role != 'secretary' %}
+                        <th>Reporte</th>
+                    {% endif %}
                     <th>Ficha</th>
+                    <th>Editar</th>
                     <th>Renovar</th>
                 </tr>
             </thead>
@@ -34,11 +37,16 @@
                         <td>{{ e.section.grade }}</td>
                         <td>{{ e.section.name }}</td>
                         <td>{{ e.get_status_display }}</td>
-                        <td>
-                            <a href="{% url 'student_report' e.id %}" class="btn btn-subtle">Ver libreta</a>
-                        </td>
+                        {% if request.user.role != 'secretary' %}
+                            <td>
+                                <a href="{% url 'student_report' e.id %}" class="btn btn-subtle">Ver libreta</a>
+                            </td>
+                        {% endif %}
                         <td>
                             <a href="{% url 'enrollment_detail' e.id %}" class="btn btn-subtle">Ver ficha</a>
+                        </td>
+                        <td>
+                            <a href="{% url 'enrollment_edit' e.id %}" class="btn btn-subtle">Editar</a>
                         </td>
                         <td>
                             <a href="{% url 'enrollment_renew' e.id %}" class="btn btn-subtle">Renovar</a>
@@ -46,7 +54,7 @@
                     </tr>
                 {% empty %}
                     <tr>
-                        <td colspan="8">No hay matriculas registradas.</td>
+                        <td colspan="{% if request.user.role != 'secretary' %}9{% else %}8{% endif %}">No hay matriculas registradas.</td>
                     </tr>
                 {% endfor %}
             </tbody>

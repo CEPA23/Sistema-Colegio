@@ -171,11 +171,20 @@ class GradeRecord(models.Model):
 
     @staticmethod
     def get_final_grade(enrollment, course):
-        grades = GradeRecord.objects.filter(
+        records = GradeRecord.objects.filter(
             enrollment=enrollment,
-            course=course
-        ).values_list('grade', flat=True)
-        return calculate_final_grade(list(grades))
+            course=course,
+        ).values_list('period__name', 'grade')
+        all_grades = []
+        bimestre_grades = []
+        for period_name, grade in records:
+            if grade not in {'AD', 'A', 'B', 'C'}:
+                continue
+            all_grades.append(grade)
+            if period_name and 'bimestre' in period_name.lower():
+                bimestre_grades.append(grade)
+
+        return calculate_mode_grade(bimestre_grades or all_grades)
 
 
 class Competency(models.Model):

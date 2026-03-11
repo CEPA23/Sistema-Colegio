@@ -14,10 +14,15 @@
 
 <section class="card">
     <div class="section-head">
-        <h2>Rendimiento por curso</h2>
+        <div>
+            <h2>Rendimiento por curso</h2>
+            {% if preferred_period %}
+                <p class="muted">Periodo: {{ preferred_period.name }}</p>
+            {% endif %}
+        </div>
         <div class="action-row">
-            <a href="{% url 'student_report_pdf' enrollment.id %}" class="btn btn-primary">Descargar PDF</a>
-            <a href="{% url 'report_card' %}" class="btn btn-subtle">Volver</a>
+            <a href="{% url 'student_report_pdf' enrollment.id %}{% if preferred_period %}?period={{ preferred_period.id }}{% endif %}" class="btn btn-primary">Descargar PDF</a>
+            <a href="{% url 'course_report' %}?grade={{ enrollment.section.grade.id }}&section={{ enrollment.section.id }}" class="btn btn-subtle">Volver</a>
         </div>
     </div>
     <div class="table-wrap">
@@ -25,18 +30,34 @@
             <thead>
                 <tr>
                     <th>Curso</th>
-                    <th>Nota final</th>
+                    <th>Competencia</th>
+                    <th>Nota</th>
                 </tr>
             </thead>
             <tbody>
-                {% for g in grades %}
+                {% for c in courses %}
+                    {% if c.competencies %}
+                        {% for comp in c.competencies %}
+                            <tr>
+                                <td>{{ c.course.name }}</td>
+                                <td>{{ comp.name }}</td>
+                                <td><span class="badge">{{ comp.grade }}</span></td>
+                            </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td>{{ c.course.name }}</td>
+                            <td class="muted">Sin competencias registradas.</td>
+                            <td><span class="badge">{{ c.course_grade }}</span></td>
+                        </tr>
+                    {% endif %}
                     <tr>
-                        <td>{{ g.course }}</td>
-                        <td><span class="badge">{{ g.final_grade }}</span></td>
+                        <td colspan="2"><strong>Nota del curso (moda)</strong></td>
+                        <td><span class="badge">{{ c.course_grade }}</span></td>
                     </tr>
                 {% empty %}
                     <tr>
-                        <td colspan="2">No hay calificaciones registradas.</td>
+                        <td colspan="3">No hay calificaciones registradas.</td>
                     </tr>
                 {% endfor %}
             </tbody>
