@@ -141,6 +141,37 @@ def course_management(request):
 
 
 @role_required('admin', 'director')
+def course_grade_matrix(request):
+    grades = list(Grade.objects.order_by('name'))
+    courses = list(Course.objects.order_by('name'))
+
+    if request.method == 'POST':
+        posted = set(request.POST.keys())
+        with transaction.atomic():
+            for course in courses:
+                selected_grade_ids = [
+                    grade.id
+                    for grade in grades
+                    if f"cg_{course.id}_{grade.id}" in posted
+                ]
+                course.grades.set(selected_grade_ids)
+
+        messages.success(request, "Cursos por grado actualizados correctamente.")
+        return redirect('course_grade_matrix')
+
+    current = {
+        course.id: set(course.grades.values_list('id', flat=True))
+        for course in courses
+    }
+    for course in courses:
+        course.selected_grade_ids = current.get(course.id, set())
+    return render(request, 'academic/course_grade_matrix.html', {
+        'grades': grades,
+        'courses': courses,
+    })
+
+
+@role_required('admin', 'director')
 def grade_management(request):
     edit_grade = None
     edit_id = request.GET.get('edit_grade')
@@ -297,6 +328,15 @@ def _courses_for_enrollment(user, enrollment):
     if not enrollment:
         return Course.objects.none()
 
+    is_teacher = user.role == 'teacher' and not user.is_superuser
+    is_subject_teacher = is_teacher and not _is_section_tutor(user, enrollment.section)
+
+    course_ids = set()
+    if not is_subject_teacher:
+        course_ids.update(
+            enrollment.section.grade.courses.values_list('id', flat=True)
+        )
+
     scope = TeacherCourseAssignment.objects.all()
     if enrollment.academic_year_id:
         scope = scope.filter(academic_year=enrollment.academic_year)
@@ -307,12 +347,12 @@ def _courses_for_enrollment(user, enrollment):
     )
 
     # Subject teachers only see their own courses; the tutor sees all courses of the section.
-    if user.role == 'teacher' and not user.is_superuser and not _is_section_tutor(user, enrollment.section):
+    if is_subject_teacher:
         scope = scope.filter(teacher=user)
 
-    course_ids = list(scope.values_list('course_id', flat=True).distinct())
+    course_ids.update(scope.values_list('course_id', flat=True).distinct())
     if not course_ids:
-        course_ids = list(
+        course_ids.update(
             GradeRecord.objects.filter(enrollment=enrollment)
             .values_list('course_id', flat=True)
             .distinct()
@@ -584,14 +624,16 @@ def _build_grade_section_report(user, grade_id=None, section_id=None):
             )
         )
 
+        course_ids = set(selected_grade.courses.values_list('id', flat=True))
+
         section_course_scope = assignment_scope.filter(
             models.Q(section=selected_section)
             | models.Q(section__isnull=True, grade=selected_grade)
         )
 
-        course_ids = list(section_course_scope.values_list('course_id', flat=True).distinct())
+        course_ids.update(section_course_scope.values_list('course_id', flat=True).distinct())
         if not course_ids and enrollments:
-            course_ids = list(
+            course_ids.update(
                 GradeRecord.objects.filter(enrollment__in=enrollments).values_list('course_id', flat=True).distinct()
             )
         courses = Course.objects.filter(id__in=course_ids).order_by('name')

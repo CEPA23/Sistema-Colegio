@@ -56,3 +56,33 @@ class StudentEnrollmentForm(forms.ModelForm):
         self.fields['academic_year'].queryset = AcademicYear.objects.select_related('school').order_by('-year')
         self.fields['section'].queryset = Section.objects.select_related('grade').order_by('grade__name', 'name')
         self.fields['section'].label_from_instance = lambda s: f"{s.grade} - {s.name}"
+
+
+class StudentEditForm(forms.ModelForm):
+    class Meta:
+        model = Student
+        fields = [
+            'dni',
+            'first_name',
+            'last_name',
+            'birth_date',
+            'address',
+            'parent_name',
+            'parent_phone',
+            'father_name',
+            'father_phone',
+            'mother_name',
+            'mother_phone',
+        ]
+        widgets = {
+            'birth_date': forms.DateInput(attrs={'type': 'date'}),
+        }
+        labels = {
+            'parent_name': 'Apoderado principal',
+            'parent_phone': 'Telefono del apoderado',
+            'father_name': 'Nombre del padre',
+            'father_phone': 'Telefono del padre',
+            'mother_name': 'Nombre de la madre',
+            'mother_phone': 'Telefono de la madre',
+            'address': 'Direccion',
+        }

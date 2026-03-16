@@ -6,7 +6,10 @@
 <section class="card">
     <div class="section-head">
         <h1>Gestion de cursos</h1>
-        <a href="{% url 'academic_dashboard' %}" class="btn btn-subtle">Panel academico</a>
+        <div class="action-row">
+            <a href="{% url 'course_grade_matrix' %}" class="btn btn-subtle">Cursos por grado</a>
+            <a href="{% url 'academic_dashboard' %}" class="btn btn-subtle">Panel academico</a>
+        </div>
     </div>
 
     <div class="table-wrap">

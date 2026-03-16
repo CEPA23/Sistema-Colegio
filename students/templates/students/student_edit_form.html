@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block title %}Editar alumno | Gestion Escolar{% endblock %}
+
+{% block content %}
+<section class="card">
+    <div class="section-head">
+        <div>
+            <h1>Editar alumno</h1>
+            <p class="muted">{{ student }} (DNI {{ student.dni }})</p>
+        </div>
+        {% if next %}
+            <a href="{{ next }}" class="btn btn-subtle">Volver</a>
+        {% else %}
+            <a href="{% url 'student_profile' student.id %}" class="btn btn-subtle">Volver</a>
+        {% endif %}
+    </div>
+
+    <form method="post" class="form-grid">
+        {% csrf_token %}
+        {% if next %}
+            <input type="hidden" name="next" value="{{ next }}">
+        {% endif %}
+
+        {% for field in form %}
+            <div>
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% if field.errors %}
+                    <div class="field-errors">
+                        {% for error in field.errors %}
+                            <div>{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+        {% endfor %}
+
+        <div class="action-row">
+            <button type="submit" class="btn btn-primary">Guardar cambios</button>
+            {% if request.user.role == 'admin' or request.user.role == 'director' or request.user.is_superuser %}
+                <a href="{% url 'student_delete' student.id %}{% if next %}?next={{ next|urlencode }}{% endif %}" class="btn btn-danger">Eliminar alumno</a>
+            {% endif %}
+        </div>
+    </form>
+</section>
+{% endblock %}
+

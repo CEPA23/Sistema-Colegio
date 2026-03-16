@@ -48,6 +48,12 @@ class Section(models.Model):
 class Course(models.Model):
     name = models.CharField(max_length=100)
     is_poly_course = models.BooleanField(default=False, verbose_name="¿Es curso de polidocencia?")
+    grades = models.ManyToManyField(
+        Grade,
+        blank=True,
+        related_name='courses',
+        verbose_name='Grados',
+    )
 
     def __str__(self):
         return self.name

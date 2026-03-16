@@ -9,7 +9,7 @@
         <a href="{% url 'attendance_dashboard' %}" class="btn btn-subtle">Panel asistencia</a>
     </div>
 
-    <form method="get" class="form-grid">
+    <form method="get" class="form-grid attendance-filter">
         <div>
             <label for="{{ filter_form.date.id_for_label }}">{{ filter_form.date.label }}</label>
             {{ filter_form.date }}
@@ -54,6 +54,17 @@
         <span class="muted">{{ selected_date }}</span>
     </div>
 
+    <div class="attendance-toolbar">
+        <div class="attendance-summary">
+            <span class="status-pill attendance-present" id="sum-present">&#10003; 0 presentes</span>
+            <span class="status-pill attendance-absent" id="sum-absent">&#10005; 0 faltas</span>
+            <span class="status-pill attendance-justified" id="sum-justified">&#10003; 0 justificados</span>
+        </div>
+        <div class="attendance-search">
+            <input type="text" id="attendance-search" placeholder="Buscar alumno..." autocomplete="off">
+        </div>
+    </div>
+
     {% if not can_edit %}
         <div class="alert warning" style="margin-bottom: 10px;">
             Esta asistencia ya fue registrada por
@@ -67,7 +78,7 @@
         <input type="hidden" name="section" value="{{ selected_section.id }}">
         <input type="hidden" name="date" value="{{ selected_date|date:'Y-m-d' }}">
 
-        <div class="table-wrap">
+        <div class="table-wrap attendance-table-wrap">
             <table class="attendance-sheet">
                 <thead>
                     <tr>
@@ -136,15 +147,19 @@
                                     id="status-{{ row.enrollment.id }}"
                                     value="{{ row.status }}"
                                 >
-                                <textarea
-                                    name="note_{{ row.enrollment.id }}"
-                                    id="note-{{ row.enrollment.id }}"
-                                    rows="2"
-                                    placeholder="Ej. Cita medica, tramite, etc."
-                                    {% if row.status != 'justified' %}disabled{% endif %}
-                                    {% if not can_edit %}readonly{% endif %}
-                                >{{ row.note }}</textarea>
-                                <small class="muted">Solo se usa cuando marcas "Justificado".</small>
+
+                                <div class="attendance-note">
+                                    <textarea
+                                        name="note_{{ row.enrollment.id }}"
+                                        id="note-{{ row.enrollment.id }}"
+                                        rows="2"
+                                        placeholder="Ej. Cita medica, tramite, etc."
+                                        {% if row.status != 'justified' %}disabled{% endif %}
+                                        {% if not can_edit %}readonly{% endif %}
+                                    >{{ row.note }}</textarea>
+                                    <small class="muted">Solo se usa cuando marcas "Justificado".</small>
+                                </div>
+                                <div class="attendance-note-placeholder muted">—</div>
                             </td>
                         </tr>
                     {% empty %}
@@ -174,10 +189,32 @@
 
         const allChoiceButtons = Array.from(form.querySelectorAll('.attendance-choice'));
         const markAllPresentBtn = document.getElementById('mark-all-present');
+        const searchInput = document.getElementById('attendance-search');
+        const presentSummary = document.getElementById('sum-present');
+        const absentSummary = document.getElementById('sum-absent');
+        const justifiedSummary = document.getElementById('sum-justified');
+
+        function updateSummary() {
+            const statusInputs = Array.from(form.querySelectorAll('input[id^="status-"]'));
+            let present = 0;
+            let absent = 0;
+            let justified = 0;
+
+            statusInputs.forEach(function (input) {
+                if (input.value === 'present') present += 1;
+                else if (input.value === 'absent') absent += 1;
+                else if (input.value === 'justified') justified += 1;
+            });
+
+            if (presentSummary) presentSummary.innerHTML = `&#10003; ${present} presentes`;
+            if (absentSummary) absentSummary.innerHTML = `&#10005; ${absent} faltas`;
+            if (justifiedSummary) justifiedSummary.innerHTML = `&#10003; ${justified} justificados`;
+        }
 
         function syncRowStatus(rowId, status, clearNoteWhenNotJustified = true) {
             const hiddenStatus = document.getElementById(`status-${rowId}`);
             const noteField = document.getElementById(`note-${rowId}`);
+            const row = form.querySelector(`.attendance-row[data-row-id="${rowId}"]`);
             if (!hiddenStatus) {
                 return;
             }
@@ -188,13 +225,18 @@
             });
 
             hiddenStatus.value = status;
+            if (row) {
+                row.classList.toggle('is-justified', status === 'justified');
+            }
             if (!noteField) {
+                updateSummary();
                 return;
             }
 
             const justified = status === 'justified';
             if (noteField.hasAttribute('readonly')) {
                 noteField.disabled = !justified;
+                updateSummary();
                 return;
             }
 
@@ -202,6 +244,7 @@
             if (!justified && clearNoteWhenNotJustified) {
                 noteField.value = '';
             }
+            updateSummary();
         }
 
         allChoiceButtons.forEach(function (button) {
@@ -228,6 +271,18 @@
             const rowId = input.id.replace('status-', '');
             syncRowStatus(rowId, input.value, false);
         });
+
+        if (searchInput) {
+            searchInput.addEventListener('input', function () {
+                const query = (this.value || '').toLowerCase().trim();
+                const rows = Array.from(form.querySelectorAll('.attendance-row'));
+                rows.forEach(function (row) {
+                    const nameCell = row.querySelector('.student-name');
+                    const name = (nameCell ? nameCell.textContent : '').toLowerCase();
+                    row.style.display = name.includes(query) ? '' : 'none';
+                });
+            });
+        }
     });
 </script>
 {% endblock %}

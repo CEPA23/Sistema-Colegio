@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+
+{% block title %}Eliminar alumno | Gestion Escolar{% endblock %}
+
+{% block content %}
+<section class="card" style="border: 1px solid rgba(220, 38, 38, 0.25);">
+    <div class="section-head">
+        <div>
+            <h1>Eliminar alumno</h1>
+            <p class="muted">Esta accion elimina al alumno y sus matriculas asociadas.</p>
+        </div>
+        {% if next %}
+            <a href="{{ next }}" class="btn btn-subtle">Cancelar</a>
+        {% else %}
+            <a href="{% url 'student_profile' student.id %}" class="btn btn-subtle">Cancelar</a>
+        {% endif %}
+    </div>
+
+    <div style="margin-bottom: 12px;">
+        <strong>{{ student }}</strong> (DNI {{ student.dni }})
+    </div>
+
+    {% if enrollments %}
+        <div class="table-wrap" style="margin-bottom: 14px;">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Anio</th>
+                        <th>Grado</th>
+                        <th>Seccion</th>
+                        <th>Estado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for e in enrollments %}
+                        <tr>
+                            <td>{{ e.academic_year.year }}</td>
+                            <td>{{ e.section.grade }}</td>
+                            <td>{{ e.section.name }}</td>
+                            <td>{{ e.get_status_display }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% endif %}
+
+    <form method="post">
+        {% csrf_token %}
+        {% if next %}
+            <input type="hidden" name="next" value="{{ next }}">
+        {% endif %}
+        <div class="action-row">
+            <button type="submit" class="btn btn-danger">Si, eliminar</button>
+            {% if next %}
+                <a href="{{ next }}" class="btn btn-subtle">No, cancelar</a>
+            {% else %}
+                <a href="{% url 'student_profile' student.id %}" class="btn btn-subtle">No, cancelar</a>
+            {% endif %}
+        </div>
+    </form>
+</section>
+{% endblock %}

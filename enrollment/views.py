@@ -1,10 +1,14 @@
 from django.contrib import messages
+from django.db import transaction
+from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from django.db.models import Q
 
 from accounts.decorators import role_required
+from academic.models import Grade, Section
 from students.models import Student
 
-from .forms import EnrollmentForm
+from .forms import EnrollmentForm, StudentBulkImportForm
 from .models import Enrollment
 
 
@@ -25,8 +29,372 @@ def enrollment_list(request):
         'student',
         'section__grade',
         'academic_year'
-    ).order_by('-enrolled_at')
-    return render(request, 'enrollment/enrollment_list.html', {'enrollments': enrollments})
+    )
+
+    q = (request.GET.get('q') or '').strip()
+    grade_id = request.GET.get('grade')
+
+    if grade_id and str(grade_id).isdigit():
+        enrollments = enrollments.filter(section__grade_id=int(grade_id))
+
+    if q:
+        enrollments = enrollments.filter(
+            Q(student__first_name__icontains=q)
+            | Q(student__last_name__icontains=q)
+            | Q(student__dni__icontains=q)
+        )
+
+    enrollments = enrollments.order_by('-enrolled_at')
+    grades = Grade.objects.all().order_by('name')
+    return render(request, 'enrollment/enrollment_list.html', {
+        'enrollments': enrollments,
+        'grades': grades,
+        'selected_grade': int(grade_id) if grade_id and str(grade_id).isdigit() else None,
+        'q': q,
+    })
+
+
+def _normalize_header(value):
+    import re
+    import unicodedata
+
+    raw = (str(value).strip().lower() if value is not None else '')
+    raw = ''.join(
+        c for c in unicodedata.normalize('NFKD', raw)
+        if not unicodedata.combining(c)
+    )
+    raw = re.sub(r'[^a-z0-9]+', '', raw)
+    return raw
+
+
+def _coerce_str(value):
+    if value is None:
+        return ''
+    if isinstance(value, str):
+        return value.strip()
+    if isinstance(value, (int,)):
+        return str(value)
+    if isinstance(value, float):
+        if value.is_integer():
+            return str(int(value))
+        return str(value).strip()
+    return str(value).strip()
+
+
+def _parse_date(value):
+    from datetime import datetime, date
+
+    if value is None or value == '':
+        return None
+    if isinstance(value, date) and not isinstance(value, datetime):
+        return value
+    if isinstance(value, datetime):
+        return value.date()
+
+    raw = _coerce_str(value)
+    for fmt in ('%Y-%m-%d', '%d/%m/%Y', '%d-%m-%Y', '%Y/%m/%d'):
+        try:
+            return datetime.strptime(raw, fmt).date()
+        except ValueError:
+            continue
+    return None
+
+
+def _split_full_name(value):
+    raw = _coerce_str(value)
+    if not raw:
+        return None, None
+
+    if ',' in raw:
+        left, right = raw.split(',', 1)
+        last_name = left.strip()
+        first_name = right.strip()
+        if first_name and last_name:
+            return first_name, last_name
+
+    parts = [p for p in raw.split() if p.strip()]
+    if len(parts) < 2:
+        return None, None
+    if len(parts) == 2:
+        return parts[0], parts[1]
+
+    first_name = ' '.join(parts[:-2]).strip()
+    last_name = ' '.join(parts[-2:]).strip()
+    if not first_name:
+        first_name = parts[0]
+        last_name = ' '.join(parts[1:])
+    return first_name, last_name
+
+
+@role_required('admin', 'director', 'secretary')
+def enrollment_import_template(request):
+    try:
+        from openpyxl import Workbook
+        from openpyxl.styles import Font
+    except ImportError:
+        messages.error(request, "Falta instalar openpyxl para generar la plantilla Excel.")
+        return redirect('enrollment_list')
+
+    headers = [
+        'Estudiante',
+        'DNI',
+        'Grado',
+        'Seccion',
+    ]
+
+    wb = Workbook()
+    ws = wb.active
+    ws.title = "Plantilla"
+    ws.append(headers)
+    for cell in ws[1]:
+        cell.font = Font(bold=True)
+
+    ws.append([
+        'Juan Perez',
+        '12345678',
+        '1',
+        'A',
+    ])
+
+    for column_cells in ws.columns:
+        max_length = max(len(str(cell.value or '')) for cell in column_cells)
+        ws.column_dimensions[column_cells[0].column_letter].width = min(max_length + 2, 45)
+
+    from io import BytesIO
+    buffer = BytesIO()
+    wb.save(buffer)
+    buffer.seek(0)
+
+    response = HttpResponse(
+        buffer.getvalue(),
+        content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    )
+    response['Content-Disposition'] = 'attachment; filename="plantilla_importacion_alumnos.xlsx"'
+    return response
+
+
+@role_required('admin', 'director', 'secretary')
+def enrollment_import_students(request):
+    results = None
+    row_errors = []
+
+    if request.method == 'POST':
+        form = StudentBulkImportForm(request.POST, request.FILES)
+        if form.is_valid():
+            try:
+                from openpyxl import load_workbook
+            except ImportError:
+                messages.error(request, "Falta instalar openpyxl para importar Excel.")
+                return redirect('enrollment_import_students')
+
+            uploaded = form.cleaned_data['file']
+            try:
+                wb = load_workbook(uploaded, data_only=True)
+            except Exception:
+                messages.error(request, "No se pudo leer el Excel. Asegurate que sea un .xlsx valido.")
+                return redirect('enrollment_import_students')
+
+            ws = wb.active
+            header_row = [
+                _normalize_header(ws.cell(row=1, column=c).value)
+                for c in range(1, ws.max_column + 1)
+            ]
+            header_index = {name: idx for idx, name in enumerate(header_row, start=1) if name}
+
+            aliases = {
+                'student_name': {'estudiante', 'alumno', 'student', 'nombreyapellido', 'nombresyapellidos'},
+                'dni': {'dni', 'documento', 'documentodeidentidad'},
+                'grade': {'grado', 'grade'},
+                'section': {'seccion', 'seccionaula', 'section'},
+                'father_name': {'nombrepadre', 'padre', 'fathername', 'father_name'},
+                'father_phone': {'telefonopadre', 'celularpadre', 'fatherphone', 'father_phone'},
+                'mother_name': {'nombremadre', 'madre', 'mothername', 'mother_name'},
+                'mother_phone': {'telefonomadre', 'celularmadre', 'motherphone', 'mother_phone'},
+            }
+
+            def _col_for(field_key):
+                for candidate in aliases[field_key]:
+                    if candidate in header_index:
+                        return header_index[candidate]
+                return None
+
+            columns = {key: _col_for(key) for key in aliases.keys()}
+            required = ['student_name', 'dni', 'grade', 'section']
+            missing_required = [k for k in required if not columns.get(k)]
+            if missing_required:
+                messages.error(
+                    request,
+                    "Plantilla invalida: faltan columnas requeridas. "
+                    "Descarga la plantilla y vuelve a intentar."
+                )
+                return redirect('enrollment_import_students')
+
+            academic_year = form.cleaned_data['academic_year']
+            status = form.cleaned_data['status']
+
+            grade_number_map = {}
+            grade_slug_map = {}
+            for grade in Grade.objects.all():
+                grade_slug_map[_normalize_header(grade.name)] = grade
+                import re
+
+                match = re.search(r'\d+', grade.name or '')
+                if match:
+                    number = int(match.group(0))
+                    grade_number_map.setdefault(number, []).append(grade)
+
+            section_map = {}
+            for sec in Section.objects.select_related('grade').all():
+                section_map.setdefault(sec.grade_id, {})[_normalize_header(sec.name)] = sec
+
+            created_students = 0
+            existing_students = 0
+            created_enrollments = 0
+            skipped_enrollments = 0
+            updated_students = 0
+
+            for row_num in range(2, ws.max_row + 1):
+                raw_values = {
+                    key: ws.cell(row=row_num, column=col).value if col else None
+                    for key, col in columns.items()
+                }
+                if not any(v not in (None, '') for v in raw_values.values()):
+                    continue
+
+                first_name, last_name = _split_full_name(raw_values.get('student_name'))
+                dni = _coerce_str(raw_values['dni']).replace(' ', '').replace('-', '')
+                if dni.isdigit():
+                    dni = dni.zfill(8)
+                if not dni.isdigit() or len(dni) != 8:
+                    row_errors.append(f"Fila {row_num}: DNI invalido ({dni or 'vacio'}).")
+                    continue
+
+                grade_name = _coerce_str(raw_values['grade'])
+                section_name = _coerce_str(raw_values['section'])
+
+                if not first_name or not last_name:
+                    row_errors.append(f"Fila {row_num}: 'Estudiante' debe tener nombre y apellido.")
+                    continue
+                if not grade_name:
+                    row_errors.append(f"Fila {row_num}: grado es obligatorio.")
+                    continue
+
+                father_name = _coerce_str(raw_values.get('father_name'))
+                father_phone = _coerce_str(raw_values.get('father_phone'))
+                mother_name = _coerce_str(raw_values.get('mother_name'))
+                mother_phone = _coerce_str(raw_values.get('mother_phone'))
+
+                normalized_grade = _normalize_header(grade_name)
+                grade = grade_slug_map.get(normalized_grade) or Grade.objects.filter(name__iexact=grade_name).first()
+                if grade is None:
+                    import re
+
+                    match = re.search(r'\d+', grade_name or '')
+                    if match:
+                        number = int(match.group(0))
+                        candidates = grade_number_map.get(number, [])
+                        if len(candidates) == 1:
+                            grade = candidates[0]
+                        elif len(candidates) > 1:
+                            grade = (
+                                next((g for g in candidates if _normalize_header(g.name) == normalized_grade), None)
+                                or candidates[0]
+                            )
+                if grade is None:
+                    row_errors.append(f"Fila {row_num}: grado no encontrado ({grade_name}). Ejemplo valido: '1' o '1 grado'.")
+                    continue
+
+                section = None
+                if section_name:
+                    section = (
+                        section_map.get(grade.id, {}).get(_normalize_header(section_name))
+                        or Section.objects.filter(grade=grade, name__iexact=section_name).first()
+                    )
+                else:
+                    candidates = list(section_map.get(grade.id, {}).values())
+                    if len(candidates) == 1:
+                        section = candidates[0]
+
+                if section is None:
+                    if section_name:
+                        row_errors.append(f"Fila {row_num}: seccion no encontrada para el grado ({grade_name} - {section_name}).")
+                    else:
+                        row_errors.append(f"Fila {row_num}: falta seccion y el grado ({grade_name}) tiene mas de una seccion.")
+                    continue
+
+                try:
+                    with transaction.atomic():
+                        student = Student.objects.filter(dni=dni).first()
+                        if student is None:
+                            student = Student.objects.create(
+                                dni=dni,
+                                first_name=first_name,
+                                last_name=last_name,
+                                father_name=father_name,
+                                father_phone=father_phone,
+                                mother_name=mother_name,
+                                mother_phone=mother_phone,
+                            )
+                            created_students += 1
+                        else:
+                            existing_students += 1
+                            update_fields = []
+                            for field_name, field_value in (
+                                ('father_name', father_name),
+                                ('father_phone', father_phone),
+                                ('mother_name', mother_name),
+                                ('mother_phone', mother_phone),
+                            ):
+                                current = getattr(student, field_name)
+                                if current in ('', None) and field_value not in ('', None):
+                                    setattr(student, field_name, field_value)
+                                    update_fields.append(field_name)
+                            if update_fields:
+                                student.save(update_fields=update_fields)
+                                updated_students += 1
+
+                        if Enrollment.objects.filter(student=student, academic_year=academic_year).exists():
+                            skipped_enrollments += 1
+                        else:
+                            Enrollment.objects.create(
+                                student=student,
+                                academic_year=academic_year,
+                                section=section,
+                                status=status,
+                            )
+                            created_enrollments += 1
+                except Exception as exc:
+                    row_errors.append(f"Fila {row_num}: error al guardar ({exc}).")
+
+            results = {
+                'created_students': created_students,
+                'existing_students': existing_students,
+                'updated_students': updated_students,
+                'created_enrollments': created_enrollments,
+                'skipped_enrollments': skipped_enrollments,
+                'error_count': len(row_errors),
+            }
+
+            messages.success(
+                request,
+                (
+                    f"Importacion finalizada. "
+                    f"Alumnos nuevos: {created_students}. "
+                    f"Alumnos existentes: {existing_students} (actualizados: {updated_students}). "
+                    f"Matriculas creadas: {created_enrollments}. "
+                    f"Matriculas omitidas (ya existian en el anio): {skipped_enrollments}."
+                )
+            )
+            if row_errors:
+                messages.warning(request, f"Se encontraron {len(row_errors)} fila(s) con errores. Revisa el detalle.")
+    else:
+        form = StudentBulkImportForm()
+
+    return render(request, 'enrollment/enrollment_import_students.html', {
+        'form': form,
+        'results': results,
+        'row_errors': row_errors[:50],
+    })
 
 
 @role_required('admin', 'director', 'secretary')

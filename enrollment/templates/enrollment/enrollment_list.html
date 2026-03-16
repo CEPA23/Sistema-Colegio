@@ -8,9 +8,33 @@
         <h1>Alumnos matriculados</h1>
         <div class="action-row">
             <a href="{% url 'enrollment_dashboard' %}" class="btn btn-subtle">Panel de matricula</a>
+            <a href="{% url 'enrollment_import_students' %}" class="btn btn-subtle">Importar alumnos (Excel)</a>
+            <a href="{% url 'enrollment_import_template' %}" class="btn btn-subtle">Descargar plantilla</a>
             <a href="{% url 'payment_create' %}" class="btn btn-primary">Registrar matricula (pagos)</a>
         </div>
     </div>
+
+    <form method="get" class="form-grid" style="margin-bottom: 16px;">
+        <div class="grid-2">
+            <div class="field">
+                <label>Grado</label>
+                <select name="grade">
+                    <option value="">Todos</option>
+                    {% for g in grades %}
+                        <option value="{{ g.id }}" {% if selected_grade == g.id %}selected{% endif %}>{{ g.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="field">
+                <label>Alumno</label>
+                <input type="text" name="q" placeholder="Busca por nombre, apellido o DNI..." value="{{ q|default:'' }}">
+            </div>
+        </div>
+        <div class="action-row">
+            <button type="submit" class="btn btn-subtle">Buscar</button>
+            <a href="{% url 'enrollment_list' %}" class="btn btn-subtle">Limpiar</a>
+        </div>
+    </form>
 
     <div class="table-wrap">
         <table>
@@ -25,6 +49,7 @@
                         <th>Reporte</th>
                     {% endif %}
                     <th>Ficha</th>
+                    <th>Alumno</th>
                     <th>Editar</th>
                     <th>Renovar</th>
                 </tr>
@@ -46,6 +71,13 @@
                             <a href="{% url 'enrollment_detail' e.id %}" class="btn btn-subtle">Ver ficha</a>
                         </td>
                         <td>
+                            <a href="{% url 'student_profile' e.student.id %}" class="btn btn-subtle">Ver perfil</a>
+                            <a href="{% url 'student_edit' e.student.id %}?next={{ request.get_full_path|urlencode }}" class="btn btn-subtle">Editar</a>
+                            {% if request.user.role == 'admin' or request.user.role == 'director' or request.user.is_superuser %}
+                                <a href="{% url 'student_delete' e.student.id %}?next={{ request.get_full_path|urlencode }}" class="btn btn-danger">Eliminar</a>
+                            {% endif %}
+                        </td>
+                        <td>
                             <a href="{% url 'enrollment_edit' e.id %}" class="btn btn-subtle">Editar</a>
                         </td>
                         <td>
@@ -54,7 +86,7 @@
                     </tr>
                 {% empty %}
                     <tr>
-                        <td colspan="{% if request.user.role != 'secretary' %}9{% else %}8{% endif %}">No hay matriculas registradas.</td>
+                        <td colspan="{% if request.user.role != 'secretary' %}10{% else %}9{% endif %}">No hay matriculas registradas.</td>
                     </tr>
                 {% endfor %}
             </tbody>

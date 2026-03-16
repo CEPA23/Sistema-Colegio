@@ -14,13 +14,13 @@
         <h2>Datos familiares</h2>
     </div>
     <div class="form-grid">
-        <div><strong>Apoderado principal:</strong> {{ student.parent_name }}</div>
-        <div><strong>Telefono apoderado:</strong> {{ student.parent_phone }}</div>
+        <div><strong>Apoderado principal:</strong> {{ student.parent_name|default:"-" }}</div>
+        <div><strong>Telefono apoderado:</strong> {{ student.parent_phone|default:"-" }}</div>
         <div><strong>Padre:</strong> {{ student.father_name|default:"-" }}</div>
         <div><strong>Telefono padre:</strong> {{ student.father_phone|default:"-" }}</div>
         <div><strong>Madre:</strong> {{ student.mother_name|default:"-" }}</div>
         <div><strong>Telefono madre:</strong> {{ student.mother_phone|default:"-" }}</div>
-        <div><strong>Direccion:</strong> {{ student.address }}</div>
+        <div><strong>Direccion:</strong> {{ student.address|default:"-" }}</div>
     </div>
 </section>
 

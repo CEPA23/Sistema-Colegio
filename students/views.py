@@ -6,7 +6,7 @@ from accounts.decorators import role_required
 from enrollment.models import Enrollment
 from finance.models import Fee
 
-from .forms import StudentEnrollmentForm
+from .forms import StudentEditForm, StudentEnrollmentForm
 from .models import Student
 
 
@@ -55,3 +55,43 @@ def student_profile(request, student_id):
         'total_debt': total_debt,
     }
     return render(request, 'students/student_profile.html', context)
+
+
+@role_required('admin', 'director', 'secretary')
+def student_edit(request, student_id):
+    student = get_object_or_404(Student, id=student_id)
+    next_url = request.POST.get('next') or request.GET.get('next') or None
+
+    if request.method == 'POST':
+        form = StudentEditForm(request.POST, instance=student)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Alumno actualizado correctamente.")
+            return redirect(next_url or 'student_profile', student_id=student.id)
+    else:
+        form = StudentEditForm(instance=student)
+
+    return render(request, 'students/student_edit_form.html', {
+        'form': form,
+        'student': student,
+        'next': next_url,
+    })
+
+
+@role_required('admin', 'director')
+def student_delete(request, student_id):
+    student = get_object_or_404(Student, id=student_id)
+    next_url = request.POST.get('next') or request.GET.get('next') or None
+
+    if request.method == 'POST':
+        name = str(student)
+        student.delete()
+        messages.success(request, f"Alumno eliminado: {name}.")
+        return redirect(next_url or 'enrollment_list')
+
+    enrollments = Enrollment.objects.select_related('academic_year', 'section__grade').filter(student=student).order_by('-enrolled_at')
+    return render(request, 'students/student_confirm_delete.html', {
+        'student': student,
+        'enrollments': enrollments,
+        'next': next_url,
+    })

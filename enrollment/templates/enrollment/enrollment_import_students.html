@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+
+{% block title %}Importar alumnos | Gestion Escolar{% endblock %}
+
+{% block content %}
+<section class="card">
+    <div class="section-head">
+        <h1>Importar alumnos (Excel) y asignar grado</h1>
+        <div class="action-row">
+            <a href="{% url 'enrollment_import_template' %}" class="btn btn-subtle">Descargar plantilla</a>
+            <a href="{% url 'enrollment_list' %}" class="btn btn-subtle">Volver</a>
+        </div>
+    </div>
+
+    <p style="margin: 0 0 16px; color: var(--muted);">
+        Selecciona el anio academico. El <strong>grado</strong> y la <strong>seccion</strong> se leen desde el Excel (por fila).
+        El archivo debe ser <strong>.xlsx</strong> y seguir el patron: <strong>Estudiante</strong>, <strong>DNI</strong>, <strong>Grado</strong>, <strong>Seccion</strong>.
+        Si un grado tiene una sola seccion, puedes dejar <strong>Seccion</strong> vacio.
+        Para nombres/apellidos compuestos, puedes usar <strong>Apellidos, Nombres</strong> en la columna <strong>Estudiante</strong>.
+    </p>
+
+    <form method="post" enctype="multipart/form-data" class="form-grid">
+        {% csrf_token %}
+        <div class="grid-2">
+            <div class="field">
+                <label>{{ form.academic_year.label }}</label>
+                {{ form.academic_year }}
+            </div>
+        </div>
+        <div class="grid-2">
+            <div class="field">
+                <label>{{ form.status.label }}</label>
+                {{ form.status }}
+            </div>
+            <div class="field">
+                <label>{{ form.file.label }}</label>
+                {{ form.file }}
+                {% if form.file.help_text %}
+                    <small style="display:block; margin-top:6px; color: var(--muted);">{{ form.file.help_text }}</small>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="action-row" style="margin-top: 14px;">
+            <button type="submit" class="btn btn-primary">Importar</button>
+        </div>
+    </form>
+
+    {% if results %}
+        <hr style="margin: 20px 0; border: 0; border-top: 1px solid var(--line);" />
+        <h3 style="margin: 0 0 10px;">Resultado</h3>
+        <ul style="margin: 0; padding-left: 18px; color: var(--text);">
+            <li>Alumnos nuevos: {{ results.created_students }}</li>
+            <li>Alumnos existentes: {{ results.existing_students }} (actualizados: {{ results.updated_students }})</li>
+            <li>Matriculas creadas: {{ results.created_enrollments }}</li>
+            <li>Matriculas omitidas (ya existian en el anio): {{ results.skipped_enrollments }}</li>
+            <li>Errores: {{ results.error_count }}</li>
+        </ul>
+    {% endif %}
+
+    {% if row_errors %}
+        <div class="table-wrap" style="margin-top: 16px;">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Detalle de errores (max. 50)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for err in row_errors %}
+                        <tr><td>{{ err }}</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% endif %}
+</section>
+{% endblock %}

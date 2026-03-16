@@ -95,13 +95,20 @@
     </div>
 </div>
 
-<!-- 4 big action tiles -->
+<!-- Big action tiles -->
 <div class="big-actions">
+    <a href="{% url 'attendance_take' %}" class="big-action-card">
+        <div class="action-icon" style="background:#ecfeff; color:#0e7490;">&#9989;</div>
+        <div class="action-info">
+            <h3>Tomar Asistencia</h3>
+            <p>Registra asistencia por seccion y fecha.</p>
+        </div>
+    </a>
     <a href="{% url 'teacher_competency_gradebook' %}" class="big-action-card">
         <div class="action-icon" style="background:#eef2ff; color:#4338ca;">📝</div>
         <div class="action-info">
-            <h3>Registrar Notas</h3>
-            <p>Ingresa calificaciones por competencias e indicadores.</p>
+            <h3>Gestionar Notas</h3>
+            <p>Registra y actualiza notas por competencias e indicadores.</p>
         </div>
     </a>
     <a href="#mis-cursos" class="big-action-card">

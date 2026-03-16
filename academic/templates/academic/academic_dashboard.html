@@ -119,6 +119,12 @@
     <div class="section-head"><h2>Accesos rapidos</h2></div>
     <div class="module-grid" style="margin-top:4px;">
         {% if request.user.role == 'admin' or request.user.role == 'director' or request.user.role == 'secretary' or request.user.is_superuser %}
+        <a href="{% url 'course_management' %}" class="module-btn primary-btn">
+            <span class="mb-icon">&#128218;</span> Gestionar Cursos
+        </a>
+        <a href="{% url 'course_grade_matrix' %}" class="module-btn primary-btn">
+            <span class="mb-icon">&#128203;</span> Cursos por Grado
+        </a>
         <a href="{% url 'grade_management' %}" class="module-btn primary-btn">
             <span class="mb-icon">&#127891;</span> Gestionar Grados
         </a>

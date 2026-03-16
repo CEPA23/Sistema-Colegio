@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+
+{% block title %}Cursos por grado | Gestion Escolar{% endblock %}
+
+{% block content %}
+<section class="card">
+    <div class="section-head">
+        <div>
+            <h1>Cursos por grado</h1>
+            <p class="muted">Marca los cursos que corresponden a cada grado y guarda los cambios.</p>
+        </div>
+        <div class="action-row">
+            <a href="{% url 'course_management' %}" class="btn btn-subtle">Gestion de cursos</a>
+            <a href="{% url 'academic_dashboard' %}" class="btn btn-subtle">Panel academico</a>
+        </div>
+    </div>
+
+    {% if not courses %}
+        <p class="muted">No hay cursos registrados.</p>
+    {% else %}
+        <style>
+            .search-bar-container { position: relative; }
+            .input-with-icon { position: relative; display: flex; align-items: center; }
+            .search-icon { position: absolute; left: 12px; color: var(--muted); font-size: 0.9rem; }
+            .search-input { padding-left: 40px !important; background: var(--surface-soft) !important; border-radius: 12px !important; }
+        </style>
+        <div class="search-bar-container" style="margin-bottom: 12px;">
+            <div class="input-with-icon">
+                <span class="search-icon">🔍</span>
+                <input type="text" id="course-search" placeholder="Buscar curso..." class="search-input">
+            </div>
+        </div>
+
+        <form method="post">
+            {% csrf_token %}
+            <div class="table-wrap" style="max-height: 70vh;">
+                <table id="course-grade-table" style="min-width: 820px;">
+                    <thead>
+                        <tr>
+                            <th style="min-width: 260px;">Curso</th>
+                            {% for grade in grades %}
+                                <th style="width: 120px; text-align:center;">
+                                    <div style="display:flex; flex-direction:column; align-items:center; gap:6px;">
+                                        <span>{{ grade.name }}</span>
+                                        <label class="muted" style="font-size:0.72rem; font-weight:700; text-transform:none; letter-spacing:0;">
+                                            <input type="checkbox" class="toggle-grade" data-grade="{{ grade.id }}">
+                                            Todos
+                                        </label>
+                                    </div>
+                                </th>
+                            {% endfor %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for course in courses %}
+                            <tr class="course-row">
+                                <td class="course-name" style="font-weight: 800;">{{ course.name }}</td>
+                                {% for grade in grades %}
+                                    <td style="text-align:center;">
+                                        <input
+                                            type="checkbox"
+                                            name="cg_{{ course.id }}_{{ grade.id }}"
+                                            {% if grade.id in course.selected_grade_ids %}checked{% endif %}
+                                        >
+                                    </td>
+                                {% endfor %}
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="action-row" style="margin-top: 14px; justify-content: flex-end;">
+                <button type="submit" class="btn btn-primary">Guardar cambios</button>
+            </div>
+        </form>
+    {% endif %}
+</section>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchInput = document.getElementById('course-search');
+        const rows = document.querySelectorAll('.course-row');
+        const gradeToggles = Array.from(document.querySelectorAll('.toggle-grade'));
+
+        if (searchInput) {
+            searchInput.addEventListener('input', function() {
+                const query = (this.value || '').toLowerCase().trim();
+                rows.forEach(row => {
+                    const name = row.querySelector('.course-name').textContent.toLowerCase();
+                    row.style.display = name.includes(query) ? '' : 'none';
+                });
+            });
+        }
+
+        gradeToggles.forEach(function(toggle) {
+            toggle.addEventListener('change', function() {
+                const gradeId = toggle.dataset.grade;
+                const inputs = document.querySelectorAll(`input[type="checkbox"][name$="_${gradeId}"]`);
+                inputs.forEach(function(inp) {
+                    inp.checked = toggle.checked;
+                });
+            });
+        });
+    });
+</script>
+{% endblock %}
