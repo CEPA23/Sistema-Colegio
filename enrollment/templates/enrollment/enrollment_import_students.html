@@ -17,6 +17,7 @@
         El archivo debe ser <strong>.xlsx</strong> y seguir el patron: <strong>Estudiante</strong>, <strong>DNI</strong>, <strong>Grado</strong>, <strong>Seccion</strong>.
         Si un grado tiene una sola seccion, puedes dejar <strong>Seccion</strong> vacio.
         Para nombres/apellidos compuestos, puedes usar <strong>Apellidos, Nombres</strong> en la columna <strong>Estudiante</strong>.
+        Si falta informacion, el sistema intentara completarla automaticamente cuando sea posible.
     </p>
 
     <form method="post" enctype="multipart/form-data" class="form-grid">
@@ -54,8 +55,44 @@
             <li>Alumnos existentes: {{ results.existing_students }} (actualizados: {{ results.updated_students }})</li>
             <li>Matriculas creadas: {{ results.created_enrollments }}</li>
             <li>Matriculas omitidas (ya existian en el anio): {{ results.skipped_enrollments }}</li>
+            <li>Repetidos omitidos: {{ results.duplicate_count|default:0 }}</li>
+            <li>Advertencias: {{ results.warning_count|default:0 }}</li>
             <li>Errores: {{ results.error_count }}</li>
         </ul>
+    {% endif %}
+
+    {% if duplicate_rows %}
+        <div class="table-wrap" style="margin-top: 16px;">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Filas repetidas omitidas (max. 50)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for duplicate in duplicate_rows %}
+                        <tr><td>{{ duplicate }}</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% endif %}
+
+    {% if row_warnings %}
+        <div class="table-wrap" style="margin-top: 16px;">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Advertencias / datos completados automaticamente (max. 50)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for warning in row_warnings %}
+                        <tr><td>{{ warning }}</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     {% endif %}
 
     {% if row_errors %}

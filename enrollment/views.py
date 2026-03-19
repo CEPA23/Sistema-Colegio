@@ -33,9 +33,13 @@ def enrollment_list(request):
 
     q = (request.GET.get('q') or '').strip()
     grade_id = request.GET.get('grade')
+    section_id = request.GET.get('section')
 
     if grade_id and str(grade_id).isdigit():
         enrollments = enrollments.filter(section__grade_id=int(grade_id))
+
+    if section_id and str(section_id).isdigit():
+        enrollments = enrollments.filter(section_id=int(section_id))
 
     if q:
         enrollments = enrollments.filter(
@@ -45,12 +49,19 @@ def enrollment_list(request):
         )
 
     enrollments = enrollments.order_by('-enrolled_at')
+    filtered_total = enrollments.count()
     grades = Grade.objects.all().order_by('name')
+    sections = Section.objects.select_related('grade').order_by('grade__name', 'name')
+    if grade_id and str(grade_id).isdigit():
+        sections = sections.filter(grade_id=int(grade_id))
     return render(request, 'enrollment/enrollment_list.html', {
         'enrollments': enrollments,
         'grades': grades,
+        'sections': sections,
         'selected_grade': int(grade_id) if grade_id and str(grade_id).isdigit() else None,
+        'selected_section': int(section_id) if section_id and str(section_id).isdigit() else None,
         'q': q,
+        'filtered_total': filtered_total,
     })
 
 
@@ -126,6 +137,39 @@ def _split_full_name(value):
     return first_name, last_name
 
 
+def _build_fallback_name(row_num, raw_name):
+    first_name, last_name = _split_full_name(raw_name)
+    if first_name and last_name:
+        return first_name, last_name, None
+    if first_name and not last_name:
+        return first_name, 'SIN APELLIDO', f"Fila {row_num}: faltaba apellido; se completo como 'SIN APELLIDO'."
+    if raw_name:
+        normalized = _coerce_str(raw_name)
+        if normalized:
+            return normalized, 'SIN APELLIDO', f"Fila {row_num}: el nombre venia incompleto; se completo como 'SIN APELLIDO'."
+    return 'ALUMNO', f'IMPORTADO {row_num}', f"Fila {row_num}: faltaba el nombre; se completo con un nombre temporal."
+
+
+def _generate_temp_dni(existing_dnis):
+    candidate = 90000000
+    while f"{candidate:08d}" in existing_dnis:
+        candidate += 1
+    return f"{candidate:08d}"
+
+
+def _import_duplicate_key(academic_year_id, dni, first_name, last_name, grade_id, section_id, use_dni=True):
+    if use_dni and dni and dni.isdigit() and len(dni) == 8:
+        return ('dni', academic_year_id, dni)
+    return (
+        'identity',
+        academic_year_id,
+        _normalize_header(first_name),
+        _normalize_header(last_name),
+        grade_id,
+        section_id,
+    )
+
+
 @role_required('admin', 'director', 'secretary')
 def enrollment_import_template(request):
     try:
@@ -177,6 +221,8 @@ def enrollment_import_template(request):
 def enrollment_import_students(request):
     results = None
     row_errors = []
+    row_warnings = []
+    duplicate_rows = []
 
     if request.method == 'POST':
         form = StudentBulkImportForm(request.POST, request.FILES)
@@ -219,13 +265,10 @@ def enrollment_import_students(request):
                 return None
 
             columns = {key: _col_for(key) for key in aliases.keys()}
-            required = ['student_name', 'dni', 'grade', 'section']
-            missing_required = [k for k in required if not columns.get(k)]
-            if missing_required:
+            if not columns.get('grade') and not columns.get('section'):
                 messages.error(
                     request,
-                    "Plantilla invalida: faltan columnas requeridas. "
-                    "Descarga la plantilla y vuelve a intentar."
+                    "Plantilla invalida: debe incluir al menos la columna Grado o Seccion para poder matricular."
                 )
                 return redirect('enrollment_import_students')
 
@@ -252,6 +295,13 @@ def enrollment_import_students(request):
             created_enrollments = 0
             skipped_enrollments = 0
             updated_students = 0
+            duplicate_count = 0
+            generated_dnis = {
+                dni for dni in Student.objects.values_list('dni', flat=True)
+                if isinstance(dni, str) and dni.isdigit() and len(dni) == 8
+            }
+            auto_generated_dnis = set()
+            seen_import_keys = {}
 
             for row_num in range(2, ws.max_row + 1):
                 raw_values = {
@@ -261,31 +311,35 @@ def enrollment_import_students(request):
                 if not any(v not in (None, '') for v in raw_values.values()):
                     continue
 
-                first_name, last_name = _split_full_name(raw_values.get('student_name'))
+                first_name, last_name, name_warning = _build_fallback_name(row_num, raw_values.get('student_name'))
+                if name_warning:
+                    row_warnings.append(name_warning)
+
                 dni = _coerce_str(raw_values['dni']).replace(' ', '').replace('-', '')
+                using_real_dni = True
                 if dni.isdigit():
                     dni = dni.zfill(8)
                 if not dni.isdigit() or len(dni) != 8:
-                    row_errors.append(f"Fila {row_num}: DNI invalido ({dni or 'vacio'}).")
-                    continue
+                    dni = _generate_temp_dni(generated_dnis)
+                    generated_dnis.add(dni)
+                    auto_generated_dnis.add(dni)
+                    using_real_dni = False
+                    row_warnings.append(
+                        f"Fila {row_num}: DNI faltante o invalido; se genero un DNI temporal ({dni})."
+                    )
 
                 grade_name = _coerce_str(raw_values['grade'])
                 section_name = _coerce_str(raw_values['section'])
-
-                if not first_name or not last_name:
-                    row_errors.append(f"Fila {row_num}: 'Estudiante' debe tener nombre y apellido.")
-                    continue
-                if not grade_name:
-                    row_errors.append(f"Fila {row_num}: grado es obligatorio.")
-                    continue
 
                 father_name = _coerce_str(raw_values.get('father_name'))
                 father_phone = _coerce_str(raw_values.get('father_phone'))
                 mother_name = _coerce_str(raw_values.get('mother_name'))
                 mother_phone = _coerce_str(raw_values.get('mother_phone'))
 
+                grade = None
                 normalized_grade = _normalize_header(grade_name)
-                grade = grade_slug_map.get(normalized_grade) or Grade.objects.filter(name__iexact=grade_name).first()
+                if grade_name:
+                    grade = grade_slug_map.get(normalized_grade) or Grade.objects.filter(name__iexact=grade_name).first()
                 if grade is None:
                     import re
 
@@ -300,20 +354,41 @@ def enrollment_import_students(request):
                                 next((g for g in candidates if _normalize_header(g.name) == normalized_grade), None)
                                 or candidates[0]
                             )
-                if grade is None:
-                    row_errors.append(f"Fila {row_num}: grado no encontrado ({grade_name}). Ejemplo valido: '1' o '1 grado'.")
-                    continue
 
                 section = None
                 if section_name:
-                    section = (
-                        section_map.get(grade.id, {}).get(_normalize_header(section_name))
-                        or Section.objects.filter(grade=grade, name__iexact=section_name).first()
-                    )
-                else:
+                    if grade is not None:
+                        section = (
+                            section_map.get(grade.id, {}).get(_normalize_header(section_name))
+                            or Section.objects.filter(grade=grade, name__iexact=section_name).first()
+                        )
+                    else:
+                        matching_sections = list(Section.objects.filter(name__iexact=section_name).select_related('grade'))
+                        if len(matching_sections) == 1:
+                            section = matching_sections[0]
+                            grade = section.grade
+                            row_warnings.append(
+                                f"Fila {row_num}: faltaba grado; se dedujo desde la seccion ({section.grade.name} {section.name})."
+                            )
+                elif grade is not None:
                     candidates = list(section_map.get(grade.id, {}).values())
                     if len(candidates) == 1:
                         section = candidates[0]
+                        row_warnings.append(
+                            f"Fila {row_num}: faltaba seccion; se uso la unica seccion del grado ({section.name})."
+                        )
+
+                if grade is None and section is None:
+                    row_errors.append(
+                        f"Fila {row_num}: falta grado/seccion o no se pudieron deducir para matricular al alumno."
+                    )
+                    continue
+
+                if grade is None:
+                    row_errors.append(
+                        f"Fila {row_num}: grado no encontrado ({grade_name}). Ejemplo valido: '1' o '1 grado'."
+                    )
+                    continue
 
                 if section is None:
                     if section_name:
@@ -321,6 +396,24 @@ def enrollment_import_students(request):
                     else:
                         row_errors.append(f"Fila {row_num}: falta seccion y el grado ({grade_name}) tiene mas de una seccion.")
                     continue
+
+                duplicate_key = _import_duplicate_key(
+                    academic_year.id,
+                    dni,
+                    first_name,
+                    last_name,
+                    grade.id,
+                    section.id,
+                    use_dni=using_real_dni and dni not in auto_generated_dnis,
+                )
+                previous_row = seen_import_keys.get(duplicate_key)
+                if previous_row is not None:
+                    duplicate_count += 1
+                    duplicate_rows.append(
+                        f"Fila {row_num}: repetida con la fila {previous_row}; se omitio el duplicado."
+                    )
+                    continue
+                seen_import_keys[duplicate_key] = row_num
 
                 try:
                     with transaction.atomic():
@@ -355,6 +448,9 @@ def enrollment_import_students(request):
 
                         if Enrollment.objects.filter(student=student, academic_year=academic_year).exists():
                             skipped_enrollments += 1
+                            row_warnings.append(
+                                f"Fila {row_num}: el alumno ya tenia matricula en el anio {academic_year.year}; se omitio."
+                            )
                         else:
                             Enrollment.objects.create(
                                 student=student,
@@ -372,7 +468,9 @@ def enrollment_import_students(request):
                 'updated_students': updated_students,
                 'created_enrollments': created_enrollments,
                 'skipped_enrollments': skipped_enrollments,
+                'duplicate_count': duplicate_count,
                 'error_count': len(row_errors),
+                'warning_count': len(row_warnings),
             }
 
             messages.success(
@@ -387,6 +485,10 @@ def enrollment_import_students(request):
             )
             if row_errors:
                 messages.warning(request, f"Se encontraron {len(row_errors)} fila(s) con errores. Revisa el detalle.")
+            if row_warnings:
+                messages.info(request, f"Se completaron automaticamente {len(row_warnings)} dato(s) faltante(s).")
+            if duplicate_rows:
+                messages.warning(request, f"Se detectaron {len(duplicate_rows)} fila(s) repetida(s) y se omitieron.")
     else:
         form = StudentBulkImportForm()
 
@@ -394,6 +496,8 @@ def enrollment_import_students(request):
         'form': form,
         'results': results,
         'row_errors': row_errors[:50],
+        'row_warnings': row_warnings[:50],
+        'duplicate_rows': duplicate_rows[:50],
     })
 
 

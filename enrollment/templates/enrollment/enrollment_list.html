@@ -26,6 +26,19 @@
                 </select>
             </div>
             <div class="field">
+                <label>Seccion</label>
+                <select name="section">
+                    <option value="">Todas</option>
+                    {% for section in sections %}
+                        <option value="{{ section.id }}" {% if selected_section == section.id %}selected{% endif %}>
+                            {{ section.grade.name }} - {{ section.name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        <div class="grid-2">
+            <div class="field">
                 <label>Alumno</label>
                 <input type="text" name="q" placeholder="Busca por nombre, apellido o DNI..." value="{{ q|default:'' }}">
             </div>
@@ -35,6 +48,19 @@
             <a href="{% url 'enrollment_list' %}" class="btn btn-subtle">Limpiar</a>
         </div>
     </form>
+
+    <div class="action-row" style="margin-bottom: 14px; align-items: center;">
+        <span class="status-pill">
+            Matriculados encontrados: <strong style="margin-left: 6px;">{{ filtered_total }}</strong>
+        </span>
+        {% if selected_grade or selected_section %}
+            <span class="muted">
+                {% if selected_grade %}Filtro por grado aplicado.{% endif %}
+                {% if selected_grade and selected_section %} {% endif %}
+                {% if selected_section %}Filtro por seccion aplicado.{% endif %}
+            </span>
+        {% endif %}
+    </div>
 
     <div class="table-wrap">
         <table>
