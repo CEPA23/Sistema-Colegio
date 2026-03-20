@@ -141,6 +141,39 @@ def course_management(request):
 
 
 @role_required('admin', 'director')
+def delete_course(request, course_id):
+    if request.method != 'POST':
+        return redirect('course_management')
+
+    course = get_object_or_404(Course, id=course_id)
+    blockers = []
+
+    if course.teachercourseassignment_set.exists():
+        blockers.append('asignaciones de docentes')
+    if course.graderecord_set.exists():
+        blockers.append('registro de notas')
+    if course.competency_set.exists():
+        blockers.append('competencias')
+    if course.gradesubmissionlock_set.exists():
+        blockers.append('bloqueos de notas')
+    if course.poly_teachers_assigned.exists() or course.poly_teachers.exists():
+        blockers.append('docentes polidocentes vinculados')
+
+    if blockers:
+        blocker_text = ', '.join(blockers)
+        messages.error(
+            request,
+            f"No se puede eliminar el curso '{course.name}' porque tiene {blocker_text} asociados.",
+        )
+        return redirect('course_management')
+
+    course_name = course.name
+    course.delete()
+    messages.success(request, f"Curso '{course_name}' eliminado correctamente.")
+    return redirect('course_management')
+
+
+@role_required('admin', 'director')
 def course_grade_matrix(request):
     grades = list(Grade.objects.order_by('name'))
     courses = list(Course.objects.order_by('name'))

@@ -5,6 +5,7 @@ from .views import (
     course_report,
     course_report_export_excel,
     course_management,
+    delete_course,
     course_grade_matrix,
     grade_management,
     section_management,
@@ -28,6 +29,7 @@ from .views import (
 urlpatterns = [
     path('dashboard/', academic_dashboard, name='academic_dashboard'),
     path('courses/', course_management, name='course_management'),
+    path('courses/delete/<int:course_id>/', delete_course, name='delete_course'),
     path('courses-by-grade/', course_grade_matrix, name='course_grade_matrix'),
     path('grades-config/', grade_management, name='grade_management'),
     path('sections/', section_management, name='section_management'),

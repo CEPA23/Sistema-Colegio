@@ -33,7 +33,13 @@
                             {% endif %}
                         </td>
                         <td>
-                            <a href="?edit_course={{ course.id }}#course-form-section" class="btn btn-subtle btn-sm">Editar</a>
+                            <div class="action-row" style="gap: 8px;">
+                                <a href="?edit_course={{ course.id }}#course-form-section" class="btn btn-subtle btn-sm">Editar</a>
+                                <form method="post" action="{% url 'delete_course' course.id %}" style="display: inline;" onsubmit="return confirm('¿Eliminar el curso {{ course.name }}?');">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
+                                </form>
+                            </div>
                         </td>
                     </tr>
                 {% empty %}
