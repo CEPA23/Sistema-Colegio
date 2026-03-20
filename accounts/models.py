@@ -4,7 +4,6 @@ from django.db import models
 
 
 class User(AbstractUser):
-
     ROLE_CHOICES = (
         ('admin', 'Administrador'),
         ('director', 'Director'),
@@ -15,8 +14,7 @@ class User(AbstractUser):
 
     role = models.CharField(max_length=20, choices=ROLE_CHOICES)
     phone = models.CharField(max_length=15, blank=True, null=True)
-    profile_picture = models.ImageField(upload_to='profile_pics/', blank=True, null=True, verbose_name="Foto de Perfil")
-    # Eliminar teaching_level
+    profile_picture = models.ImageField(upload_to='profile_pics/', blank=True, null=True, verbose_name='Foto de Perfil')
     teaching_grade = models.ForeignKey(
         'academic.Grade',
         on_delete=models.SET_NULL,
@@ -38,25 +36,25 @@ class User(AbstractUser):
         blank=True,
         null=True,
         related_name='poly_teachers_assigned',
-        verbose_name='Curso de polidocencia'
+        verbose_name='Curso de polidocencia',
     )
     teaching_courses = models.ManyToManyField(
         'academic.Course',
         blank=True,
         related_name='poly_teachers',
-        verbose_name='Cursos que enseña (polidocente) - MÚLTIPLES'
+        verbose_name='Cursos que ensena (polidocente) - MULTIPLES',
     )
     teaching_grades = models.ManyToManyField(
         'academic.Grade',
         blank=True,
         related_name='poly_teachers_grades',
-        verbose_name='Grados que enseña (polidocente)'
+        verbose_name='Grados que ensena (polidocente)',
     )
     teaching_sections = models.ManyToManyField(
         'academic.Section',
         blank=True,
         related_name='poly_teachers_sections',
-        verbose_name='Secciones que enseña (polidocente)'
+        verbose_name='Secciones que ensena (polidocente)',
     )
 
     def __str__(self):
@@ -65,20 +63,27 @@ class User(AbstractUser):
     def clean(self):
         super().clean()
         if self.role == 'teacher':
+            has_grade = bool(self.teaching_grade_id)
+            has_section = bool(self.teaching_section_id)
+
+            if has_grade != has_section:
+                raise ValidationError({
+                    'teaching_grade': 'Debes completar grado y seccion para la tutoria.',
+                    'teaching_section': 'Debes completar grado y seccion para la tutoria.',
+                })
+
+            if self.teaching_section and self.teaching_grade and self.teaching_section.grade_id != self.teaching_grade_id:
+                raise ValidationError({'teaching_section': 'La seccion no pertenece al grado seleccionado.'})
+
             if not self.is_polyteacher:
-                # Para docentes no polidocentes, validar grado y sección
                 if not self.teaching_grade:
-                    raise ValidationError({'teaching_grade': 'Debes seleccionar el grado que enseña el docente.'})
+                    raise ValidationError({'teaching_grade': 'Debes seleccionar el grado que ensena el docente.'})
                 if not self.teaching_section:
-                    raise ValidationError({'teaching_section': 'Debes seleccionar la sección que enseña el docente.'})
-                if self.teaching_section and self.teaching_section.grade_id != self.teaching_grade_id:
-                    raise ValidationError({'teaching_section': 'La sección no pertenece al grado seleccionado.'})
+                    raise ValidationError({'teaching_section': 'Debes seleccionar la seccion que ensena el docente.'})
         else:
-            # Limpiar campos de docente si no es teacher
             self.teaching_grade = None
             self.teaching_section = None
             self.is_polyteacher = False
-            # No limpiar ManyToMany aquí, se hace en el form
 
 
 class ActivityLog(models.Model):
@@ -93,4 +98,4 @@ class ActivityLog(models.Model):
         ordering = ('-created_at',)
 
     def __str__(self):
-        return f"{self.created_at} - {self.user} - {self.method} {self.path}"
+        return f'{self.created_at} - {self.user} - {self.method} {self.path}'

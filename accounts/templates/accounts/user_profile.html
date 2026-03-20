@@ -32,9 +32,12 @@
             
             {% if profile_user.role == 'teacher' %}
                 <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #e2e8f0;">
-                    <p style="margin: 0; font-size: 0.8em; text-transform: uppercase; letter-spacing: 0.05em; color: var(--primary); font-weight: 800;">Información Académica</p>
+                    <p style="margin: 0; font-size: 0.8em; text-transform: uppercase; letter-spacing: 0.05em; color: var(--primary); font-weight: 800;">Informacion Academica</p>
+                    {% if profile_user.teaching_section %}
+                        <p style="margin: 8px 0 0 0; font-size: 0.9em;"><span class="muted">Tutoria:</span> <strong>{{ profile_user.teaching_grade|default:"Sin asignar" }} / {{ profile_user.teaching_section.name|default:"Sin asignar" }}</strong></p>
+                    {% endif %}
                     {% if profile_user.is_polyteacher %}
-                        <p style="margin: 8px 0 0 0; font-size: 0.9em;"><span class="muted">Tipo:</span> <strong>Polidocente</strong></p>
+                        <p style="margin: 8px 0 0 0; font-size: 0.9em;"><span class="muted">Polidocencia:</span> <strong>Activa</strong></p>
                         <p style="margin: 5px 0 0 0; font-size: 0.9em;"><span class="muted">Grados:</span> 
                             <strong>
                                 {% for grade in profile_user.teaching_grades.all %}
@@ -44,9 +47,9 @@
                                 {% endfor %}
                             </strong>
                         </p>
-                    {% else %}
-                        <p style="margin: 8px 0 0 0; font-size: 0.9em;"><span class="muted">Grado:</span> <strong>{{ profile_user.teaching_grade|default:"Sin asignar" }}</strong></p>
-                        <p style="margin: 5px 0 0 0; font-size: 0.9em;"><span class="muted">Sección:</span> <strong>{{ profile_user.teaching_section.name|default:"Sin asignar" }}</strong></p>
+                    {% endif %}
+                    {% if not profile_user.teaching_section and not profile_user.is_polyteacher %}
+                        <p style="margin: 8px 0 0 0; font-size: 0.9em;"><span class="muted">Asignacion:</span> <strong>Sin asignar</strong></p>
                     {% endif %}
                 </div>
             {% endif %}

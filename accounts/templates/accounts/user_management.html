@@ -224,13 +224,18 @@
                     </td>
                     <td>
                         {% if user.role == 'teacher' %}
+                            {% if user.teaching_section %}
+                                <div style="margin-bottom: 6px;">
+                                    Tutoria: {{ user.teaching_grade|default:"-" }} / {{ user.teaching_section|default:"-" }}
+                                </div>
+                            {% endif %}
                             {% if user.is_polyteacher %}
                                 <span class="badge-poly">Poly: {{ user.teaching_courses.count }} curso(s) / {{ user.teaching_sections.count }} seccion(es)</span>
-                            {% else %}
-                                {{ user.teaching_grade|default:"—" }} / {{ user.teaching_section|default:"—" }}
+                            {% elif not user.teaching_section %}
+                                -
                             {% endif %}
                         {% else %}
-                            —
+                            -
                         {% endif %}
                     </td>
                     <td>
@@ -399,15 +404,9 @@ document.addEventListener('DOMContentLoaded', function () {
         });
 
         if (isTeacher) {
-            if (isPoly) {
-                POLY_ONLY.forEach(f => { const w = wrapperOf(f); if (w) w.style.display = ''; });
-                REGULAR_ONLY.forEach(f => { const w = wrapperOf(f); if (w) w.style.display = 'none'; });
-                const isPolyW = wrapperOf('is_polyteacher'); if (isPolyW) isPolyW.style.display = '';
-            } else {
-                POLY_ONLY.forEach(f => { const w = wrapperOf(f); if (w) w.style.display = 'none'; });
-                REGULAR_ONLY.forEach(f => { const w = wrapperOf(f); if (w) w.style.display = ''; });
-                const isPolyW = wrapperOf('is_polyteacher'); if (isPolyW) isPolyW.style.display = '';
-            }
+            REGULAR_ONLY.forEach(f => { const w = wrapperOf(f); if (w) w.style.display = ''; });
+            POLY_ONLY.forEach(f => { const w = wrapperOf(f); if (w) w.style.display = isPoly ? '' : 'none'; });
+            const isPolyW = wrapperOf('is_polyteacher'); if (isPolyW) isPolyW.style.display = '';
         } else {
             [...POLY_ONLY, ...REGULAR_ONLY, ...ALWAYS_HIDE, 'is_polyteacher'].forEach(f => {
                 const w = wrapperOf(f); if (w) w.style.display = 'none';

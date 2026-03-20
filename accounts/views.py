@@ -38,6 +38,13 @@ class RoleLoginView(LoginView):
 
 @login_required
 def dashboard(request):
+    if request.user.role == 'teacher' and not request.user.is_superuser:
+        return redirect('teacher_dashboard')
+    if request.user.role == 'secretary' and not request.user.is_superuser:
+        return redirect('secretary_dashboard')
+    if request.user.role == 'parent' and not request.user.is_superuser:
+        return redirect('account_status')
+
     today = timezone.localdate()
     active_year = AcademicYear.objects.filter(is_active=True).select_related('school').first()
     recent_enrollments = Enrollment.objects.select_related(
@@ -114,19 +121,36 @@ def dashboard(request):
 
 @role_required('teacher')
 def teacher_dashboard(request):
-    # Fetch teacher's assignments
+    active_year = AcademicYear.objects.filter(is_active=True).first()
     assignments = TeacherCourseAssignment.objects.filter(teacher=request.user).select_related(
         'course', 'section__grade', 'academic_year'
     )
-    
-    # Calculate relevant stats
-    assigned_section_ids = assignments.values_list('section_id', flat=True).distinct()
-    total_students = Enrollment.objects.filter(section_id__in=assigned_section_ids, status='active').count()
+    if active_year:
+        assignments = assignments.filter(academic_year=active_year)
+
+    section_scope = Enrollment.objects.none()
+    if request.user.teaching_section_id:
+        section_scope = Enrollment.objects.filter(
+            section_id=request.user.teaching_section_id,
+            status='active',
+        )
+        if active_year:
+            section_scope = section_scope.filter(academic_year=active_year)
+    else:
+        assigned_section_ids = assignments.exclude(section__isnull=True).values_list('section_id', flat=True).distinct()
+        section_scope = Enrollment.objects.filter(
+            section_id__in=assigned_section_ids,
+            status='active',
+        )
+        if active_year:
+            section_scope = section_scope.filter(academic_year=active_year)
+
+    total_students = section_scope.count()
     total_courses = assignments.values_list('course_id', flat=True).distinct().count()
-    
-    # Filter grade records for this teacher
-    assigned_course_ids = assignments.values_list('course_id', flat=True)
-    total_grade_records = GradeRecord.objects.filter(course_id__in=assigned_course_ids).count()
+    total_grade_records = GradeRecord.objects.filter(
+        course_id__in=assignments.values_list('course_id', flat=True),
+        enrollment__in=section_scope,
+    ).count()
 
     context = {
         'total_students': total_students,
