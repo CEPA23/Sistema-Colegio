@@ -7,6 +7,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('academic', '0012_course_is_poly_course'),
+        ('accounts', '0006_remove_user_teaching_level_user_is_polyteacher_and_more'),
     ]
 
     operations = [
