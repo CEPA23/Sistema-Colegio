@@ -52,7 +52,7 @@ RENDER = env_bool('RENDER', default=False)
 
 DEBUG = env_bool('DEBUG', default=not RENDER)
 
-ALLOWED_HOSTS = env_list('ALLOWED_HOSTS', default=['*'])
+ALLOWED_HOSTS = env_list('ALLOWED_HOSTS', default='*')
 
 # Application definition
 
