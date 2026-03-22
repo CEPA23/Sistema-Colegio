@@ -52,14 +52,7 @@ RENDER = env_bool('RENDER', default=False)
 
 DEBUG = env_bool('DEBUG', default=not RENDER)
 
-ALLOWED_HOSTS = env_list('ALLOWED_HOSTS', default='*' if DEBUG else '')
-if not ALLOWED_HOSTS:
-    ALLOWED_HOSTS = ['localhost', '127.0.0.1']
-
-CSRF_TRUSTED_ORIGINS = env_list('CSRF_TRUSTED_ORIGINS')
-if not CSRF_TRUSTED_ORIGINS and os.environ.get('RENDER_EXTERNAL_HOSTNAME'):
-    CSRF_TRUSTED_ORIGINS = [f"https://{os.environ['RENDER_EXTERNAL_HOSTNAME']}"]
-
+ALLOWED_HOSTS = env_list('ALLOWED_HOSTS', default=['*'])
 
 # Application definition
 
