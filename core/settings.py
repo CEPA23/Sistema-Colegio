@@ -114,7 +114,7 @@ WSGI_APPLICATION = 'core.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
-database_url = os.environ.get('DATABASE_URL')
+database_url = os.environ.get('postgresql://sanmarcos_sql_xre7_user:tzUDhDvG7zMX3NgsrDCdBrHA570DzNL2@dpg-d73jqq0gjchc73aoc2kg-a.oregon-postgres.render.com/sanmarcos_sql_xre7')
 
 if dj_database_url is not None and database_url:
     DATABASES = {
