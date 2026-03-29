@@ -1,0 +1,158 @@
+[
+{
+  "model": "accounts.user",
+  "pk": 2,
+  "fields": {
+    "password": "S0p0rt3..",
+    "last_login": null,
+    "is_superuser": true,
+    "username": "CEPA",
+    "first_name": "Carlos",
+    "last_name": "Porras",
+    "email": "lalo.cepa12327@gmail.com",
+    "is_staff": true,
+    "is_active": false,
+    "date_joined": "2026-03-29T15:19:27Z",
+    "role": "admin",
+    "phone": null,
+    "profile_picture": "",
+    "teaching_grade": null,
+    "teaching_section": null,
+    "is_polyteacher": false,
+    "poly_course": null,
+    "groups": [],
+    "user_permissions": [],
+    "teaching_courses": [],
+    "teaching_grades": [],
+    "teaching_sections": []
+  }
+},
+{
+  "model": "accounts.user",
+  "pk": 3,
+  "fields": {
+    "password": "pbkdf2_sha256$1200000$RNIID5rsfmsUGicFgbmu4U$a1l/j6OqgdbmWFJkJFZNrwJbHpdCyFUQASuwQYmfd80=",
+    "last_login": "2026-03-29T19:38:34.531Z",
+    "is_superuser": true,
+    "username": "admin",
+    "first_name": "",
+    "last_name": "",
+    "email": "admin@gmail.com",
+    "is_staff": true,
+    "is_active": true,
+    "date_joined": "2026-03-29T15:45:10.329Z",
+    "role": "admin",
+    "phone": null,
+    "profile_picture": "",
+    "teaching_grade": null,
+    "teaching_section": null,
+    "is_polyteacher": false,
+    "poly_course": null,
+    "groups": [],
+    "user_permissions": [],
+    "teaching_courses": [],
+    "teaching_grades": [],
+    "teaching_sections": []
+  }
+},
+{
+  "model": "accounts.user",
+  "pk": 4,
+  "fields": {
+    "password": "pbkdf2_sha256$1200000$54PpMqgEHQaEIyFI8xkANQ$f6pFGrJj9iqmAHnKSRC5RtpZwbOIxWAv7cbIheNbmj0=",
+    "last_login": "2026-03-29T20:29:16.001Z",
+    "is_superuser": false,
+    "username": "Maharoal",
+    "first_name": "Mariano",
+    "last_name": "Haro",
+    "email": "maharoal@gmail.com",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-03-29T20:28:49.038Z",
+    "role": "admin",
+    "phone": null,
+    "profile_picture": "",
+    "teaching_grade": null,
+    "teaching_section": null,
+    "is_polyteacher": false,
+    "poly_course": null,
+    "groups": [],
+    "user_permissions": [],
+    "teaching_courses": [],
+    "teaching_grades": [],
+    "teaching_sections": []
+  }
+},
+{
+  "model": "accounts.activitylog",
+  "pk": 1,
+  "fields": {
+    "user": 3,
+    "action": "user_action",
+    "path": "/login/",
+    "method": "POST",
+    "ip_address": "179.7.16.167",
+    "created_at": "2026-03-29T19:38:34.559Z"
+  }
+},
+{
+  "model": "accounts.activitylog",
+  "pk": 2,
+  "fields": {
+    "user": 3,
+    "action": "user_action",
+    "path": "/admin/users/",
+    "method": "POST",
+    "ip_address": "179.7.16.167",
+    "created_at": "2026-03-29T20:27:59.953Z"
+  }
+},
+{
+  "model": "accounts.activitylog",
+  "pk": 3,
+  "fields": {
+    "user": 3,
+    "action": "user_action",
+    "path": "/admin/users/",
+    "method": "POST",
+    "ip_address": "179.7.16.167",
+    "created_at": "2026-03-29T20:28:22.613Z"
+  }
+},
+{
+  "model": "accounts.activitylog",
+  "pk": 4,
+  "fields": {
+    "user": 3,
+    "action": "user_action",
+    "path": "/admin/users/",
+    "method": "POST",
+    "ip_address": "179.7.16.167",
+    "created_at": "2026-03-29T20:28:51.715Z"
+  }
+},
+{
+  "model": "accounts.activitylog",
+  "pk": 5,
+  "fields": {
+    "user": 4,
+    "action": "user_action",
+    "path": "/login/",
+    "method": "POST",
+    "ip_address": "179.7.16.167",
+    "created_at": "2026-03-29T20:29:16.006Z"
+  }
+},
+{
+  "model": "accounts.activitylog",
+  "pk": 6,
+  "fields": {
+    "user": 3,
+    "action": "user_action",
+    "path": "/admin/config/",
+    "method": "POST",
+    "ip_address": "179.7.16.167",
+    "created_at": "2026-03-29T20:30:10.823Z"
+  }
+}
+]

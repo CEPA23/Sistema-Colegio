@@ -1,0 +1,9812 @@
+[
+{
+  "model": "sessions.session",
+  "pk": "3gvx6ah7y97r59ikdc40s15eawoc3ki1",
+  "fields": {
+    "session_data": ".eJxVi70KwjAQgN8ls5S7NLmkjoKzk3O4_JGibaFpJvHdrdBB1-_nJRy3rbhW0-rGKM4CQZx-oefwSPPXcAhLm7faHah29z2YeUq39Trx-Lwc6d9fuJZ9BmOAIEqpJCk2Hlh6GAhIK9CYNRoEpa1kjtjHiKSSzab3AwSdKFvx_gCZ4zZ_:1w1yZi:no4053shchnrjSJKUA75E2LCkmGZNK4by7nc6OmiQV8",
+    "expire_date": "2026-03-30T03:25:02.989Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "72sz8dy7wclozac6gmoc2abhl55nbfb5",
+  "fields": {
+    "session_data": ".eJxVi70KwjAQgN8ls5T80EvqKDh3cg6X5I4UbYSmmcR3N0IHXb-fl_DY9uxbpc0vSZwFiNMvCxjvVL4CY3y2stfhQHW49aDgSvN2XXF5XI70789Yc58luTg6YosIwAzBBlZgtZMmsCHGqCYpdTA2aaOIJkORXBg1qB4mFu8P4wM4rQ:1vwpJy:vSUXn5T0ZhXjoZB9TqLztbBuz3vfuPMstnCCgCm7zLQ",
+    "expire_date": "2026-03-15T22:31:30.464Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "9e0lz6ik3doguzj2m1a4gl2ncb58hd8k",
+  "fields": {
+    "session_data": ".eJxVi7sKwjAUht8ls5Tm0lwcBWcn5_KfY0KKNkLTTOK7W6GDrt_lJUa0NY-txmWcbuIopDj8MgLfY_kKMD9bWWu3o9pdt6BgjpflPGN6nPb078-oeZtTIEoMN0DZJIkCIiVohMFY7xCRiL3WlpNWPcgpZsNeetK9UTaweH8ACOA4_g:1vwp9F:XilFUp1yUkIrWISUfmx3H7xVQMXYBba8LFQV2z08k_k",
+    "expire_date": "2026-03-15T22:20:25.864Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "fhwgokf1433xhzxc7iiq5p022dut16hs",
+  "fields": {
+    "session_data": ".eJxVjEEOwiAQRe_C2pDCAIJL9z0Dmc6AVA0kpV0Z765NutDtf-_9l4i4rSVuPS1xZnERIE6_24T0SHUHfMd6a5JaXZd5krsiD9rl2Dg9r4f7d1Cwl2-dVVCOVcgMRiuFA1kIZBI51h61YccWzxk9AYEFDl7pTIYyuTA448X7A-DeN9g:1vsc9O:87WvPOprg1XcDDK_XC5lVLAARizVARg2XPPN0tuTSUU",
+    "expire_date": "2026-03-04T07:39:10.939Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "fhz7gq0sifxbt2bajew99bow9qp34lxh",
+  "fields": {
+    "session_data": ".eJxVjMsOwiAQRf-FtSHgwAAu3fcbyPCSqoGktCvjv2uTLnR7zzn3xTxta_XbyIufE7swYKffLVB85LaDdKd26zz2ti5z4LvCDzr41FN-Xg_376DSqN-ainAGZAGLLpLWKRirikEsWimQIlsJ1mG0SgTEZPKZJAhCkNlRgsjeH8XyNyE:1vsc7v:4FK_pBfnfUFq1aH6J8jpnl3co4pMmYp8RmM0R6Kfjmw",
+    "expire_date": "2026-03-04T07:37:39.648Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "fzr7yd7hdl4u7e1ysy6pgfxulu5i0vn8",
+  "fields": {
+    "session_data": ".eJxVi7sKwjAUht8ls5Tm0lwcBWcn5_KfY0KKNkLTTOK7W6GDrt_lJUa0NY-txmWcbuIopDj8MgLfY_kKMD9bWWu3o9pdt6BgjpflPGN6nPb078-oeZtTIEoMN0DZJIkCIiVohMFY7xCRiL3WlpNWPcgpZsNeetK9UTaweH8ACOA4_g:1w3SK0:omaL1B75v5hgmmJYx862MNZS1_1duYW-YlFYftdkUvI",
+    "expire_date": "2026-04-03T05:22:56.235Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "kok3e3vjzftrqhbbs9iou8l4gc8bxdnr",
+  "fields": {
+    "session_data": ".eJxVi70KwjAQgN8ls5T80EvqKDh3cg6X5I4UbYSmmcR3N0IHXb-fl_DY9uxbpc0vSZwFiNMvCxjvVL4CY3y2stfhQHW49aDgSvN2XXF5XI70789Yc58luTg6YosIwAzBBlZgtZMmsCHGqCYpdTA2aaOIJkORXBg1qB4mFu8P4wM4rQ:1vxeVe:2sOYjwO_NFk6n1-S0LV_ST6lbSP-WDMv1AuKzzELZYc",
+    "expire_date": "2026-03-18T05:10:58.079Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "l7srqm6s0x6g2j502897jy8qcrzpd9c5",
+  "fields": {
+    "session_data": ".eJxVi70KwjAQgN8ls5T8p3EUnJ2cw3m5I0UboWkm8d2t0EHX7-clEvS1pN5oSVMWR6HF4ZfdAO9UvwIQn72ubdhRG65bUGGmy3KeYXqc9vTvL9DKNgcrPStGa8lIitGNkjMbQMc-cFSsHaJWxhrKMhLakQLb7CNmAueleH8AxkA4Lw:1vv3Xs:YrTq-ob17C2uYRW3IarVqQUO1uIUK-J2bh1ubjui3uc",
+    "expire_date": "2026-03-11T01:18:32.695Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "skbknir1hgibjdy9dnj6giommgu7ajwd",
+  "fields": {
+    "session_data": ".eJxVi7sKwjAUht8ls5Tm0lwcBWcn5_KfY0KKNkLTTOK7W6GDrt_lJUa0NY-txmWcbuIopDj8MgLfY_kKMD9bWWu3o9pdt6BgjpflPGN6nPb078-oeZtTIEoMN0DZJIkCIiVohMFY7xCRiL3WlpNWPcgpZsNeetK9UTaweH8ACOA4_g:1vzL41:H-dgkj8Uwqbxtm2PIanDd3MBE5zFkY5j9wBkvFqxma0",
+    "expire_date": "2026-03-22T20:49:25.451Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "we8i0xig71timlam8en41te1i00c8w7h",
+  "fields": {
+    "session_data": ".eJxVi70KwjAQgN8ls5T80EvqKDh3cg6X5I4UbYSmmcR3N0IHXb-fl_DY9uxbpc0vSZwFiNMvCxjvVL4CY3y2stfhQHW49aDgSvN2XXF5XI70789Yc58luTg6YosIwAzBBlZgtZMmsCHGqCYpdTA2aaOIJkORXBg1qB4mFu8P4wM4rQ:1vzKdO:7JxoL5u-l36GLH5KFwWUG9LVSGH6u3sQh73nnQ080HM",
+    "expire_date": "2026-03-22T20:21:54.285Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "zmi5d3mk9sfeikcw9if5cc8cl0p8kx4g",
+  "fields": {
+    "session_data": ".eJxVi7sOwiAUQP-F2TRQ3o4mzk7O5MK9hEbbJqVMxn8Xkw66nseLBWh7Ca3SFiZkZ6bZ6ZdFSA9avgJSWtuy1-FAdbj3YIGZbtt1hul5OdK_v0AtfU4kovfWOmlGEB6RUwIRk8mIWXsOjjBmaYyVIzruNVmVSfdDKc29Yu8P3ZY33w:1vvTzu:-QVO4_uSkC8HIPmF7jUcRw_hLFprvYvUam9Vjs1utXY",
+    "expire_date": "2026-03-12T05:33:14.651Z"
+  }
+},
+{
+  "model": "accounts.user",
+  "pk": 1,
+  "fields": {
+    "password": "pbkdf2_sha256$1200000$Ng3LxIzIOxjiMTQAWTXARF$6zoJ2VRO4EveLAsj8mTNidY5fRrJVDlQKT4YoMUxhYc=",
+    "last_login": "2026-03-20T05:22:56.093Z",
+    "is_superuser": true,
+    "username": "CEPA",
+    "first_name": "Carlos",
+    "last_name": "Porras",
+    "email": "lalo.cepa12327@gmail.com",
+    "is_staff": true,
+    "is_active": true,
+    "date_joined": "2026-02-18T06:18:32.394Z",
+    "role": "",
+    "phone": "981970101",
+    "profile_picture": "",
+    "teaching_grade": null,
+    "teaching_section": null,
+    "is_polyteacher": false,
+    "poly_course": null,
+    "groups": [],
+    "user_permissions": [],
+    "teaching_courses": [],
+    "teaching_grades": [],
+    "teaching_sections": []
+  }
+},
+{
+  "model": "accounts.user",
+  "pk": 5,
+  "fields": {
+    "password": "pbkdf2_sha256$1200000$VgwnejW01haGIdVqbb1fcf$U1dXYzoF0cBWNVWzIpNTq982j6zqFvOUUmxkbNvVvxQ=",
+    "last_login": "2026-03-11T06:32:24.197Z",
+    "is_superuser": false,
+    "username": "Secretaria",
+    "first_name": "Secretaria",
+    "last_name": "",
+    "email": "secre@gmail.com",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-02-19T19:38:19.825Z",
+    "role": "secretary",
+    "phone": "111111111",
+    "profile_picture": "",
+    "teaching_grade": null,
+    "teaching_section": null,
+    "is_polyteacher": false,
+    "poly_course": null,
+    "groups": [],
+    "user_permissions": [],
+    "teaching_courses": [],
+    "teaching_grades": [],
+    "teaching_sections": []
+  }
+},
+{
+  "model": "accounts.user",
+  "pk": 11,
+  "fields": {
+    "password": "pbkdf2_sha256$1200000$BhUoA3ya9wZwTzs1L8PRbr$hTzktw7cT6GxA33LjScsi1+oiaP0ypMqBNwwoJe7oMQ=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "arodriguez",
+    "first_name": "Anthony",
+    "last_name": "Rodriguez",
+    "email": "arodriguez@gmail.com",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-03-20T05:23:56.399Z",
+    "role": "teacher",
+    "phone": null,
+    "profile_picture": "",
+    "teaching_grade": null,
+    "teaching_section": null,
+    "is_polyteacher": true,
+    "poly_course": null,
+    "groups": [],
+    "user_permissions": [],
+    "teaching_courses": [
+      5
+    ],
+    "teaching_grades": [
+      5,
+      6
+    ],
+    "teaching_sections": [
+      10,
+      11,
+      12,
+      13
+    ]
+  }
+},
+{
+  "model": "accounts.user",
+  "pk": 12,
+  "fields": {
+    "password": "pbkdf2_sha256$1200000$s1GmrwCgphZdMLumcHqH6N$59nx3gvmI4k6vg4B7M6fNgkr5aaTjiHYXNVzQM+rffQ=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "ctorres",
+    "first_name": "Cesar",
+    "last_name": "Torres",
+    "email": "ctorres@gmail.com",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-03-20T05:24:42.998Z",
+    "role": "teacher",
+    "phone": null,
+    "profile_picture": "",
+    "teaching_grade": null,
+    "teaching_section": null,
+    "is_polyteacher": true,
+    "poly_course": null,
+    "groups": [],
+    "user_permissions": [],
+    "teaching_courses": [
+      4
+    ],
+    "teaching_grades": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6
+    ],
+    "teaching_sections": [
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13
+    ]
+  }
+},
+{
+  "model": "accounts.user",
+  "pk": 13,
+  "fields": {
+    "password": "pbkdf2_sha256$1200000$yCrsSYknQ0qsT0WZ6KQRXb$QDo12nwSTpoFi1NbR5GY6A9gJuXpd+H1TpAIwUa+F8c=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "djave",
+    "first_name": "Delia",
+    "last_name": "Jave Azabache",
+    "email": "djave@gmail.com",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-03-20T05:25:15.846Z",
+    "role": "teacher",
+    "phone": null,
+    "profile_picture": "",
+    "teaching_grade": 3,
+    "teaching_section": 6,
+    "is_polyteacher": false,
+    "poly_course": null,
+    "groups": [],
+    "user_permissions": [],
+    "teaching_courses": [],
+    "teaching_grades": [],
+    "teaching_sections": []
+  }
+},
+{
+  "model": "accounts.user",
+  "pk": 14,
+  "fields": {
+    "password": "pbkdf2_sha256$1200000$YTd4WRKVLCPufzQHTQDMYA$hHsg2Tcql+qMFDn8n9gf1Stb5EWQ85QnTzZEjv0FVp8=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "kchavez",
+    "first_name": "Katherine",
+    "last_name": "Chavez Avila",
+    "email": "kchavez@gmail.com",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-03-20T05:25:58.205Z",
+    "role": "teacher",
+    "phone": null,
+    "profile_picture": "",
+    "teaching_grade": 1,
+    "teaching_section": 2,
+    "is_polyteacher": false,
+    "poly_course": null,
+    "groups": [],
+    "user_permissions": [],
+    "teaching_courses": [],
+    "teaching_grades": [],
+    "teaching_sections": []
+  }
+},
+{
+  "model": "accounts.user",
+  "pk": 15,
+  "fields": {
+    "password": "pbkdf2_sha256$1200000$4enrOT8WWnmhJMIohO483O$ztGc7WYXpMQwbUJhcGT+pPwb5XzSNzWS663n0VumG9o=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "vrodriguez",
+    "first_name": "Vernica",
+    "last_name": "Rodriguez Alayo",
+    "email": "vrodriguez@gmail.com",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-03-20T05:26:36.769Z",
+    "role": "teacher",
+    "phone": null,
+    "profile_picture": "",
+    "teaching_grade": 2,
+    "teaching_section": 5,
+    "is_polyteacher": false,
+    "poly_course": null,
+    "groups": [],
+    "user_permissions": [],
+    "teaching_courses": [],
+    "teaching_grades": [],
+    "teaching_sections": []
+  }
+},
+{
+  "model": "accounts.user",
+  "pk": 16,
+  "fields": {
+    "password": "pbkdf2_sha256$1200000$9z4XnCxdlRqilLfmranEki$DPT+DVsy7aVm1DOu2j+iUYC6ysYn0/b7YWFrZzmhklY=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "elynch",
+    "first_name": "Erika",
+    "last_name": "Lynch Gutierrez",
+    "email": "elynch@gmail.com",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-03-20T05:27:30.839Z",
+    "role": "teacher",
+    "phone": null,
+    "profile_picture": "",
+    "teaching_grade": null,
+    "teaching_section": null,
+    "is_polyteacher": true,
+    "poly_course": null,
+    "groups": [],
+    "user_permissions": [],
+    "teaching_courses": [
+      6
+    ],
+    "teaching_grades": [
+      5,
+      6
+    ],
+    "teaching_sections": [
+      10,
+      11,
+      12,
+      13
+    ]
+  }
+},
+{
+  "model": "accounts.user",
+  "pk": 17,
+  "fields": {
+    "password": "pbkdf2_sha256$1200000$l9OQZPlL7scx9wkQn2Uzv1$XT9HekM5mSdcvOo6zn/aUQkuifZhx5n2Ho38Cq4nKoU=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "ipachecho",
+    "first_name": "Isabel",
+    "last_name": "Pacheco Fossa",
+    "email": "ipachecho@gmail.com",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-03-20T05:28:10.616Z",
+    "role": "teacher",
+    "phone": null,
+    "profile_picture": "",
+    "teaching_grade": null,
+    "teaching_section": null,
+    "is_polyteacher": true,
+    "poly_course": null,
+    "groups": [],
+    "user_permissions": [],
+    "teaching_courses": [
+      2
+    ],
+    "teaching_grades": [
+      1,
+      2,
+      3,
+      5,
+      6
+    ],
+    "teaching_sections": [
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      10,
+      11,
+      12,
+      13
+    ]
+  }
+},
+{
+  "model": "accounts.user",
+  "pk": 18,
+  "fields": {
+    "password": "pbkdf2_sha256$1200000$KGSPz2YvUniXkZA1DWky9Y$VwCUkz/1N3Zu8EHq41z6gluy6pb0DJN55ASNs8F8YJ0=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "ygonzales",
+    "first_name": "Yuli",
+    "last_name": "Gonzales",
+    "email": "ygonzales@gmail.com",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-03-20T05:28:58.021Z",
+    "role": "teacher",
+    "phone": null,
+    "profile_picture": "",
+    "teaching_grade": 3,
+    "teaching_section": 7,
+    "is_polyteacher": false,
+    "poly_course": null,
+    "groups": [],
+    "user_permissions": [],
+    "teaching_courses": [],
+    "teaching_grades": [],
+    "teaching_sections": []
+  }
+},
+{
+  "model": "accounts.user",
+  "pk": 19,
+  "fields": {
+    "password": "pbkdf2_sha256$1200000$2BMbQPPwnQjqPeFMT9Ky32$LVstnIc2iDjYO7a3ZLndW6j46bwydXQebGqkq+8mdT8=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "rsolar",
+    "first_name": "Rosa",
+    "last_name": "Solar Aguilar",
+    "email": "rsolar@gmail.com",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-03-20T05:29:34.617Z",
+    "role": "teacher",
+    "phone": null,
+    "profile_picture": "",
+    "teaching_grade": null,
+    "teaching_section": null,
+    "is_polyteacher": true,
+    "poly_course": null,
+    "groups": [],
+    "user_permissions": [],
+    "teaching_courses": [
+      1
+    ],
+    "teaching_grades": [
+      5,
+      6
+    ],
+    "teaching_sections": [
+      10,
+      11,
+      12,
+      13
+    ]
+  }
+},
+{
+  "model": "accounts.user",
+  "pk": 20,
+  "fields": {
+    "password": "pbkdf2_sha256$1200000$LuxzAFzElTXvnhvXsxwkOs$tRugmCY8QqoP0moL7yZz9wGEqShAwk3TpRyuHo+yPlI=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "scruz",
+    "first_name": "Shirley",
+    "last_name": "Cruz Lujn",
+    "email": "scruz@gmail.com",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-03-20T05:30:30.779Z",
+    "role": "teacher",
+    "phone": null,
+    "profile_picture": "",
+    "teaching_grade": null,
+    "teaching_section": null,
+    "is_polyteacher": true,
+    "poly_course": null,
+    "groups": [],
+    "user_permissions": [],
+    "teaching_courses": [
+      9
+    ],
+    "teaching_grades": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6
+    ],
+    "teaching_sections": [
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13
+    ]
+  }
+},
+{
+  "model": "accounts.user",
+  "pk": 21,
+  "fields": {
+    "password": "pbkdf2_sha256$1200000$SowMSaq7NkDVGRVr1gW5dE$BGL81J7okKdtQk5ly3zDMxS5pFPiYScilvbQcA9dS6E=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "jpolo",
+    "first_name": "Janet",
+    "last_name": "Polo Reyes",
+    "email": "jpolo@gmail.com",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-03-20T05:31:55.675Z",
+    "role": "teacher",
+    "phone": null,
+    "profile_picture": "",
+    "teaching_grade": 1,
+    "teaching_section": 3,
+    "is_polyteacher": false,
+    "poly_course": null,
+    "groups": [],
+    "user_permissions": [],
+    "teaching_courses": [],
+    "teaching_grades": [],
+    "teaching_sections": []
+  }
+},
+{
+  "model": "accounts.user",
+  "pk": 22,
+  "fields": {
+    "password": "pbkdf2_sha256$1200000$NB828IdMX6ky7vejxc1UDS$mBP9jZrdqYv96UUsr+HjpM4zFCFGNrIWEuW2+USOFDg=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "saranda",
+    "first_name": "Steysy",
+    "last_name": "Aranda Fiestas",
+    "email": "saranda@gmail.com",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-03-20T05:32:28.501Z",
+    "role": "teacher",
+    "phone": null,
+    "profile_picture": "",
+    "teaching_grade": 2,
+    "teaching_section": 4,
+    "is_polyteacher": false,
+    "poly_course": null,
+    "groups": [],
+    "user_permissions": [],
+    "teaching_courses": [],
+    "teaching_grades": [],
+    "teaching_sections": []
+  }
+},
+{
+  "model": "accounts.user",
+  "pk": 23,
+  "fields": {
+    "password": "pbkdf2_sha256$1200000$T85Kx2AKErEAx8cnogqMD5$7SNqQs2bV9aTzIbOABZZs6gQI+HM9HhgLG/BpwPM9IQ=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "kcervantes",
+    "first_name": "Katya",
+    "last_name": "Cervantes Ruiz",
+    "email": "kcervantes@gmail.com",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-03-20T05:33:50.735Z",
+    "role": "teacher",
+    "phone": null,
+    "profile_picture": "",
+    "teaching_grade": 4,
+    "teaching_section": 8,
+    "is_polyteacher": true,
+    "poly_course": null,
+    "groups": [],
+    "user_permissions": [],
+    "teaching_courses": [
+      8
+    ],
+    "teaching_grades": [
+      5
+    ],
+    "teaching_sections": [
+      10,
+      11
+    ]
+  }
+},
+{
+  "model": "accounts.user",
+  "pk": 24,
+  "fields": {
+    "password": "pbkdf2_sha256$1200000$dcWdGyfswBE0nq2Nrt42B7$owEhP9/KgN5Dn+dzpv7xrRvRhSAkVPv6dagX+OEGoAU=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "kparravicini",
+    "first_name": "Katherine",
+    "last_name": "Parravicini Esquivel",
+    "email": "kparravicini@gmail.com",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-03-20T05:34:44.971Z",
+    "role": "teacher",
+    "phone": null,
+    "profile_picture": "",
+    "teaching_grade": 4,
+    "teaching_section": 9,
+    "is_polyteacher": true,
+    "poly_course": null,
+    "groups": [],
+    "user_permissions": [],
+    "teaching_courses": [
+      8
+    ],
+    "teaching_grades": [
+      6
+    ],
+    "teaching_sections": [
+      12,
+      13
+    ]
+  }
+},
+{
+  "model": "accounts.user",
+  "pk": 25,
+  "fields": {
+    "password": "pbkdf2_sha256$1200000$mqggUGHZy26fYpyQlvQdbs$psNVirefnQBQ3JNt0XREOolV8075zurEPfGh/Wubko0=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "caporrasa",
+    "first_name": "Carlos",
+    "last_name": "Porras Ayaviri",
+    "email": "caporrasa@gmail.com",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-03-20T05:35:45.964Z",
+    "role": "teacher",
+    "phone": null,
+    "profile_picture": "",
+    "teaching_grade": null,
+    "teaching_section": null,
+    "is_polyteacher": true,
+    "poly_course": null,
+    "groups": [],
+    "user_permissions": [],
+    "teaching_courses": [
+      2,
+      10
+    ],
+    "teaching_grades": [
+      4,
+      5,
+      6
+    ],
+    "teaching_sections": [
+      8,
+      9,
+      10,
+      11,
+      12,
+      13
+    ]
+  }
+},
+{
+  "model": "accounts.user",
+  "pk": 26,
+  "fields": {
+    "password": "pbkdf2_sha256$1200000$jaoVDmgUeQ5XLGdbxI9x3V$pboGP+bkovmaA1T8OCGfptj2E1hfnDT/ifvlWvoVmbI=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "maharoal",
+    "first_name": "Mariano",
+    "last_name": "Haro Alvitez",
+    "email": "maharoal@gmail.com",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-03-20T05:36:37.585Z",
+    "role": "teacher",
+    "phone": null,
+    "profile_picture": "",
+    "teaching_grade": null,
+    "teaching_section": null,
+    "is_polyteacher": true,
+    "poly_course": null,
+    "groups": [],
+    "user_permissions": [],
+    "teaching_courses": [
+      3
+    ],
+    "teaching_grades": [
+      6
+    ],
+    "teaching_sections": [
+      12,
+      13
+    ]
+  }
+},
+{
+  "model": "accounts.user",
+  "pk": 27,
+  "fields": {
+    "password": "pbkdf2_sha256$1200000$ETVQ4dKYs5ziz1EsdvNn39$YqUhbp1343+KCju12R3fqAzGq/b7H2dcpa+2Qct7CDg=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "taloyaga",
+    "first_name": "Tatiana",
+    "last_name": "Loyaga",
+    "email": "taloyaga@gmail.com",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-03-20T05:37:29.980Z",
+    "role": "teacher",
+    "phone": null,
+    "profile_picture": "",
+    "teaching_grade": null,
+    "teaching_section": null,
+    "is_polyteacher": true,
+    "poly_course": null,
+    "groups": [],
+    "user_permissions": [],
+    "teaching_courses": [
+      3
+    ],
+    "teaching_grades": [
+      5
+    ],
+    "teaching_sections": [
+      10,
+      11
+    ]
+  }
+},
+{
+  "model": "accounts.user",
+  "pk": 28,
+  "fields": {
+    "password": "pbkdf2_sha256$1200000$NavSIKdTRlcrnMSodgaHFh$r2WFTvAbanykUbhgokkz4J49OO0dWbE3EcDp+6HyCBM=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "mharoal",
+    "first_name": "Mariano",
+    "last_name": "Haro Alvitez",
+    "email": "mharoal@gmail.com",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-03-20T05:38:10.567Z",
+    "role": "director",
+    "phone": null,
+    "profile_picture": "",
+    "teaching_grade": null,
+    "teaching_section": null,
+    "is_polyteacher": false,
+    "poly_course": null,
+    "groups": [],
+    "user_permissions": [],
+    "teaching_courses": [],
+    "teaching_grades": [],
+    "teaching_sections": []
+  }
+},
+{
+  "model": "accounts.activitylog",
+  "pk": 1,
+  "fields": {
+    "user": 1,
+    "action": "user_action",
+    "path": "/admin/academic/period/2/change/",
+    "method": "POST",
+    "ip_address": "127.0.0.1",
+    "created_at": "2026-03-27T05:30:27.827Z"
+  }
+},
+{
+  "model": "schools.school",
+  "pk": 1,
+  "fields": {
+    "name": "I.E.P Mayor De San Marcos",
+    "logo": "school_logos/logo.png",
+    "address": "Tupac Yupanqui #361",
+    "phone": "981970101",
+    "email": "lalo.cepa12327@gmail.com",
+    "ruc": "1072511814",
+    "pension_price": "200.00",
+    "enrollment_price": "180.00",
+    "supplies_price": "50.00",
+    "created_at": "2026-02-18T06:23:45.562Z"
+  }
+},
+{
+  "model": "students.student",
+  "pk": 4,
+  "fields": {
+    "dni": "93610713",
+    "first_name": "GALVEZ",
+    "last_name": "ROJAS ROSELAYNE",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 5,
+  "fields": {
+    "dni": "91289886",
+    "first_name": "LLANOS",
+    "last_name": "VASQUEZ CRISTOPHER",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 6,
+  "fields": {
+    "dni": "91281460",
+    "first_name": "MENDOZA",
+    "last_name": "SALINAS MARYAN",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 7,
+  "fields": {
+    "dni": "91562840",
+    "first_name": "CASTILLO",
+    "last_name": "AGUILAR DYLAND",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 8,
+  "fields": {
+    "dni": "91711839",
+    "first_name": "VASQUEZ RAMOS",
+    "last_name": "ALESSA ABRIEL",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 9,
+  "fields": {
+    "dni": "91355223",
+    "first_name": "URQUIZO",
+    "last_name": "CALDERON ELISA",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 10,
+  "fields": {
+    "dni": "91382752",
+    "first_name": "SOTO",
+    "last_name": "CENTENO TATIANA",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 11,
+  "fields": {
+    "dni": "91396293",
+    "first_name": "CARAJULCA",
+    "last_name": "GUEVARA GHIA",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 12,
+  "fields": {
+    "dni": "91396826",
+    "first_name": "PAREDES",
+    "last_name": "HIHUALLANCA ANTHON",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 13,
+  "fields": {
+    "dni": "81836789",
+    "first_name": "ESPINOZA",
+    "last_name": "NARVAEZ RAISA",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 14,
+  "fields": {
+    "dni": "91507377",
+    "first_name": "VERGARA",
+    "last_name": "PASMIO BRYANNA",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 15,
+  "fields": {
+    "dni": "91340186",
+    "first_name": "ROBLES",
+    "last_name": "MILLONES CRISTINA",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 16,
+  "fields": {
+    "dni": "91626238",
+    "first_name": "QUISPE ROMERO",
+    "last_name": "ARLETH KHALESSI",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 17,
+  "fields": {
+    "dni": "91525741",
+    "first_name": "QUISPE",
+    "last_name": "VARGAS ESTHEFANY",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 18,
+  "fields": {
+    "dni": "91525158",
+    "first_name": "CASTAEDA",
+    "last_name": "ARCE XOANA",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 19,
+  "fields": {
+    "dni": "91593487",
+    "first_name": "PATRICK PAOLI",
+    "last_name": "AMAYA ARROYO",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 20,
+  "fields": {
+    "dni": "91579520",
+    "first_name": "CHAPOAN",
+    "last_name": "CASTELLANOS THIAGO",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 21,
+  "fields": {
+    "dni": "91720185",
+    "first_name": "NIMA TIRADO",
+    "last_name": "JONATHAN GAEL",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 22,
+  "fields": {
+    "dni": "91522952",
+    "first_name": "NAVARRO",
+    "last_name": "LOSADA VICTORIA",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 23,
+  "fields": {
+    "dni": "81774674",
+    "first_name": "MUOZ",
+    "last_name": "TEATINO JHON",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 24,
+  "fields": {
+    "dni": "91455110",
+    "first_name": "BLAS GONSALEZ",
+    "last_name": "PITTER ADRIANO",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 25,
+  "fields": {
+    "dni": "91274020",
+    "first_name": "FACHO",
+    "last_name": "VASQUEZ DAFNE",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 26,
+  "fields": {
+    "dni": "91610313",
+    "first_name": "CRUZ LLAMO",
+    "last_name": "LUIS MATEO",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 27,
+  "fields": {
+    "dni": "91474088",
+    "first_name": "ASENCIO RUIZ",
+    "last_name": "ALISSON ABRIL",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 30,
+  "fields": {
+    "dni": "91461500",
+    "first_name": "CASTILLO",
+    "last_name": "HUAMANCHUMO ZARELLA",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 31,
+  "fields": {
+    "dni": "91297692",
+    "first_name": "GALINDO",
+    "last_name": "SAAVEDRA SEBASTIAN",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 32,
+  "fields": {
+    "dni": "91731138",
+    "first_name": "GAMARRA",
+    "last_name": "HUAMAN JADIEL",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 33,
+  "fields": {
+    "dni": "91384302",
+    "first_name": "BACA",
+    "last_name": "ALCANTARA THIAGO",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 34,
+  "fields": {
+    "dni": "91554475",
+    "first_name": "DELGADO",
+    "last_name": "SANCHEZ LUCIANA",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 35,
+  "fields": {
+    "dni": "81857093",
+    "first_name": "REYES",
+    "last_name": "BOCANEGRA ANTONELLA",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 36,
+  "fields": {
+    "dni": "91374826",
+    "first_name": "YEPES",
+    "last_name": "MENDOCILLA JULIO",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 37,
+  "fields": {
+    "dni": "91489980",
+    "first_name": "CRUZ",
+    "last_name": "ACUA SERGIO",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 38,
+  "fields": {
+    "dni": "91395625",
+    "first_name": "SALCEDO",
+    "last_name": "CRESPO ABDIEL",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 39,
+  "fields": {
+    "dni": "91504343",
+    "first_name": "AVALOS",
+    "last_name": "RODRIGUEZ SAORY",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 40,
+  "fields": {
+    "dni": "91398854",
+    "first_name": "ROJAS",
+    "last_name": "OLIVARES ALISSON",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 41,
+  "fields": {
+    "dni": "91670098",
+    "first_name": "LINARES",
+    "last_name": "ARRIECHE CESAR",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 42,
+  "fields": {
+    "dni": "91775295",
+    "first_name": "SOLAR",
+    "last_name": "VILLANUEVA ETHAN",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 43,
+  "fields": {
+    "dni": "91516994",
+    "first_name": "RICHE",
+    "last_name": "CHAVEZ NOAH",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 44,
+  "fields": {
+    "dni": "91661850",
+    "first_name": "MORENO",
+    "last_name": "ORTURZA CARLOS",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 45,
+  "fields": {
+    "dni": "28031560",
+    "first_name": "LUNA",
+    "last_name": "RIVERA DEREK",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 46,
+  "fields": {
+    "dni": "91610273",
+    "first_name": "PEREZ GONSALEZ",
+    "last_name": "DANTE ALESSANDRO",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 47,
+  "fields": {
+    "dni": "90390250",
+    "first_name": "PEA",
+    "last_name": "AZABACHE MATEO",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 48,
+  "fields": {
+    "dni": "44444444",
+    "first_name": "VASQUEZ ANGULO",
+    "last_name": "ALESSIA MAITE",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 49,
+  "fields": {
+    "dni": "33333333",
+    "first_name": "PUENTES GIL LIAM",
+    "last_name": "JOSE ARTURO",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 50,
+  "fields": {
+    "dni": "22222222",
+    "first_name": "CHIROQUE CHENG",
+    "last_name": "MIA VALENTINA",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 51,
+  "fields": {
+    "dni": "55555555",
+    "first_name": "VIGO ROMAN",
+    "last_name": "ANGEL MATEO",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 52,
+  "fields": {
+    "dni": "79567003",
+    "first_name": "VASQUEZ",
+    "last_name": "LOPEZ JANKO",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 53,
+  "fields": {
+    "dni": "90944835",
+    "first_name": "OLIVOS",
+    "last_name": "HERRERA SAORI",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 54,
+  "fields": {
+    "dni": "90868441",
+    "first_name": "HERNANDEZ",
+    "last_name": "ZEVALLOS JARED",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 55,
+  "fields": {
+    "dni": "90183838",
+    "first_name": "MAYLYN",
+    "last_name": "THAMARA",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 56,
+  "fields": {
+    "dni": "90368879",
+    "first_name": "TAPIA",
+    "last_name": "RAYMUNDO MATHIAS",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 57,
+  "fields": {
+    "dni": "90766165",
+    "first_name": "OBESO",
+    "last_name": "LOPEZ ANTONIO",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 59,
+  "fields": {
+    "dni": "90000001",
+    "first_name": "MATUTE",
+    "last_name": "ACUA TIANA",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 60,
+  "fields": {
+    "dni": "12345678",
+    "first_name": "TELLO CUEVA MIKEL",
+    "last_name": "SALVADOR",
+    "birth_date": "2026-03-19",
+    "address": "Av. Por confirmar",
+    "parent_name": "Falta",
+    "parent_phone": "Falta",
+    "father_name": "Falta",
+    "mother_name": "Falta",
+    "father_phone": "Falta",
+    "mother_phone": "Falta"
+  }
+},
+{
+  "model": "students.student",
+  "pk": 61,
+  "fields": {
+    "dni": "90000002",
+    "first_name": "VERGARA",
+    "last_name": "MOZOMBITE WASHINGTON",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 62,
+  "fields": {
+    "dni": "90000003",
+    "first_name": "SALDAA LA",
+    "last_name": "ROSA THAIS",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 63,
+  "fields": {
+    "dni": "90000004",
+    "first_name": "URBINA",
+    "last_name": "ELIAS CAMILA",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 64,
+  "fields": {
+    "dni": "90000005",
+    "first_name": "CUSTODIO",
+    "last_name": "DAGA AYLLIN",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 65,
+  "fields": {
+    "dni": "90000006",
+    "first_name": "MONASTERIOS",
+    "last_name": "WELMAN SEBASTIAN",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 66,
+  "fields": {
+    "dni": "90000007",
+    "first_name": "VERDI",
+    "last_name": "DIAZ ANGELLO",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 67,
+  "fields": {
+    "dni": "90000008",
+    "first_name": "CARRANZA",
+    "last_name": "PLACIDO RODRIGO",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 68,
+  "fields": {
+    "dni": "90000009",
+    "first_name": "FALLA",
+    "last_name": "BERMUDEZ CHELSEA",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 69,
+  "fields": {
+    "dni": "90000010",
+    "first_name": "GAMARRA",
+    "last_name": "CHAVEZ YARETZY",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 70,
+  "fields": {
+    "dni": "90000011",
+    "first_name": "AGUILAR",
+    "last_name": "SALAS GAEL",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 71,
+  "fields": {
+    "dni": "90000012",
+    "first_name": "SEMEJAL",
+    "last_name": "GARCIA MIRANDA",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 72,
+  "fields": {
+    "dni": "87654321",
+    "first_name": "VASQUEZ LOPEZ",
+    "last_name": "JANKO",
+    "birth_date": "2026-03-19",
+    "address": "Av. Por confirmar",
+    "parent_name": "Falta",
+    "parent_phone": "Falta",
+    "father_name": "Falta",
+    "mother_name": "Falta",
+    "father_phone": "Falta",
+    "mother_phone": "Falta"
+  }
+},
+{
+  "model": "students.student",
+  "pk": 73,
+  "fields": {
+    "dni": "90765294",
+    "first_name": "LOPEZ",
+    "last_name": "GUTIERREZ JHOSEPH",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 74,
+  "fields": {
+    "dni": "90000000",
+    "first_name": "JULCA",
+    "last_name": "ZAPATA PAOLO",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 75,
+  "fields": {
+    "dni": "90000013",
+    "first_name": "ROLDAN",
+    "last_name": "SOLANO KHAORY",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 76,
+  "fields": {
+    "dni": "90000014",
+    "first_name": "LAYZA AREDO",
+    "last_name": "KAROL AINARA",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 77,
+  "fields": {
+    "dni": "90811317",
+    "first_name": "TERRONES",
+    "last_name": "GARCIA XARENI",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 78,
+  "fields": {
+    "dni": "90000015",
+    "first_name": "FLORES",
+    "last_name": "CASTILLO ADRIANA",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 79,
+  "fields": {
+    "dni": "90000016",
+    "first_name": "VASQUEZ",
+    "last_name": "CALUA DANILO",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 80,
+  "fields": {
+    "dni": "90000017",
+    "first_name": "SOL SOL",
+    "last_name": "PAREDES NICOLE",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 81,
+  "fields": {
+    "dni": "90000018",
+    "first_name": "SALAZAR",
+    "last_name": "CRISOLOGO LIAM",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 82,
+  "fields": {
+    "dni": "90000019",
+    "first_name": "DIAZ",
+    "last_name": "ROMERO DIEGO",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 83,
+  "fields": {
+    "dni": "90000020",
+    "first_name": "CAMPOS",
+    "last_name": "ASMAT LYAN",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 84,
+  "fields": {
+    "dni": "90000021",
+    "first_name": "ENCO",
+    "last_name": "RODRIGUEZ IKER",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 85,
+  "fields": {
+    "dni": "90000022",
+    "first_name": "ESPINOZA",
+    "last_name": "ESTACIO SERGIO",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 86,
+  "fields": {
+    "dni": "90000023",
+    "first_name": "CALLA TORRES",
+    "last_name": "LIAM SAID",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 87,
+  "fields": {
+    "dni": "90000024",
+    "first_name": "CUEVA",
+    "last_name": "RAMOS ARIANA",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 88,
+  "fields": {
+    "dni": "90000025",
+    "first_name": "RUBIO",
+    "last_name": "FLORES LIAM",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 89,
+  "fields": {
+    "dni": "90000026",
+    "first_name": "VASQUEZ",
+    "last_name": "CUEVA DAMIAN",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 90,
+  "fields": {
+    "dni": "90269776",
+    "first_name": "BARROS PUICAN",
+    "last_name": "JESUS BENJAMIN",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 91,
+  "fields": {
+    "dni": "90599893",
+    "first_name": "LEON",
+    "last_name": "PONCE ENZO",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 92,
+  "fields": {
+    "dni": "90000027",
+    "first_name": "CHOMBA",
+    "last_name": "ALTAMIRANO LIAM",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 93,
+  "fields": {
+    "dni": "90000028",
+    "first_name": "URQUIZA",
+    "last_name": "OLIVERA ARIANA",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 94,
+  "fields": {
+    "dni": "90000029",
+    "first_name": "LUJAN",
+    "last_name": "BOADO GUSTAVO",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 95,
+  "fields": {
+    "dni": "90000030",
+    "first_name": "POLO",
+    "last_name": "RIVERO MAYLETH",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 96,
+  "fields": {
+    "dni": "90000031",
+    "first_name": "SILVA",
+    "last_name": "DURAND BRIANA",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 97,
+  "fields": {
+    "dni": "90000032",
+    "first_name": "MARTI",
+    "last_name": "NACARINO MATEO",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 98,
+  "fields": {
+    "dni": "90000033",
+    "first_name": "ANHUAMAN NACARINO",
+    "last_name": "CHRYSTOFER MATEO",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 99,
+  "fields": {
+    "dni": "90000034",
+    "first_name": "ASUNCION",
+    "last_name": "OTINIANO IVANNA",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 100,
+  "fields": {
+    "dni": "90000035",
+    "first_name": "OLANO",
+    "last_name": "CABANILLAS FAVIO",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 101,
+  "fields": {
+    "dni": "90000036",
+    "first_name": "CASTILLO",
+    "last_name": "CUBA ALVARO",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 102,
+  "fields": {
+    "dni": "90000037",
+    "first_name": "CONTRERAS",
+    "last_name": "AVILA DANIELA",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 103,
+  "fields": {
+    "dni": "90000038",
+    "first_name": "CHANCAFE",
+    "last_name": "ANGELES SHELSEY",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 104,
+  "fields": {
+    "dni": "90000039",
+    "first_name": "VARGAS",
+    "last_name": "FERNANDEZ ADYRA",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 105,
+  "fields": {
+    "dni": "90000040",
+    "first_name": "GAMARRA",
+    "last_name": "HUAMAN PEYTON",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 106,
+  "fields": {
+    "dni": "90000041",
+    "first_name": "TELLO",
+    "last_name": "PEREA GAEV",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 123,
+  "fields": {
+    "dni": "90000058",
+    "first_name": "ENRIQUEZ D",
+    "last_name": "ELA CRUZ",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 124,
+  "fields": {
+    "dni": "90000059",
+    "first_name": "MIRANDA",
+    "last_name": "CALDERON JACOBO",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 125,
+  "fields": {
+    "dni": "90000060",
+    "first_name": "FLORIAN",
+    "last_name": "VENEROS LUCIANO",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 126,
+  "fields": {
+    "dni": "90000061",
+    "first_name": "BRACAMONTE",
+    "last_name": "PARRAVICINI EITHAN",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 127,
+  "fields": {
+    "dni": "90000062",
+    "first_name": "DELGADO",
+    "last_name": "SHAWAN BRUNO",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 128,
+  "fields": {
+    "dni": "90000063",
+    "first_name": "ANGULO",
+    "last_name": "VASQUEZ AMBAR",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 129,
+  "fields": {
+    "dni": "90000064",
+    "first_name": "EUSTAQUIO",
+    "last_name": "MARTINEZ KHALEESI",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 130,
+  "fields": {
+    "dni": "90000065",
+    "first_name": "MARIOS",
+    "last_name": "GARCIA LIAM",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 131,
+  "fields": {
+    "dni": "90000066",
+    "first_name": "RIOS ORBE",
+    "last_name": "AARON GAEL",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 132,
+  "fields": {
+    "dni": "90000067",
+    "first_name": "RODRIGUEZ",
+    "last_name": "ARANDA GAEL",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 133,
+  "fields": {
+    "dni": "90000068",
+    "first_name": "NAVARRO",
+    "last_name": "MEDINA MIA",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 134,
+  "fields": {
+    "dni": "90000069",
+    "first_name": "ESQUECHE",
+    "last_name": "PALMA AARON",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 135,
+  "fields": {
+    "dni": "90000070",
+    "first_name": "URIBE",
+    "last_name": "LLACTAS ANTHUAN",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 136,
+  "fields": {
+    "dni": "90000071",
+    "first_name": "NIETO",
+    "last_name": "LOPEZ LIAM",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 137,
+  "fields": {
+    "dni": "90000072",
+    "first_name": "BURGOS LARA JHOSEPH- FALTA",
+    "last_name": "LLENAR FICHAS",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 138,
+  "fields": {
+    "dni": "90000073",
+    "first_name": "ITZAE",
+    "last_name": "VALVERDE",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 139,
+  "fields": {
+    "dni": "90000074",
+    "first_name": "PALOMINO",
+    "last_name": "CRUZ KIOMARA",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 140,
+  "fields": {
+    "dni": "79615698",
+    "first_name": "NIMA",
+    "last_name": "TIRADO JEANPIERRE",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 142,
+  "fields": {
+    "dni": "79712334",
+    "first_name": "ASENCIO",
+    "last_name": "RUIZ CESAR",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 143,
+  "fields": {
+    "dni": "90041325",
+    "first_name": "SALINAS",
+    "last_name": "CASTILLO ZOE",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 158,
+  "fields": {
+    "dni": "90000090",
+    "first_name": "ROSDRGUEZ",
+    "last_name": "MORENO RODRIGO",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 159,
+  "fields": {
+    "dni": "90000091",
+    "first_name": "CORDOVA",
+    "last_name": "SAAVEDRA ANYELI",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 160,
+  "fields": {
+    "dni": "90000092",
+    "first_name": "TEJADA",
+    "last_name": "ORRILLO IAN",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 161,
+  "fields": {
+    "dni": "90000093",
+    "first_name": "RISCO",
+    "last_name": "REYES THIAGO",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 162,
+  "fields": {
+    "dni": "90000094",
+    "first_name": "SANCHEZ",
+    "last_name": "ALAYO GUSTAVO",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 163,
+  "fields": {
+    "dni": "90000095",
+    "first_name": "MOYA",
+    "last_name": "SEGURA NANCY",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 164,
+  "fields": {
+    "dni": "90000096",
+    "first_name": "CAMACHO",
+    "last_name": "ANGULO JARED",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 165,
+  "fields": {
+    "dni": "90000097",
+    "first_name": "HUAMAN",
+    "last_name": "CASTILLO ROUSE",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 166,
+  "fields": {
+    "dni": "90000098",
+    "first_name": "MILLONES",
+    "last_name": "ANGELES ROBERTO",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 167,
+  "fields": {
+    "dni": "90000099",
+    "first_name": "DE LA CRUZ",
+    "last_name": "ARAUJO AXEL",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 168,
+  "fields": {
+    "dni": "90000100",
+    "first_name": "DURAND",
+    "last_name": "HUAMAN ROSANGELA",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 169,
+  "fields": {
+    "dni": "90000101",
+    "first_name": "CUTIN",
+    "last_name": "ORDOEZ ZULLY",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 170,
+  "fields": {
+    "dni": "90000102",
+    "first_name": "LUJAN",
+    "last_name": "PLACIDO ENZO",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 171,
+  "fields": {
+    "dni": "90000103",
+    "first_name": "VARGAS",
+    "last_name": "FLORIAN TATIANA",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 172,
+  "fields": {
+    "dni": "90000104",
+    "first_name": "RAMOS",
+    "last_name": "HARO CRISTINA",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 173,
+  "fields": {
+    "dni": "90000105",
+    "first_name": "DIAZ",
+    "last_name": "PRETELL GIANPIERO",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 174,
+  "fields": {
+    "dni": "90000106",
+    "first_name": "MILLA",
+    "last_name": "CHAVEZ VALERIA",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 175,
+  "fields": {
+    "dni": "90000107",
+    "first_name": "RUIZ",
+    "last_name": "MENDOZA BRICCY",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 176,
+  "fields": {
+    "dni": "90000108",
+    "first_name": "HERRERA",
+    "last_name": "DIAZ LIAM",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 177,
+  "fields": {
+    "dni": "90000109",
+    "first_name": "RODRIGUEZ",
+    "last_name": "HUACCHA YORS",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 178,
+  "fields": {
+    "dni": "90000110",
+    "first_name": "CASTILLO",
+    "last_name": "LOPEZ BENJAMIN",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 179,
+  "fields": {
+    "dni": "90000111",
+    "first_name": "ANHUAMAN",
+    "last_name": "VILLARREAL KAHORY",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 219,
+  "fields": {
+    "dni": "79701411",
+    "first_name": "HERMEREGILDO",
+    "last_name": "LLAJARUNA KAORI",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 220,
+  "fields": {
+    "dni": "90020198",
+    "first_name": "VERDE",
+    "last_name": "VICITACION ALESSIA",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 221,
+  "fields": {
+    "dni": "79908255",
+    "first_name": "ALVAREZ SILVA",
+    "last_name": "SANTOS EIMY",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 222,
+  "fields": {
+    "dni": "90000042",
+    "first_name": "BURGOS",
+    "last_name": "CAYETANO ALHSKA",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 223,
+  "fields": {
+    "dni": "79617058",
+    "first_name": "VASQUEZ RISCO",
+    "last_name": "ARIANO AILEEN",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 224,
+  "fields": {
+    "dni": "70663634",
+    "first_name": "TOLEDOPAREDES",
+    "last_name": "ROUSE",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 225,
+  "fields": {
+    "dni": "90035867",
+    "first_name": "AYALA",
+    "last_name": "SEMINARIO SANTIAGO",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 226,
+  "fields": {
+    "dni": "90083555",
+    "first_name": "AZABACHE",
+    "last_name": "ROMERO ARIANA",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 227,
+  "fields": {
+    "dni": "90000043",
+    "first_name": "BOBADILLA",
+    "last_name": "PRETEL THIAGO",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 228,
+  "fields": {
+    "dni": "79964768",
+    "first_name": "MENESES",
+    "last_name": "VELASQUEZ ENZO",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 229,
+  "fields": {
+    "dni": "90000044",
+    "first_name": "RODRIGUEZ",
+    "last_name": "FERNANDEZ ANTONIO",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 230,
+  "fields": {
+    "dni": "90000045",
+    "first_name": "MORENO",
+    "last_name": "ORTURZA ADRIAN",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 231,
+  "fields": {
+    "dni": "90000046",
+    "first_name": "VILCA",
+    "last_name": "VALERA SAIRA",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 232,
+  "fields": {
+    "dni": "90000047",
+    "first_name": "PASTOR SANCHEZ",
+    "last_name": "LUIS ANGEL",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 233,
+  "fields": {
+    "dni": "90000048",
+    "first_name": "OTINIANO",
+    "last_name": "ROBLES HONG",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 234,
+  "fields": {
+    "dni": "90000049",
+    "first_name": "DELGADO",
+    "last_name": "CASTRO KHALESSI",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 235,
+  "fields": {
+    "dni": "90000050",
+    "first_name": "CASTAEDA",
+    "last_name": "GARCIA JEREMY",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 236,
+  "fields": {
+    "dni": "90000051",
+    "first_name": "CHAVEZ",
+    "last_name": "LAVADO BENJAMIN",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 237,
+  "fields": {
+    "dni": "79557090",
+    "first_name": "RISCO",
+    "last_name": "NIMA JOSUE",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 238,
+  "fields": {
+    "dni": "90000052",
+    "first_name": "MARQUEZ MARQUEZ",
+    "last_name": "DARIANNYS ARANZA",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 239,
+  "fields": {
+    "dni": "79197669",
+    "first_name": "AZABACHE",
+    "last_name": "ROMERO ARIANA",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 240,
+  "fields": {
+    "dni": "78435730",
+    "first_name": "OLIVOS HERRERA ANA",
+    "last_name": "MARIA ISABEL",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 241,
+  "fields": {
+    "dni": "90000053",
+    "first_name": "HUANCA",
+    "last_name": "GAMARRA THIAGO",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 242,
+  "fields": {
+    "dni": "90000054",
+    "first_name": "NIETO VERA",
+    "last_name": "BRIHANNA JAKIRA",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 243,
+  "fields": {
+    "dni": "90000055",
+    "first_name": "LIAM",
+    "last_name": "WILLIAM PEREDA",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 244,
+  "fields": {
+    "dni": "90000056",
+    "first_name": "PAREDES",
+    "last_name": "VENTURA LIAM",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 245,
+  "fields": {
+    "dni": "90000057",
+    "first_name": "CUEVA",
+    "last_name": "MONTOYA YASUMI",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 246,
+  "fields": {
+    "dni": "90000075",
+    "first_name": "LLAMO",
+    "last_name": "NACARINO LUANA",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 247,
+  "fields": {
+    "dni": "90000076",
+    "first_name": "CASTILLO",
+    "last_name": "MIRANDA DYLAN",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 248,
+  "fields": {
+    "dni": "90000077",
+    "first_name": "NARVAEZ",
+    "last_name": "BARDALES ASHLY",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 249,
+  "fields": {
+    "dni": "90000078",
+    "first_name": "AGUILAR",
+    "last_name": "YOVERA FABIANA",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 250,
+  "fields": {
+    "dni": "90000079",
+    "first_name": "NARRO",
+    "last_name": "VASQUEZ MIA",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 251,
+  "fields": {
+    "dni": "90000080",
+    "first_name": "ARCE",
+    "last_name": "AZABACHE DIEGO",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 252,
+  "fields": {
+    "dni": "90000081",
+    "first_name": "CAMILA",
+    "last_name": "OJEDA PEREZ",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 253,
+  "fields": {
+    "dni": "90000082",
+    "first_name": "ENCO",
+    "last_name": "RODRIGUEZ NARAM",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 254,
+  "fields": {
+    "dni": "90000083",
+    "first_name": "HUAMANI",
+    "last_name": "PEREZ THIAGO",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 255,
+  "fields": {
+    "dni": "90000084",
+    "first_name": "VILLANUEVA",
+    "last_name": "TARMEO ABBY",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 256,
+  "fields": {
+    "dni": "90000085",
+    "first_name": "MARIOS",
+    "last_name": "GARCIA AYTANA",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 257,
+  "fields": {
+    "dni": "90000086",
+    "first_name": "ALVAREZ",
+    "last_name": "AGUIRRE MARI",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 258,
+  "fields": {
+    "dni": "79393216",
+    "first_name": "TORRES",
+    "last_name": "POLO IAN",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 259,
+  "fields": {
+    "dni": "79101305",
+    "first_name": "TOLEDO",
+    "last_name": "PAREDES PEDRO",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 260,
+  "fields": {
+    "dni": "79503449",
+    "first_name": "LA ROSA CABEZA",
+    "last_name": "LUANA DAMILETH",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 261,
+  "fields": {
+    "dni": "90000087",
+    "first_name": "SEQUIN",
+    "last_name": "GONZALEZ JAIDERLYN",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 262,
+  "fields": {
+    "dni": "90000088",
+    "first_name": "CAMACHO",
+    "last_name": "SAUCEDA ELAYNE",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 263,
+  "fields": {
+    "dni": "90000089",
+    "first_name": "CORDOVA",
+    "last_name": "GONZALES ANGELES",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 264,
+  "fields": {
+    "dni": "90000112",
+    "first_name": "AVALOS",
+    "last_name": "RODRIGUEZ LUCIANA",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 265,
+  "fields": {
+    "dni": "90000113",
+    "first_name": "CHERO",
+    "last_name": "RUIZ LIAM",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 266,
+  "fields": {
+    "dni": "90000114",
+    "first_name": "VARGAS",
+    "last_name": "CENAS JHENKO",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 267,
+  "fields": {
+    "dni": "90000115",
+    "first_name": "RAMOS",
+    "last_name": "HARO MATEO",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 268,
+  "fields": {
+    "dni": "90000116",
+    "first_name": "BEDON",
+    "last_name": "ESPINOZA THIAGO",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 269,
+  "fields": {
+    "dni": "90000117",
+    "first_name": "DIESTRA",
+    "last_name": "QUISPE JHAYRO",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 270,
+  "fields": {
+    "dni": "90000118",
+    "first_name": "FACHO",
+    "last_name": "VASQUEZ ARIANA",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 271,
+  "fields": {
+    "dni": "90000119",
+    "first_name": "VERA",
+    "last_name": "VELASQUEZ THIAGO",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 272,
+  "fields": {
+    "dni": "90000120",
+    "first_name": "SOL SOL",
+    "last_name": "PAREDES IAN",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 273,
+  "fields": {
+    "dni": "90000121",
+    "first_name": "RIOS",
+    "last_name": "ORBE AMMY",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 274,
+  "fields": {
+    "dni": "90000122",
+    "first_name": "DEL CASTILLO",
+    "last_name": "VASQUEZ RENZO",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 275,
+  "fields": {
+    "dni": "90000123",
+    "first_name": "MENDIETA",
+    "last_name": "ALAYO ANDERSON",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 276,
+  "fields": {
+    "dni": "90000124",
+    "first_name": "CURINUQUI CHAVARRY",
+    "last_name": "THIAGO MATEO",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 277,
+  "fields": {
+    "dni": "90000125",
+    "first_name": "URIBE",
+    "last_name": "LLACTAS AITANA",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 278,
+  "fields": {
+    "dni": "90000126",
+    "first_name": "VARAGASS",
+    "last_name": "FAJARDO NOAH",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 279,
+  "fields": {
+    "dni": "90000127",
+    "first_name": "MARTINEZ",
+    "last_name": "PELAEZ CAMILA",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 280,
+  "fields": {
+    "dni": "08824762",
+    "first_name": "TROCEL SOSA",
+    "last_name": "DARIANA SINAI",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 281,
+  "fields": {
+    "dni": "78845611",
+    "first_name": "SIFUENTES",
+    "last_name": "VELA LIAM",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 282,
+  "fields": {
+    "dni": "90000128",
+    "first_name": "VALDVIESO",
+    "last_name": "CHAVARRY MILETH",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 283,
+  "fields": {
+    "dni": "90000129",
+    "first_name": "SILVA",
+    "last_name": "DURAND THIAGO",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 284,
+  "fields": {
+    "dni": "90000130",
+    "first_name": "SANTAMARIA",
+    "last_name": "CENTENO BENJAMIN",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 285,
+  "fields": {
+    "dni": "90000131",
+    "first_name": "MEDINA",
+    "last_name": "VIDARTE JEANNETH",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 286,
+  "fields": {
+    "dni": "90000132",
+    "first_name": "DIAZ",
+    "last_name": "PRETELL KIYARI",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 287,
+  "fields": {
+    "dni": "90000133",
+    "first_name": "CASTILLO",
+    "last_name": "CHUQUILIN IAN",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 288,
+  "fields": {
+    "dni": "90000134",
+    "first_name": "SOLANO",
+    "last_name": "AVILA ROBINSON",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 289,
+  "fields": {
+    "dni": "90000135",
+    "first_name": "ESQUIVEZ MOZOMBITE",
+    "last_name": "LADY MICAELA",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 290,
+  "fields": {
+    "dni": "90000136",
+    "first_name": "PULIDO",
+    "last_name": "GUTIERREZ LIAM",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 291,
+  "fields": {
+    "dni": "90000137",
+    "first_name": "FERNANDEZ",
+    "last_name": "MEREGILDO PATRICK",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 292,
+  "fields": {
+    "dni": "90000138",
+    "first_name": "SOLAR",
+    "last_name": "LLAJA CLAUDIO",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 293,
+  "fields": {
+    "dni": "90000139",
+    "first_name": "MENDOZA",
+    "last_name": "RUBIO SUSAN",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 294,
+  "fields": {
+    "dni": "90000140",
+    "first_name": "FERNANDEZ",
+    "last_name": "RAMOS OSCAR",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 295,
+  "fields": {
+    "dni": "90000141",
+    "first_name": "CASTILLO",
+    "last_name": "AGUILAR MAXIMILIANO",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 296,
+  "fields": {
+    "dni": "90000142",
+    "first_name": "VIDAL BAYLON MILA",
+    "last_name": "YOUNG MI",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 297,
+  "fields": {
+    "dni": "90000143",
+    "first_name": "VIDAL",
+    "last_name": "BAYLON NAHOMY",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 298,
+  "fields": {
+    "dni": "90000144",
+    "first_name": "LIZARRAGA",
+    "last_name": "BRICEO NEYMAR",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 299,
+  "fields": {
+    "dni": "90000145",
+    "first_name": "GALLO LEIVA",
+    "last_name": "THIAGO ANDREE",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 300,
+  "fields": {
+    "dni": "90000146",
+    "first_name": "DIAZ RAMIREZ",
+    "last_name": "TYRA XIMENA",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 301,
+  "fields": {
+    "dni": "90000147",
+    "first_name": "PINTO",
+    "last_name": "ORTEGA ANTONELLA",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 302,
+  "fields": {
+    "dni": "81726354",
+    "first_name": "ROSAS BACILIO",
+    "last_name": "SEBASTIAN",
+    "birth_date": "2026-03-19",
+    "address": "Av. Por confirmar",
+    "parent_name": "Falta",
+    "parent_phone": "Falta",
+    "father_name": "Falta",
+    "mother_name": "Falta",
+    "father_phone": "Falta",
+    "mother_phone": "Falta"
+  }
+},
+{
+  "model": "students.student",
+  "pk": 303,
+  "fields": {
+    "dni": "90000148",
+    "first_name": "MIRANDA GALLARDO",
+    "last_name": "ANGEL TADEO",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 304,
+  "fields": {
+    "dni": "90000149",
+    "first_name": "MIRANDA CALDERON",
+    "last_name": "JHANNA MISMELLE",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 305,
+  "fields": {
+    "dni": "90000150",
+    "first_name": "GUTIERREZ PEREIRA ALESSANDRO",
+    "last_name": "DEL PIERO",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 306,
+  "fields": {
+    "dni": "90000151",
+    "first_name": "ROJAS",
+    "last_name": "BOBADILLA PAMELA",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 307,
+  "fields": {
+    "dni": "90000152",
+    "first_name": "GUERRA",
+    "last_name": "MORENO SULEIDY",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 308,
+  "fields": {
+    "dni": "90000153",
+    "first_name": "VIDAL",
+    "last_name": "CARRANZA NICOLL",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 309,
+  "fields": {
+    "dni": "90000154",
+    "first_name": "MARQUINA",
+    "last_name": "DAVALOS MARCELO",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 310,
+  "fields": {
+    "dni": "90000155",
+    "first_name": "SAMAME",
+    "last_name": "CUBAS TIAGO",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 311,
+  "fields": {
+    "dni": "90000156",
+    "first_name": "OTINIANO ROBLES",
+    "last_name": "ALEXANDRA VALERIA",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 312,
+  "fields": {
+    "dni": "90000157",
+    "first_name": "FERNANDEZ",
+    "last_name": "OBLITAS YEHIKO",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 313,
+  "fields": {
+    "dni": "90000158",
+    "first_name": "VALDERRAMA",
+    "last_name": "HUAMAN BRYAN",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 314,
+  "fields": {
+    "dni": "90000159",
+    "first_name": "ALVARADO",
+    "last_name": "LEYVA INGRID",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 315,
+  "fields": {
+    "dni": "90000160",
+    "first_name": "SOSA RUIZ",
+    "last_name": "STHEFANY ESTRELLA",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 316,
+  "fields": {
+    "dni": "90000161",
+    "first_name": "CABANILLAS",
+    "last_name": "CASTILLO SOLANGE",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 317,
+  "fields": {
+    "dni": "90000162",
+    "first_name": "NECIOSUP CASTRO",
+    "last_name": "MATHIAS SEBASTIAN",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 318,
+  "fields": {
+    "dni": "90000163",
+    "first_name": "CASTILLO",
+    "last_name": "PLASENCIA LEONARDO",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 319,
+  "fields": {
+    "dni": "90000164",
+    "first_name": "YALTA",
+    "last_name": "GUTIERREZ STEFY",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 320,
+  "fields": {
+    "dni": "90000165",
+    "first_name": "OLIVA RUBIO ZAHARA",
+    "last_name": "HIZAKI PRINS",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 321,
+  "fields": {
+    "dni": "90000166",
+    "first_name": "LUNA RIVERA",
+    "last_name": "ADRIANITA NATZUMY",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 322,
+  "fields": {
+    "dni": "90000167",
+    "first_name": "FLORES",
+    "last_name": "LOPEZ BRIANA",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 323,
+  "fields": {
+    "dni": "90000168",
+    "first_name": "QUITO",
+    "last_name": "JHARAMILLO YARED",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 324,
+  "fields": {
+    "dni": "90000169",
+    "first_name": "IBAEZ",
+    "last_name": "RODRIGUEZ ZAFIRO",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "students.student",
+  "pk": 325,
+  "fields": {
+    "dni": "90000170",
+    "first_name": "GARCIA",
+    "last_name": "FLORES ZOHE",
+    "birth_date": null,
+    "address": "",
+    "parent_name": "",
+    "parent_phone": "",
+    "father_name": "",
+    "mother_name": "",
+    "father_phone": "",
+    "mother_phone": ""
+  }
+},
+{
+  "model": "academic.academicyear",
+  "pk": 1,
+  "fields": {
+    "school": 1,
+    "year": 2026,
+    "is_active": true
+  }
+},
+{
+  "model": "academic.grade",
+  "pk": 1,
+  "fields": {
+    "name": "1 grado"
+  }
+},
+{
+  "model": "academic.grade",
+  "pk": 2,
+  "fields": {
+    "name": "2 grado"
+  }
+},
+{
+  "model": "academic.grade",
+  "pk": 3,
+  "fields": {
+    "name": "3 grado"
+  }
+},
+{
+  "model": "academic.grade",
+  "pk": 4,
+  "fields": {
+    "name": "4 grado"
+  }
+},
+{
+  "model": "academic.grade",
+  "pk": 5,
+  "fields": {
+    "name": "5 grado"
+  }
+},
+{
+  "model": "academic.grade",
+  "pk": 6,
+  "fields": {
+    "name": "6 grado"
+  }
+},
+{
+  "model": "academic.section",
+  "pk": 2,
+  "fields": {
+    "name": "A",
+    "grade": 1,
+    "tutor_teacher": 14
+  }
+},
+{
+  "model": "academic.section",
+  "pk": 3,
+  "fields": {
+    "name": "B",
+    "grade": 1,
+    "tutor_teacher": 21
+  }
+},
+{
+  "model": "academic.section",
+  "pk": 4,
+  "fields": {
+    "name": "A",
+    "grade": 2,
+    "tutor_teacher": 22
+  }
+},
+{
+  "model": "academic.section",
+  "pk": 5,
+  "fields": {
+    "name": "B",
+    "grade": 2,
+    "tutor_teacher": 15
+  }
+},
+{
+  "model": "academic.section",
+  "pk": 6,
+  "fields": {
+    "name": "A",
+    "grade": 3,
+    "tutor_teacher": 13
+  }
+},
+{
+  "model": "academic.section",
+  "pk": 7,
+  "fields": {
+    "name": "B",
+    "grade": 3,
+    "tutor_teacher": 18
+  }
+},
+{
+  "model": "academic.section",
+  "pk": 8,
+  "fields": {
+    "name": "A",
+    "grade": 4,
+    "tutor_teacher": 23
+  }
+},
+{
+  "model": "academic.section",
+  "pk": 9,
+  "fields": {
+    "name": "B",
+    "grade": 4,
+    "tutor_teacher": 24
+  }
+},
+{
+  "model": "academic.section",
+  "pk": 10,
+  "fields": {
+    "name": "A",
+    "grade": 5,
+    "tutor_teacher": null
+  }
+},
+{
+  "model": "academic.section",
+  "pk": 11,
+  "fields": {
+    "name": "B",
+    "grade": 5,
+    "tutor_teacher": null
+  }
+},
+{
+  "model": "academic.section",
+  "pk": 12,
+  "fields": {
+    "name": "A",
+    "grade": 6,
+    "tutor_teacher": null
+  }
+},
+{
+  "model": "academic.section",
+  "pk": 13,
+  "fields": {
+    "name": "B",
+    "grade": 6,
+    "tutor_teacher": null
+  }
+},
+{
+  "model": "academic.course",
+  "pk": 1,
+  "fields": {
+    "name": "Matematica",
+    "is_poly_course": false,
+    "grades": []
+  }
+},
+{
+  "model": "academic.course",
+  "pk": 2,
+  "fields": {
+    "name": "Ingles",
+    "is_poly_course": true,
+    "grades": []
+  }
+},
+{
+  "model": "academic.course",
+  "pk": 3,
+  "fields": {
+    "name": "Religion",
+    "is_poly_course": false,
+    "grades": []
+  }
+},
+{
+  "model": "academic.course",
+  "pk": 4,
+  "fields": {
+    "name": "Computacion",
+    "is_poly_course": true,
+    "grades": []
+  }
+},
+{
+  "model": "academic.course",
+  "pk": 5,
+  "fields": {
+    "name": "Ciencia y tecnologa",
+    "is_poly_course": true,
+    "grades": []
+  }
+},
+{
+  "model": "academic.course",
+  "pk": 6,
+  "fields": {
+    "name": "Comunicacin",
+    "is_poly_course": false,
+    "grades": []
+  }
+},
+{
+  "model": "academic.course",
+  "pk": 7,
+  "fields": {
+    "name": "Razonamiento matemtico",
+    "is_poly_course": false,
+    "grades": []
+  }
+},
+{
+  "model": "academic.course",
+  "pk": 8,
+  "fields": {
+    "name": "Personal Social",
+    "is_poly_course": false,
+    "grades": []
+  }
+},
+{
+  "model": "academic.course",
+  "pk": 9,
+  "fields": {
+    "name": "Arte",
+    "is_poly_course": true,
+    "grades": []
+  }
+},
+{
+  "model": "academic.course",
+  "pk": 10,
+  "fields": {
+    "name": "Programacin y Robotica",
+    "is_poly_course": true,
+    "grades": []
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 58,
+  "fields": {
+    "teacher": 11,
+    "course": 5,
+    "grade": 5,
+    "section": 10,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 59,
+  "fields": {
+    "teacher": 11,
+    "course": 5,
+    "grade": 5,
+    "section": 11,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 60,
+  "fields": {
+    "teacher": 11,
+    "course": 5,
+    "grade": 6,
+    "section": 12,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 61,
+  "fields": {
+    "teacher": 11,
+    "course": 5,
+    "grade": 6,
+    "section": 13,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 62,
+  "fields": {
+    "teacher": 12,
+    "course": 4,
+    "grade": 1,
+    "section": 2,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 63,
+  "fields": {
+    "teacher": 12,
+    "course": 4,
+    "grade": 1,
+    "section": 3,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 64,
+  "fields": {
+    "teacher": 12,
+    "course": 4,
+    "grade": 2,
+    "section": 4,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 65,
+  "fields": {
+    "teacher": 12,
+    "course": 4,
+    "grade": 2,
+    "section": 5,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 66,
+  "fields": {
+    "teacher": 12,
+    "course": 4,
+    "grade": 3,
+    "section": 6,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 67,
+  "fields": {
+    "teacher": 12,
+    "course": 4,
+    "grade": 3,
+    "section": 7,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 68,
+  "fields": {
+    "teacher": 12,
+    "course": 4,
+    "grade": 4,
+    "section": 8,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 69,
+  "fields": {
+    "teacher": 12,
+    "course": 4,
+    "grade": 4,
+    "section": 9,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 70,
+  "fields": {
+    "teacher": 12,
+    "course": 4,
+    "grade": 5,
+    "section": 10,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 71,
+  "fields": {
+    "teacher": 12,
+    "course": 4,
+    "grade": 5,
+    "section": 11,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 72,
+  "fields": {
+    "teacher": 12,
+    "course": 4,
+    "grade": 6,
+    "section": 12,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 73,
+  "fields": {
+    "teacher": 12,
+    "course": 4,
+    "grade": 6,
+    "section": 13,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 74,
+  "fields": {
+    "teacher": 13,
+    "course": 9,
+    "grade": 3,
+    "section": 6,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 75,
+  "fields": {
+    "teacher": 13,
+    "course": 5,
+    "grade": 3,
+    "section": 6,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 76,
+  "fields": {
+    "teacher": 13,
+    "course": 4,
+    "grade": 3,
+    "section": 6,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 77,
+  "fields": {
+    "teacher": 13,
+    "course": 6,
+    "grade": 3,
+    "section": 6,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 78,
+  "fields": {
+    "teacher": 13,
+    "course": 2,
+    "grade": 3,
+    "section": 6,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 79,
+  "fields": {
+    "teacher": 13,
+    "course": 1,
+    "grade": 3,
+    "section": 6,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 80,
+  "fields": {
+    "teacher": 13,
+    "course": 8,
+    "grade": 3,
+    "section": 6,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 81,
+  "fields": {
+    "teacher": 13,
+    "course": 7,
+    "grade": 3,
+    "section": 6,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 82,
+  "fields": {
+    "teacher": 13,
+    "course": 3,
+    "grade": 3,
+    "section": 6,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 83,
+  "fields": {
+    "teacher": 14,
+    "course": 9,
+    "grade": 1,
+    "section": 2,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 84,
+  "fields": {
+    "teacher": 14,
+    "course": 5,
+    "grade": 1,
+    "section": 2,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 85,
+  "fields": {
+    "teacher": 14,
+    "course": 4,
+    "grade": 1,
+    "section": 2,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 86,
+  "fields": {
+    "teacher": 14,
+    "course": 6,
+    "grade": 1,
+    "section": 2,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 87,
+  "fields": {
+    "teacher": 14,
+    "course": 2,
+    "grade": 1,
+    "section": 2,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 88,
+  "fields": {
+    "teacher": 14,
+    "course": 1,
+    "grade": 1,
+    "section": 2,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 89,
+  "fields": {
+    "teacher": 14,
+    "course": 8,
+    "grade": 1,
+    "section": 2,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 90,
+  "fields": {
+    "teacher": 14,
+    "course": 7,
+    "grade": 1,
+    "section": 2,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 91,
+  "fields": {
+    "teacher": 14,
+    "course": 3,
+    "grade": 1,
+    "section": 2,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 92,
+  "fields": {
+    "teacher": 15,
+    "course": 9,
+    "grade": 2,
+    "section": 5,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 93,
+  "fields": {
+    "teacher": 15,
+    "course": 5,
+    "grade": 2,
+    "section": 5,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 94,
+  "fields": {
+    "teacher": 15,
+    "course": 4,
+    "grade": 2,
+    "section": 5,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 95,
+  "fields": {
+    "teacher": 15,
+    "course": 6,
+    "grade": 2,
+    "section": 5,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 96,
+  "fields": {
+    "teacher": 15,
+    "course": 2,
+    "grade": 2,
+    "section": 5,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 97,
+  "fields": {
+    "teacher": 15,
+    "course": 1,
+    "grade": 2,
+    "section": 5,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 98,
+  "fields": {
+    "teacher": 15,
+    "course": 8,
+    "grade": 2,
+    "section": 5,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 99,
+  "fields": {
+    "teacher": 15,
+    "course": 7,
+    "grade": 2,
+    "section": 5,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 100,
+  "fields": {
+    "teacher": 15,
+    "course": 3,
+    "grade": 2,
+    "section": 5,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 101,
+  "fields": {
+    "teacher": 16,
+    "course": 6,
+    "grade": 5,
+    "section": 10,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 102,
+  "fields": {
+    "teacher": 16,
+    "course": 6,
+    "grade": 5,
+    "section": 11,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 103,
+  "fields": {
+    "teacher": 16,
+    "course": 6,
+    "grade": 6,
+    "section": 12,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 104,
+  "fields": {
+    "teacher": 16,
+    "course": 6,
+    "grade": 6,
+    "section": 13,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 105,
+  "fields": {
+    "teacher": 17,
+    "course": 2,
+    "grade": 1,
+    "section": 2,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 106,
+  "fields": {
+    "teacher": 17,
+    "course": 2,
+    "grade": 1,
+    "section": 3,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 107,
+  "fields": {
+    "teacher": 17,
+    "course": 2,
+    "grade": 2,
+    "section": 4,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 108,
+  "fields": {
+    "teacher": 17,
+    "course": 2,
+    "grade": 2,
+    "section": 5,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 109,
+  "fields": {
+    "teacher": 17,
+    "course": 2,
+    "grade": 3,
+    "section": 6,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 110,
+  "fields": {
+    "teacher": 17,
+    "course": 2,
+    "grade": 3,
+    "section": 7,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 111,
+  "fields": {
+    "teacher": 17,
+    "course": 2,
+    "grade": 5,
+    "section": 10,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 112,
+  "fields": {
+    "teacher": 17,
+    "course": 2,
+    "grade": 5,
+    "section": 11,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 113,
+  "fields": {
+    "teacher": 17,
+    "course": 2,
+    "grade": 6,
+    "section": 12,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 114,
+  "fields": {
+    "teacher": 17,
+    "course": 2,
+    "grade": 6,
+    "section": 13,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 115,
+  "fields": {
+    "teacher": 18,
+    "course": 9,
+    "grade": 3,
+    "section": 7,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 116,
+  "fields": {
+    "teacher": 18,
+    "course": 5,
+    "grade": 3,
+    "section": 7,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 117,
+  "fields": {
+    "teacher": 18,
+    "course": 4,
+    "grade": 3,
+    "section": 7,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 118,
+  "fields": {
+    "teacher": 18,
+    "course": 6,
+    "grade": 3,
+    "section": 7,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 119,
+  "fields": {
+    "teacher": 18,
+    "course": 2,
+    "grade": 3,
+    "section": 7,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 120,
+  "fields": {
+    "teacher": 18,
+    "course": 1,
+    "grade": 3,
+    "section": 7,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 121,
+  "fields": {
+    "teacher": 18,
+    "course": 8,
+    "grade": 3,
+    "section": 7,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 122,
+  "fields": {
+    "teacher": 18,
+    "course": 7,
+    "grade": 3,
+    "section": 7,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 123,
+  "fields": {
+    "teacher": 18,
+    "course": 3,
+    "grade": 3,
+    "section": 7,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 124,
+  "fields": {
+    "teacher": 19,
+    "course": 1,
+    "grade": 5,
+    "section": 10,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 125,
+  "fields": {
+    "teacher": 19,
+    "course": 1,
+    "grade": 5,
+    "section": 11,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 126,
+  "fields": {
+    "teacher": 19,
+    "course": 1,
+    "grade": 6,
+    "section": 12,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 127,
+  "fields": {
+    "teacher": 19,
+    "course": 1,
+    "grade": 6,
+    "section": 13,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 128,
+  "fields": {
+    "teacher": 20,
+    "course": 9,
+    "grade": 1,
+    "section": 2,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 129,
+  "fields": {
+    "teacher": 20,
+    "course": 9,
+    "grade": 1,
+    "section": 3,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 130,
+  "fields": {
+    "teacher": 20,
+    "course": 9,
+    "grade": 2,
+    "section": 4,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 131,
+  "fields": {
+    "teacher": 20,
+    "course": 9,
+    "grade": 2,
+    "section": 5,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 132,
+  "fields": {
+    "teacher": 20,
+    "course": 9,
+    "grade": 3,
+    "section": 6,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 133,
+  "fields": {
+    "teacher": 20,
+    "course": 9,
+    "grade": 3,
+    "section": 7,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 134,
+  "fields": {
+    "teacher": 20,
+    "course": 9,
+    "grade": 4,
+    "section": 8,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 135,
+  "fields": {
+    "teacher": 20,
+    "course": 9,
+    "grade": 4,
+    "section": 9,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 136,
+  "fields": {
+    "teacher": 20,
+    "course": 9,
+    "grade": 5,
+    "section": 10,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 137,
+  "fields": {
+    "teacher": 20,
+    "course": 9,
+    "grade": 5,
+    "section": 11,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 138,
+  "fields": {
+    "teacher": 20,
+    "course": 9,
+    "grade": 6,
+    "section": 12,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 139,
+  "fields": {
+    "teacher": 20,
+    "course": 9,
+    "grade": 6,
+    "section": 13,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 140,
+  "fields": {
+    "teacher": 21,
+    "course": 9,
+    "grade": 1,
+    "section": 3,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 141,
+  "fields": {
+    "teacher": 21,
+    "course": 5,
+    "grade": 1,
+    "section": 3,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 142,
+  "fields": {
+    "teacher": 21,
+    "course": 4,
+    "grade": 1,
+    "section": 3,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 143,
+  "fields": {
+    "teacher": 21,
+    "course": 6,
+    "grade": 1,
+    "section": 3,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 144,
+  "fields": {
+    "teacher": 21,
+    "course": 2,
+    "grade": 1,
+    "section": 3,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 145,
+  "fields": {
+    "teacher": 21,
+    "course": 1,
+    "grade": 1,
+    "section": 3,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 146,
+  "fields": {
+    "teacher": 21,
+    "course": 8,
+    "grade": 1,
+    "section": 3,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 147,
+  "fields": {
+    "teacher": 21,
+    "course": 7,
+    "grade": 1,
+    "section": 3,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 148,
+  "fields": {
+    "teacher": 21,
+    "course": 3,
+    "grade": 1,
+    "section": 3,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 149,
+  "fields": {
+    "teacher": 22,
+    "course": 9,
+    "grade": 2,
+    "section": 4,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 150,
+  "fields": {
+    "teacher": 22,
+    "course": 5,
+    "grade": 2,
+    "section": 4,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 151,
+  "fields": {
+    "teacher": 22,
+    "course": 4,
+    "grade": 2,
+    "section": 4,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 152,
+  "fields": {
+    "teacher": 22,
+    "course": 6,
+    "grade": 2,
+    "section": 4,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 153,
+  "fields": {
+    "teacher": 22,
+    "course": 2,
+    "grade": 2,
+    "section": 4,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 154,
+  "fields": {
+    "teacher": 22,
+    "course": 1,
+    "grade": 2,
+    "section": 4,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 155,
+  "fields": {
+    "teacher": 22,
+    "course": 8,
+    "grade": 2,
+    "section": 4,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 156,
+  "fields": {
+    "teacher": 22,
+    "course": 7,
+    "grade": 2,
+    "section": 4,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 157,
+  "fields": {
+    "teacher": 22,
+    "course": 3,
+    "grade": 2,
+    "section": 4,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 158,
+  "fields": {
+    "teacher": 23,
+    "course": 9,
+    "grade": 4,
+    "section": 8,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 159,
+  "fields": {
+    "teacher": 23,
+    "course": 5,
+    "grade": 4,
+    "section": 8,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 160,
+  "fields": {
+    "teacher": 23,
+    "course": 4,
+    "grade": 4,
+    "section": 8,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 161,
+  "fields": {
+    "teacher": 23,
+    "course": 6,
+    "grade": 4,
+    "section": 8,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 162,
+  "fields": {
+    "teacher": 23,
+    "course": 2,
+    "grade": 4,
+    "section": 8,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 163,
+  "fields": {
+    "teacher": 23,
+    "course": 1,
+    "grade": 4,
+    "section": 8,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 164,
+  "fields": {
+    "teacher": 23,
+    "course": 8,
+    "grade": 4,
+    "section": 8,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 165,
+  "fields": {
+    "teacher": 23,
+    "course": 7,
+    "grade": 4,
+    "section": 8,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 166,
+  "fields": {
+    "teacher": 23,
+    "course": 3,
+    "grade": 4,
+    "section": 8,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 167,
+  "fields": {
+    "teacher": 23,
+    "course": 8,
+    "grade": 5,
+    "section": 10,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 168,
+  "fields": {
+    "teacher": 23,
+    "course": 8,
+    "grade": 5,
+    "section": 11,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 169,
+  "fields": {
+    "teacher": 24,
+    "course": 9,
+    "grade": 4,
+    "section": 9,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 170,
+  "fields": {
+    "teacher": 24,
+    "course": 5,
+    "grade": 4,
+    "section": 9,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 171,
+  "fields": {
+    "teacher": 24,
+    "course": 4,
+    "grade": 4,
+    "section": 9,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 172,
+  "fields": {
+    "teacher": 24,
+    "course": 6,
+    "grade": 4,
+    "section": 9,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 173,
+  "fields": {
+    "teacher": 24,
+    "course": 2,
+    "grade": 4,
+    "section": 9,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 174,
+  "fields": {
+    "teacher": 24,
+    "course": 1,
+    "grade": 4,
+    "section": 9,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 175,
+  "fields": {
+    "teacher": 24,
+    "course": 8,
+    "grade": 4,
+    "section": 9,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 176,
+  "fields": {
+    "teacher": 24,
+    "course": 7,
+    "grade": 4,
+    "section": 9,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 177,
+  "fields": {
+    "teacher": 24,
+    "course": 3,
+    "grade": 4,
+    "section": 9,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 178,
+  "fields": {
+    "teacher": 24,
+    "course": 8,
+    "grade": 6,
+    "section": 12,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 179,
+  "fields": {
+    "teacher": 24,
+    "course": 8,
+    "grade": 6,
+    "section": 13,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 180,
+  "fields": {
+    "teacher": 25,
+    "course": 2,
+    "grade": 4,
+    "section": 8,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 181,
+  "fields": {
+    "teacher": 25,
+    "course": 2,
+    "grade": 4,
+    "section": 9,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 182,
+  "fields": {
+    "teacher": 25,
+    "course": 2,
+    "grade": 5,
+    "section": 10,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 183,
+  "fields": {
+    "teacher": 25,
+    "course": 2,
+    "grade": 5,
+    "section": 11,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 184,
+  "fields": {
+    "teacher": 25,
+    "course": 2,
+    "grade": 6,
+    "section": 12,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 185,
+  "fields": {
+    "teacher": 25,
+    "course": 2,
+    "grade": 6,
+    "section": 13,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 186,
+  "fields": {
+    "teacher": 25,
+    "course": 10,
+    "grade": 4,
+    "section": 8,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 187,
+  "fields": {
+    "teacher": 25,
+    "course": 10,
+    "grade": 4,
+    "section": 9,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 188,
+  "fields": {
+    "teacher": 25,
+    "course": 10,
+    "grade": 5,
+    "section": 10,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 189,
+  "fields": {
+    "teacher": 25,
+    "course": 10,
+    "grade": 5,
+    "section": 11,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 190,
+  "fields": {
+    "teacher": 25,
+    "course": 10,
+    "grade": 6,
+    "section": 12,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 191,
+  "fields": {
+    "teacher": 25,
+    "course": 10,
+    "grade": 6,
+    "section": 13,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 192,
+  "fields": {
+    "teacher": 26,
+    "course": 3,
+    "grade": 6,
+    "section": 12,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 193,
+  "fields": {
+    "teacher": 26,
+    "course": 3,
+    "grade": 6,
+    "section": 13,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 194,
+  "fields": {
+    "teacher": 27,
+    "course": 3,
+    "grade": 5,
+    "section": 10,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.teachercourseassignment",
+  "pk": 195,
+  "fields": {
+    "teacher": 27,
+    "course": 3,
+    "grade": 5,
+    "section": 11,
+    "academic_year": 1
+  }
+},
+{
+  "model": "academic.period",
+  "pk": 2,
+  "fields": {
+    "name": "I Bimestre",
+    "academic_year": 1,
+    "start_date": "2026-03-01",
+    "end_date": "2026-05-15",
+    "is_active": true
+  }
+},
+{
+  "model": "academic.period",
+  "pk": 3,
+  "fields": {
+    "name": "II Bimestre",
+    "academic_year": 1,
+    "start_date": "2026-05-20",
+    "end_date": "2026-07-25",
+    "is_active": false
+  }
+},
+{
+  "model": "academic.period",
+  "pk": 4,
+  "fields": {
+    "name": "III Bimestre",
+    "academic_year": 1,
+    "start_date": "2026-08-10",
+    "end_date": "2026-10-15",
+    "is_active": false
+  }
+},
+{
+  "model": "academic.period",
+  "pk": 5,
+  "fields": {
+    "name": "IV Bimestre",
+    "academic_year": 1,
+    "start_date": "2026-10-20",
+    "end_date": "2026-12-20",
+    "is_active": false
+  }
+},
+{
+  "model": "academic.competency",
+  "pk": 1,
+  "fields": {
+    "course": 2,
+    "name": "Habla en ingles",
+    "order": 1
+  }
+},
+{
+  "model": "academic.competency",
+  "pk": 2,
+  "fields": {
+    "course": 2,
+    "name": "Escribe textos",
+    "order": 2
+  }
+},
+{
+  "model": "academic.competency",
+  "pk": 3,
+  "fields": {
+    "course": 2,
+    "name": "Libros",
+    "order": 3
+  }
+},
+{
+  "model": "academic.competency",
+  "pk": 5,
+  "fields": {
+    "course": 4,
+    "name": "Manejo de herramientas informticas",
+    "order": 1
+  }
+},
+{
+  "model": "academic.competency",
+  "pk": 6,
+  "fields": {
+    "course": 4,
+    "name": "Resolucin de problemas con tecnologa",
+    "order": 1
+  }
+},
+{
+  "model": "academic.competency",
+  "pk": 7,
+  "fields": {
+    "course": 4,
+    "name": "Uso responsable y seguro de la tecnologa",
+    "order": 1
+  }
+},
+{
+  "model": "academic.indicator",
+  "pk": 1,
+  "fields": {
+    "competency": 1,
+    "name": "Expone",
+    "order": 1
+  }
+},
+{
+  "model": "academic.indicator",
+  "pk": 2,
+  "fields": {
+    "competency": 1,
+    "name": "habla en ingles durante clase",
+    "order": 2
+  }
+},
+{
+  "model": "academic.indicator",
+  "pk": 3,
+  "fields": {
+    "competency": 2,
+    "name": "1",
+    "order": 1
+  }
+},
+{
+  "model": "academic.indicator",
+  "pk": 4,
+  "fields": {
+    "competency": 2,
+    "name": "2",
+    "order": 1
+  }
+},
+{
+  "model": "academic.indicator",
+  "pk": 5,
+  "fields": {
+    "competency": 3,
+    "name": "1",
+    "order": 1
+  }
+},
+{
+  "model": "academic.indicator",
+  "pk": 6,
+  "fields": {
+    "competency": 3,
+    "name": "2",
+    "order": 1
+  }
+},
+{
+  "model": "academic.indicator",
+  "pk": 7,
+  "fields": {
+    "competency": 5,
+    "name": "Examen de Unidad I",
+    "order": 1
+  }
+},
+{
+  "model": "academic.indicator",
+  "pk": 8,
+  "fields": {
+    "competency": 5,
+    "name": "Revisin de cuaderno",
+    "order": 1
+  }
+},
+{
+  "model": "academic.indicator",
+  "pk": 9,
+  "fields": {
+    "competency": 5,
+    "name": "Revisin de libro",
+    "order": 1
+  }
+},
+{
+  "model": "academic.indicator",
+  "pk": 10,
+  "fields": {
+    "competency": 5,
+    "name": "Elaboracin de trabajos en programas",
+    "order": 1
+  }
+},
+{
+  "model": "academic.indicator",
+  "pk": 11,
+  "fields": {
+    "competency": 6,
+    "name": "Examen de Unidad II",
+    "order": 1
+  }
+},
+{
+  "model": "academic.indicator",
+  "pk": 12,
+  "fields": {
+    "competency": 6,
+    "name": "Desarrollo de ejercicios y actividades",
+    "order": 1
+  }
+},
+{
+  "model": "academic.indicator",
+  "pk": 13,
+  "fields": {
+    "competency": 6,
+    "name": "Revisin del libro",
+    "order": 1
+  }
+},
+{
+  "model": "academic.indicator",
+  "pk": 14,
+  "fields": {
+    "competency": 6,
+    "name": "Participacin en actividades",
+    "order": 1
+  }
+},
+{
+  "model": "academic.indicator",
+  "pk": 15,
+  "fields": {
+    "competency": 7,
+    "name": "Respeto de las normas del aula de computacin.",
+    "order": 1
+  }
+},
+{
+  "model": "academic.indicator",
+  "pk": 16,
+  "fields": {
+    "competency": 7,
+    "name": "Cuidado adecuado de la computadora y los equipos.",
+    "order": 1
+  }
+},
+{
+  "model": "academic.indicator",
+  "pk": 17,
+  "fields": {
+    "competency": 7,
+    "name": "Uso responsable de internet y recursos digitales.",
+    "order": 1
+  }
+},
+{
+  "model": "academic.indicator",
+  "pk": 18,
+  "fields": {
+    "competency": 7,
+    "name": "Actitud responsable durante las clases de computacin.",
+    "order": 1
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 4,
+  "fields": {
+    "student": 4,
+    "academic_year": 1,
+    "section": 2,
+    "status": "active",
+    "enrolled_at": "2026-03-16T03:20:31.996Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 5,
+  "fields": {
+    "student": 5,
+    "academic_year": 1,
+    "section": 2,
+    "status": "active",
+    "enrolled_at": "2026-03-16T03:20:32.101Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 6,
+  "fields": {
+    "student": 6,
+    "academic_year": 1,
+    "section": 2,
+    "status": "active",
+    "enrolled_at": "2026-03-16T03:20:32.197Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 7,
+  "fields": {
+    "student": 7,
+    "academic_year": 1,
+    "section": 2,
+    "status": "active",
+    "enrolled_at": "2026-03-16T03:20:32.261Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 8,
+  "fields": {
+    "student": 8,
+    "academic_year": 1,
+    "section": 2,
+    "status": "active",
+    "enrolled_at": "2026-03-16T03:20:32.352Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 9,
+  "fields": {
+    "student": 9,
+    "academic_year": 1,
+    "section": 2,
+    "status": "active",
+    "enrolled_at": "2026-03-16T03:20:32.451Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 10,
+  "fields": {
+    "student": 10,
+    "academic_year": 1,
+    "section": 2,
+    "status": "active",
+    "enrolled_at": "2026-03-16T03:20:32.546Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 11,
+  "fields": {
+    "student": 11,
+    "academic_year": 1,
+    "section": 2,
+    "status": "active",
+    "enrolled_at": "2026-03-16T03:20:32.635Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 12,
+  "fields": {
+    "student": 12,
+    "academic_year": 1,
+    "section": 2,
+    "status": "active",
+    "enrolled_at": "2026-03-16T03:20:32.709Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 13,
+  "fields": {
+    "student": 13,
+    "academic_year": 1,
+    "section": 2,
+    "status": "active",
+    "enrolled_at": "2026-03-16T03:20:32.784Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 14,
+  "fields": {
+    "student": 14,
+    "academic_year": 1,
+    "section": 2,
+    "status": "active",
+    "enrolled_at": "2026-03-16T03:20:32.886Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 15,
+  "fields": {
+    "student": 15,
+    "academic_year": 1,
+    "section": 2,
+    "status": "active",
+    "enrolled_at": "2026-03-16T03:20:32.975Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 16,
+  "fields": {
+    "student": 16,
+    "academic_year": 1,
+    "section": 2,
+    "status": "active",
+    "enrolled_at": "2026-03-16T03:20:33.063Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 17,
+  "fields": {
+    "student": 17,
+    "academic_year": 1,
+    "section": 2,
+    "status": "active",
+    "enrolled_at": "2026-03-16T03:20:33.150Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 18,
+  "fields": {
+    "student": 18,
+    "academic_year": 1,
+    "section": 2,
+    "status": "active",
+    "enrolled_at": "2026-03-16T03:20:33.250Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 19,
+  "fields": {
+    "student": 19,
+    "academic_year": 1,
+    "section": 2,
+    "status": "active",
+    "enrolled_at": "2026-03-16T03:20:33.342Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 20,
+  "fields": {
+    "student": 20,
+    "academic_year": 1,
+    "section": 2,
+    "status": "active",
+    "enrolled_at": "2026-03-16T03:20:33.437Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 21,
+  "fields": {
+    "student": 21,
+    "academic_year": 1,
+    "section": 2,
+    "status": "active",
+    "enrolled_at": "2026-03-16T03:20:33.517Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 22,
+  "fields": {
+    "student": 22,
+    "academic_year": 1,
+    "section": 2,
+    "status": "active",
+    "enrolled_at": "2026-03-16T03:20:33.600Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 23,
+  "fields": {
+    "student": 23,
+    "academic_year": 1,
+    "section": 2,
+    "status": "active",
+    "enrolled_at": "2026-03-16T03:20:33.692Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 24,
+  "fields": {
+    "student": 24,
+    "academic_year": 1,
+    "section": 2,
+    "status": "active",
+    "enrolled_at": "2026-03-16T03:20:33.776Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 25,
+  "fields": {
+    "student": 25,
+    "academic_year": 1,
+    "section": 2,
+    "status": "active",
+    "enrolled_at": "2026-03-16T03:20:33.859Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 26,
+  "fields": {
+    "student": 26,
+    "academic_year": 1,
+    "section": 2,
+    "status": "active",
+    "enrolled_at": "2026-03-16T03:20:33.954Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 27,
+  "fields": {
+    "student": 27,
+    "academic_year": 1,
+    "section": 2,
+    "status": "active",
+    "enrolled_at": "2026-03-16T03:20:34.043Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 30,
+  "fields": {
+    "student": 30,
+    "academic_year": 1,
+    "section": 3,
+    "status": "active",
+    "enrolled_at": "2026-03-19T13:51:07.358Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 31,
+  "fields": {
+    "student": 31,
+    "academic_year": 1,
+    "section": 3,
+    "status": "active",
+    "enrolled_at": "2026-03-19T13:51:07.438Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 32,
+  "fields": {
+    "student": 32,
+    "academic_year": 1,
+    "section": 3,
+    "status": "active",
+    "enrolled_at": "2026-03-19T13:51:07.521Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 33,
+  "fields": {
+    "student": 33,
+    "academic_year": 1,
+    "section": 3,
+    "status": "active",
+    "enrolled_at": "2026-03-19T13:51:07.608Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 34,
+  "fields": {
+    "student": 34,
+    "academic_year": 1,
+    "section": 3,
+    "status": "active",
+    "enrolled_at": "2026-03-19T13:51:07.679Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 35,
+  "fields": {
+    "student": 35,
+    "academic_year": 1,
+    "section": 3,
+    "status": "active",
+    "enrolled_at": "2026-03-19T13:51:07.771Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 36,
+  "fields": {
+    "student": 36,
+    "academic_year": 1,
+    "section": 3,
+    "status": "active",
+    "enrolled_at": "2026-03-19T13:51:07.863Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 37,
+  "fields": {
+    "student": 37,
+    "academic_year": 1,
+    "section": 3,
+    "status": "active",
+    "enrolled_at": "2026-03-19T13:51:07.962Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 38,
+  "fields": {
+    "student": 38,
+    "academic_year": 1,
+    "section": 3,
+    "status": "active",
+    "enrolled_at": "2026-03-19T13:51:08.062Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 39,
+  "fields": {
+    "student": 39,
+    "academic_year": 1,
+    "section": 3,
+    "status": "active",
+    "enrolled_at": "2026-03-19T13:51:08.154Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 40,
+  "fields": {
+    "student": 40,
+    "academic_year": 1,
+    "section": 3,
+    "status": "active",
+    "enrolled_at": "2026-03-19T13:51:08.241Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 41,
+  "fields": {
+    "student": 41,
+    "academic_year": 1,
+    "section": 3,
+    "status": "active",
+    "enrolled_at": "2026-03-19T13:51:08.321Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 42,
+  "fields": {
+    "student": 42,
+    "academic_year": 1,
+    "section": 3,
+    "status": "active",
+    "enrolled_at": "2026-03-19T13:51:08.412Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 43,
+  "fields": {
+    "student": 43,
+    "academic_year": 1,
+    "section": 3,
+    "status": "active",
+    "enrolled_at": "2026-03-19T13:51:08.491Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 44,
+  "fields": {
+    "student": 44,
+    "academic_year": 1,
+    "section": 3,
+    "status": "active",
+    "enrolled_at": "2026-03-19T13:51:08.572Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 45,
+  "fields": {
+    "student": 45,
+    "academic_year": 1,
+    "section": 3,
+    "status": "active",
+    "enrolled_at": "2026-03-19T13:51:08.657Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 46,
+  "fields": {
+    "student": 46,
+    "academic_year": 1,
+    "section": 3,
+    "status": "active",
+    "enrolled_at": "2026-03-19T13:51:08.758Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 47,
+  "fields": {
+    "student": 47,
+    "academic_year": 1,
+    "section": 3,
+    "status": "active",
+    "enrolled_at": "2026-03-19T13:51:08.829Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 48,
+  "fields": {
+    "student": 48,
+    "academic_year": 1,
+    "section": 3,
+    "status": "active",
+    "enrolled_at": "2026-03-19T13:52:19.496Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 49,
+  "fields": {
+    "student": 49,
+    "academic_year": 1,
+    "section": 3,
+    "status": "active",
+    "enrolled_at": "2026-03-19T13:52:19.588Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 50,
+  "fields": {
+    "student": 50,
+    "academic_year": 1,
+    "section": 3,
+    "status": "active",
+    "enrolled_at": "2026-03-19T13:52:19.673Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 51,
+  "fields": {
+    "student": 51,
+    "academic_year": 1,
+    "section": 3,
+    "status": "active",
+    "enrolled_at": "2026-03-19T13:52:19.768Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 52,
+  "fields": {
+    "student": 52,
+    "academic_year": 1,
+    "section": 2,
+    "status": "active",
+    "enrolled_at": "2026-03-19T13:54:00.224Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 53,
+  "fields": {
+    "student": 53,
+    "academic_year": 1,
+    "section": 4,
+    "status": "active",
+    "enrolled_at": "2026-03-19T13:54:00.309Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 54,
+  "fields": {
+    "student": 54,
+    "academic_year": 1,
+    "section": 4,
+    "status": "active",
+    "enrolled_at": "2026-03-19T13:54:00.387Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 55,
+  "fields": {
+    "student": 55,
+    "academic_year": 1,
+    "section": 4,
+    "status": "active",
+    "enrolled_at": "2026-03-19T13:54:00.471Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 56,
+  "fields": {
+    "student": 56,
+    "academic_year": 1,
+    "section": 4,
+    "status": "active",
+    "enrolled_at": "2026-03-19T13:54:00.546Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 57,
+  "fields": {
+    "student": 57,
+    "academic_year": 1,
+    "section": 4,
+    "status": "active",
+    "enrolled_at": "2026-03-19T13:54:00.621Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 59,
+  "fields": {
+    "student": 59,
+    "academic_year": 1,
+    "section": 2,
+    "status": "active",
+    "enrolled_at": "2026-03-19T13:59:15.330Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 60,
+  "fields": {
+    "student": 60,
+    "academic_year": 1,
+    "section": 3,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:08:34.585Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 61,
+  "fields": {
+    "student": 61,
+    "academic_year": 1,
+    "section": 4,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:09:46.981Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 62,
+  "fields": {
+    "student": 62,
+    "academic_year": 1,
+    "section": 4,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:09:47.105Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 63,
+  "fields": {
+    "student": 63,
+    "academic_year": 1,
+    "section": 4,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:09:47.195Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 64,
+  "fields": {
+    "student": 64,
+    "academic_year": 1,
+    "section": 4,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:09:47.278Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 65,
+  "fields": {
+    "student": 65,
+    "academic_year": 1,
+    "section": 4,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:09:47.357Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 66,
+  "fields": {
+    "student": 66,
+    "academic_year": 1,
+    "section": 4,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:09:47.420Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 67,
+  "fields": {
+    "student": 67,
+    "academic_year": 1,
+    "section": 4,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:09:47.512Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 68,
+  "fields": {
+    "student": 68,
+    "academic_year": 1,
+    "section": 4,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:09:47.604Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 69,
+  "fields": {
+    "student": 69,
+    "academic_year": 1,
+    "section": 4,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:09:47.703Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 70,
+  "fields": {
+    "student": 70,
+    "academic_year": 1,
+    "section": 4,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:09:47.804Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 71,
+  "fields": {
+    "student": 71,
+    "academic_year": 1,
+    "section": 4,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:09:47.904Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 72,
+  "fields": {
+    "student": 72,
+    "academic_year": 1,
+    "section": 4,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:12:53.360Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 73,
+  "fields": {
+    "student": 73,
+    "academic_year": 1,
+    "section": 5,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:13:56.223Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 74,
+  "fields": {
+    "student": 74,
+    "academic_year": 1,
+    "section": 5,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:13:56.307Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 75,
+  "fields": {
+    "student": 75,
+    "academic_year": 1,
+    "section": 5,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:13:56.380Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 76,
+  "fields": {
+    "student": 76,
+    "academic_year": 1,
+    "section": 5,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:13:56.454Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 77,
+  "fields": {
+    "student": 77,
+    "academic_year": 1,
+    "section": 5,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:13:56.537Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 78,
+  "fields": {
+    "student": 78,
+    "academic_year": 1,
+    "section": 5,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:13:56.620Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 79,
+  "fields": {
+    "student": 79,
+    "academic_year": 1,
+    "section": 5,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:13:56.708Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 80,
+  "fields": {
+    "student": 80,
+    "academic_year": 1,
+    "section": 5,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:13:56.795Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 81,
+  "fields": {
+    "student": 81,
+    "academic_year": 1,
+    "section": 5,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:13:56.862Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 82,
+  "fields": {
+    "student": 82,
+    "academic_year": 1,
+    "section": 5,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:13:56.945Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 83,
+  "fields": {
+    "student": 83,
+    "academic_year": 1,
+    "section": 5,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:13:57.037Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 84,
+  "fields": {
+    "student": 84,
+    "academic_year": 1,
+    "section": 5,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:13:57.120Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 85,
+  "fields": {
+    "student": 85,
+    "academic_year": 1,
+    "section": 5,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:13:57.212Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 86,
+  "fields": {
+    "student": 86,
+    "academic_year": 1,
+    "section": 5,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:13:57.303Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 87,
+  "fields": {
+    "student": 87,
+    "academic_year": 1,
+    "section": 5,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:13:57.407Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 88,
+  "fields": {
+    "student": 88,
+    "academic_year": 1,
+    "section": 5,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:13:57.478Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 89,
+  "fields": {
+    "student": 89,
+    "academic_year": 1,
+    "section": 6,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:16:09.717Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 90,
+  "fields": {
+    "student": 90,
+    "academic_year": 1,
+    "section": 6,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:16:09.807Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 91,
+  "fields": {
+    "student": 91,
+    "academic_year": 1,
+    "section": 6,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:16:09.879Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 92,
+  "fields": {
+    "student": 92,
+    "academic_year": 1,
+    "section": 6,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:16:09.954Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 93,
+  "fields": {
+    "student": 93,
+    "academic_year": 1,
+    "section": 6,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:16:10.037Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 94,
+  "fields": {
+    "student": 94,
+    "academic_year": 1,
+    "section": 6,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:16:10.129Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 95,
+  "fields": {
+    "student": 95,
+    "academic_year": 1,
+    "section": 6,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:16:10.228Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 96,
+  "fields": {
+    "student": 96,
+    "academic_year": 1,
+    "section": 6,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:16:10.320Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 97,
+  "fields": {
+    "student": 97,
+    "academic_year": 1,
+    "section": 6,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:16:10.446Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 98,
+  "fields": {
+    "student": 98,
+    "academic_year": 1,
+    "section": 6,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:16:10.562Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 99,
+  "fields": {
+    "student": 99,
+    "academic_year": 1,
+    "section": 6,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:16:10.662Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 100,
+  "fields": {
+    "student": 100,
+    "academic_year": 1,
+    "section": 6,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:16:10.753Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 101,
+  "fields": {
+    "student": 101,
+    "academic_year": 1,
+    "section": 6,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:16:10.845Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 102,
+  "fields": {
+    "student": 102,
+    "academic_year": 1,
+    "section": 6,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:16:10.954Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 103,
+  "fields": {
+    "student": 103,
+    "academic_year": 1,
+    "section": 6,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:16:11.054Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 104,
+  "fields": {
+    "student": 104,
+    "academic_year": 1,
+    "section": 6,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:16:11.162Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 105,
+  "fields": {
+    "student": 105,
+    "academic_year": 1,
+    "section": 6,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:16:11.270Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 106,
+  "fields": {
+    "student": 106,
+    "academic_year": 1,
+    "section": 6,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:16:11.400Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 123,
+  "fields": {
+    "student": 123,
+    "academic_year": 1,
+    "section": 7,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:18:54.257Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 124,
+  "fields": {
+    "student": 124,
+    "academic_year": 1,
+    "section": 7,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:18:54.381Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 125,
+  "fields": {
+    "student": 125,
+    "academic_year": 1,
+    "section": 7,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:18:54.471Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 126,
+  "fields": {
+    "student": 126,
+    "academic_year": 1,
+    "section": 7,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:18:54.588Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 127,
+  "fields": {
+    "student": 127,
+    "academic_year": 1,
+    "section": 7,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:18:54.679Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 128,
+  "fields": {
+    "student": 128,
+    "academic_year": 1,
+    "section": 7,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:18:54.778Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 129,
+  "fields": {
+    "student": 129,
+    "academic_year": 1,
+    "section": 7,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:18:54.878Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 130,
+  "fields": {
+    "student": 130,
+    "academic_year": 1,
+    "section": 7,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:18:54.987Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 131,
+  "fields": {
+    "student": 131,
+    "academic_year": 1,
+    "section": 7,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:18:55.095Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 132,
+  "fields": {
+    "student": 132,
+    "academic_year": 1,
+    "section": 7,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:18:55.212Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 133,
+  "fields": {
+    "student": 133,
+    "academic_year": 1,
+    "section": 7,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:18:55.303Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 134,
+  "fields": {
+    "student": 134,
+    "academic_year": 1,
+    "section": 7,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:18:55.403Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 135,
+  "fields": {
+    "student": 135,
+    "academic_year": 1,
+    "section": 7,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:18:55.503Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 136,
+  "fields": {
+    "student": 136,
+    "academic_year": 1,
+    "section": 7,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:18:55.612Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 137,
+  "fields": {
+    "student": 137,
+    "academic_year": 1,
+    "section": 7,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:18:55.712Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 138,
+  "fields": {
+    "student": 138,
+    "academic_year": 1,
+    "section": 7,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:18:55.820Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 139,
+  "fields": {
+    "student": 139,
+    "academic_year": 1,
+    "section": 7,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:18:55.912Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 140,
+  "fields": {
+    "student": 140,
+    "academic_year": 1,
+    "section": 8,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:19:45.267Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 142,
+  "fields": {
+    "student": 142,
+    "academic_year": 1,
+    "section": 8,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:19:45.471Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 143,
+  "fields": {
+    "student": 143,
+    "academic_year": 1,
+    "section": 8,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:19:45.570Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 158,
+  "fields": {
+    "student": 158,
+    "academic_year": 1,
+    "section": 8,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:20:10.910Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 159,
+  "fields": {
+    "student": 159,
+    "academic_year": 1,
+    "section": 8,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:20:10.995Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 160,
+  "fields": {
+    "student": 160,
+    "academic_year": 1,
+    "section": 8,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:20:11.087Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 161,
+  "fields": {
+    "student": 161,
+    "academic_year": 1,
+    "section": 8,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:20:11.195Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 162,
+  "fields": {
+    "student": 162,
+    "academic_year": 1,
+    "section": 8,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:20:11.295Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 163,
+  "fields": {
+    "student": 163,
+    "academic_year": 1,
+    "section": 8,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:20:11.403Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 164,
+  "fields": {
+    "student": 164,
+    "academic_year": 1,
+    "section": 8,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:20:11.512Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 165,
+  "fields": {
+    "student": 165,
+    "academic_year": 1,
+    "section": 8,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:20:11.620Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 166,
+  "fields": {
+    "student": 166,
+    "academic_year": 1,
+    "section": 8,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:20:11.737Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 167,
+  "fields": {
+    "student": 167,
+    "academic_year": 1,
+    "section": 8,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:20:11.828Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 168,
+  "fields": {
+    "student": 168,
+    "academic_year": 1,
+    "section": 8,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:20:11.928Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 169,
+  "fields": {
+    "student": 169,
+    "academic_year": 1,
+    "section": 8,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:20:12.028Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 170,
+  "fields": {
+    "student": 170,
+    "academic_year": 1,
+    "section": 8,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:20:12.128Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 171,
+  "fields": {
+    "student": 171,
+    "academic_year": 1,
+    "section": 8,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:20:12.237Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 172,
+  "fields": {
+    "student": 172,
+    "academic_year": 1,
+    "section": 8,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:20:12.337Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 173,
+  "fields": {
+    "student": 173,
+    "academic_year": 1,
+    "section": 8,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:20:12.437Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 174,
+  "fields": {
+    "student": 174,
+    "academic_year": 1,
+    "section": 8,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:20:12.549Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 175,
+  "fields": {
+    "student": 175,
+    "academic_year": 1,
+    "section": 8,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:20:12.653Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 176,
+  "fields": {
+    "student": 176,
+    "academic_year": 1,
+    "section": 8,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:20:12.762Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 177,
+  "fields": {
+    "student": 177,
+    "academic_year": 1,
+    "section": 8,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:20:12.870Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 178,
+  "fields": {
+    "student": 178,
+    "academic_year": 1,
+    "section": 8,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:20:12.970Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 179,
+  "fields": {
+    "student": 179,
+    "academic_year": 1,
+    "section": 8,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:20:13.078Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 219,
+  "fields": {
+    "student": 219,
+    "academic_year": 1,
+    "section": 9,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:39:54.791Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 220,
+  "fields": {
+    "student": 220,
+    "academic_year": 1,
+    "section": 9,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:39:54.907Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 221,
+  "fields": {
+    "student": 221,
+    "academic_year": 1,
+    "section": 9,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:39:55.024Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 222,
+  "fields": {
+    "student": 222,
+    "academic_year": 1,
+    "section": 9,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:39:55.128Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 223,
+  "fields": {
+    "student": 223,
+    "academic_year": 1,
+    "section": 9,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:39:55.236Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 224,
+  "fields": {
+    "student": 224,
+    "academic_year": 1,
+    "section": 9,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:39:55.337Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 225,
+  "fields": {
+    "student": 225,
+    "academic_year": 1,
+    "section": 9,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:39:55.428Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 226,
+  "fields": {
+    "student": 226,
+    "academic_year": 1,
+    "section": 9,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:39:55.520Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 227,
+  "fields": {
+    "student": 227,
+    "academic_year": 1,
+    "section": 9,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:39:55.629Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 228,
+  "fields": {
+    "student": 228,
+    "academic_year": 1,
+    "section": 9,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:39:55.728Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 229,
+  "fields": {
+    "student": 229,
+    "academic_year": 1,
+    "section": 9,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:39:55.836Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 230,
+  "fields": {
+    "student": 230,
+    "academic_year": 1,
+    "section": 9,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:39:55.936Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 231,
+  "fields": {
+    "student": 231,
+    "academic_year": 1,
+    "section": 9,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:39:56.045Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 232,
+  "fields": {
+    "student": 232,
+    "academic_year": 1,
+    "section": 9,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:39:56.145Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 233,
+  "fields": {
+    "student": 233,
+    "academic_year": 1,
+    "section": 9,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:39:56.258Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 234,
+  "fields": {
+    "student": 234,
+    "academic_year": 1,
+    "section": 9,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:39:56.353Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 235,
+  "fields": {
+    "student": 235,
+    "academic_year": 1,
+    "section": 9,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:39:56.445Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 236,
+  "fields": {
+    "student": 236,
+    "academic_year": 1,
+    "section": 9,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:39:56.553Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 237,
+  "fields": {
+    "student": 237,
+    "academic_year": 1,
+    "section": 10,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:40:39.358Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 238,
+  "fields": {
+    "student": 238,
+    "academic_year": 1,
+    "section": 10,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:40:39.475Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 239,
+  "fields": {
+    "student": 239,
+    "academic_year": 1,
+    "section": 10,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:40:39.570Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 240,
+  "fields": {
+    "student": 240,
+    "academic_year": 1,
+    "section": 10,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:40:39.661Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 241,
+  "fields": {
+    "student": 241,
+    "academic_year": 1,
+    "section": 10,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:40:39.761Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 242,
+  "fields": {
+    "student": 242,
+    "academic_year": 1,
+    "section": 10,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:40:39.862Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 243,
+  "fields": {
+    "student": 243,
+    "academic_year": 1,
+    "section": 10,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:40:39.954Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 244,
+  "fields": {
+    "student": 244,
+    "academic_year": 1,
+    "section": 10,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:40:40.071Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 245,
+  "fields": {
+    "student": 245,
+    "academic_year": 1,
+    "section": 10,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:40:40.172Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 246,
+  "fields": {
+    "student": 246,
+    "academic_year": 1,
+    "section": 10,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:40:40.262Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 247,
+  "fields": {
+    "student": 247,
+    "academic_year": 1,
+    "section": 10,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:40:40.362Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 248,
+  "fields": {
+    "student": 248,
+    "academic_year": 1,
+    "section": 10,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:40:40.470Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 249,
+  "fields": {
+    "student": 249,
+    "academic_year": 1,
+    "section": 10,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:40:40.561Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 250,
+  "fields": {
+    "student": 250,
+    "academic_year": 1,
+    "section": 10,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:40:40.670Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 251,
+  "fields": {
+    "student": 251,
+    "academic_year": 1,
+    "section": 10,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:40:40.775Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 252,
+  "fields": {
+    "student": 252,
+    "academic_year": 1,
+    "section": 10,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:40:40.871Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 253,
+  "fields": {
+    "student": 253,
+    "academic_year": 1,
+    "section": 10,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:40:40.970Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 254,
+  "fields": {
+    "student": 254,
+    "academic_year": 1,
+    "section": 10,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:40:41.091Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 255,
+  "fields": {
+    "student": 255,
+    "academic_year": 1,
+    "section": 10,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:40:41.203Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 256,
+  "fields": {
+    "student": 256,
+    "academic_year": 1,
+    "section": 10,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:40:41.304Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 257,
+  "fields": {
+    "student": 257,
+    "academic_year": 1,
+    "section": 10,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:40:41.403Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 258,
+  "fields": {
+    "student": 258,
+    "academic_year": 1,
+    "section": 11,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:41:20.500Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 259,
+  "fields": {
+    "student": 259,
+    "academic_year": 1,
+    "section": 11,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:41:20.624Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 260,
+  "fields": {
+    "student": 260,
+    "academic_year": 1,
+    "section": 11,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:41:20.720Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 261,
+  "fields": {
+    "student": 261,
+    "academic_year": 1,
+    "section": 11,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:41:20.812Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 262,
+  "fields": {
+    "student": 262,
+    "academic_year": 1,
+    "section": 11,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:41:20.903Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 263,
+  "fields": {
+    "student": 263,
+    "academic_year": 1,
+    "section": 11,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:41:21.004Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 264,
+  "fields": {
+    "student": 264,
+    "academic_year": 1,
+    "section": 11,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:41:21.095Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 265,
+  "fields": {
+    "student": 265,
+    "academic_year": 1,
+    "section": 11,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:41:21.211Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 266,
+  "fields": {
+    "student": 266,
+    "academic_year": 1,
+    "section": 11,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:41:21.312Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 267,
+  "fields": {
+    "student": 267,
+    "academic_year": 1,
+    "section": 11,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:41:21.428Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 268,
+  "fields": {
+    "student": 268,
+    "academic_year": 1,
+    "section": 11,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:41:21.536Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 269,
+  "fields": {
+    "student": 269,
+    "academic_year": 1,
+    "section": 11,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:41:21.636Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 270,
+  "fields": {
+    "student": 270,
+    "academic_year": 1,
+    "section": 11,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:41:21.728Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 271,
+  "fields": {
+    "student": 271,
+    "academic_year": 1,
+    "section": 11,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:41:21.845Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 272,
+  "fields": {
+    "student": 272,
+    "academic_year": 1,
+    "section": 11,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:41:21.945Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 273,
+  "fields": {
+    "student": 273,
+    "academic_year": 1,
+    "section": 11,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:41:22.045Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 274,
+  "fields": {
+    "student": 274,
+    "academic_year": 1,
+    "section": 11,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:41:22.145Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 275,
+  "fields": {
+    "student": 275,
+    "academic_year": 1,
+    "section": 11,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:41:22.245Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 276,
+  "fields": {
+    "student": 276,
+    "academic_year": 1,
+    "section": 11,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:41:22.354Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 277,
+  "fields": {
+    "student": 277,
+    "academic_year": 1,
+    "section": 11,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:41:22.453Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 278,
+  "fields": {
+    "student": 278,
+    "academic_year": 1,
+    "section": 11,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:41:22.555Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 279,
+  "fields": {
+    "student": 279,
+    "academic_year": 1,
+    "section": 11,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:41:22.653Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 280,
+  "fields": {
+    "student": 280,
+    "academic_year": 1,
+    "section": 12,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:42:01.617Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 281,
+  "fields": {
+    "student": 281,
+    "academic_year": 1,
+    "section": 12,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:42:01.741Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 282,
+  "fields": {
+    "student": 282,
+    "academic_year": 1,
+    "section": 12,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:42:01.837Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 283,
+  "fields": {
+    "student": 283,
+    "academic_year": 1,
+    "section": 12,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:42:01.928Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 284,
+  "fields": {
+    "student": 284,
+    "academic_year": 1,
+    "section": 12,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:42:02.028Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 285,
+  "fields": {
+    "student": 285,
+    "academic_year": 1,
+    "section": 12,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:42:02.128Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 286,
+  "fields": {
+    "student": 286,
+    "academic_year": 1,
+    "section": 12,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:42:02.220Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 287,
+  "fields": {
+    "student": 287,
+    "academic_year": 1,
+    "section": 12,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:42:02.337Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 288,
+  "fields": {
+    "student": 288,
+    "academic_year": 1,
+    "section": 12,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:42:02.436Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 289,
+  "fields": {
+    "student": 289,
+    "academic_year": 1,
+    "section": 12,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:42:02.537Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 290,
+  "fields": {
+    "student": 290,
+    "academic_year": 1,
+    "section": 12,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:42:02.654Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 291,
+  "fields": {
+    "student": 291,
+    "academic_year": 1,
+    "section": 12,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:42:02.753Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 292,
+  "fields": {
+    "student": 292,
+    "academic_year": 1,
+    "section": 12,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:42:02.845Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 293,
+  "fields": {
+    "student": 293,
+    "academic_year": 1,
+    "section": 12,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:42:02.961Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 294,
+  "fields": {
+    "student": 294,
+    "academic_year": 1,
+    "section": 12,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:42:03.070Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 295,
+  "fields": {
+    "student": 295,
+    "academic_year": 1,
+    "section": 12,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:42:03.162Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 296,
+  "fields": {
+    "student": 296,
+    "academic_year": 1,
+    "section": 12,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:42:03.270Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 297,
+  "fields": {
+    "student": 297,
+    "academic_year": 1,
+    "section": 12,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:42:03.370Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 298,
+  "fields": {
+    "student": 298,
+    "academic_year": 1,
+    "section": 12,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:42:03.478Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 299,
+  "fields": {
+    "student": 299,
+    "academic_year": 1,
+    "section": 12,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:42:03.579Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 300,
+  "fields": {
+    "student": 300,
+    "academic_year": 1,
+    "section": 12,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:42:03.687Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 301,
+  "fields": {
+    "student": 301,
+    "academic_year": 1,
+    "section": 12,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:42:03.787Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 302,
+  "fields": {
+    "student": 302,
+    "academic_year": 1,
+    "section": 12,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:44:59.993Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 303,
+  "fields": {
+    "student": 303,
+    "academic_year": 1,
+    "section": 13,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:45:37.571Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 304,
+  "fields": {
+    "student": 304,
+    "academic_year": 1,
+    "section": 13,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:45:37.703Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 305,
+  "fields": {
+    "student": 305,
+    "academic_year": 1,
+    "section": 13,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:45:37.795Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 306,
+  "fields": {
+    "student": 306,
+    "academic_year": 1,
+    "section": 13,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:45:37.903Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 307,
+  "fields": {
+    "student": 307,
+    "academic_year": 1,
+    "section": 13,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:45:38.016Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 308,
+  "fields": {
+    "student": 308,
+    "academic_year": 1,
+    "section": 13,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:45:38.111Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 309,
+  "fields": {
+    "student": 309,
+    "academic_year": 1,
+    "section": 13,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:45:38.211Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 310,
+  "fields": {
+    "student": 310,
+    "academic_year": 1,
+    "section": 13,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:45:38.328Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 311,
+  "fields": {
+    "student": 311,
+    "academic_year": 1,
+    "section": 13,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:45:38.428Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 312,
+  "fields": {
+    "student": 312,
+    "academic_year": 1,
+    "section": 13,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:45:38.545Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 313,
+  "fields": {
+    "student": 313,
+    "academic_year": 1,
+    "section": 13,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:45:38.653Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 314,
+  "fields": {
+    "student": 314,
+    "academic_year": 1,
+    "section": 13,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:45:38.762Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 315,
+  "fields": {
+    "student": 315,
+    "academic_year": 1,
+    "section": 13,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:45:38.853Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 316,
+  "fields": {
+    "student": 316,
+    "academic_year": 1,
+    "section": 13,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:45:38.961Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 317,
+  "fields": {
+    "student": 317,
+    "academic_year": 1,
+    "section": 13,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:45:39.079Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 318,
+  "fields": {
+    "student": 318,
+    "academic_year": 1,
+    "section": 13,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:45:39.170Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 319,
+  "fields": {
+    "student": 319,
+    "academic_year": 1,
+    "section": 13,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:45:39.278Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 320,
+  "fields": {
+    "student": 320,
+    "academic_year": 1,
+    "section": 13,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:45:39.378Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 321,
+  "fields": {
+    "student": 321,
+    "academic_year": 1,
+    "section": 13,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:45:39.478Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 322,
+  "fields": {
+    "student": 322,
+    "academic_year": 1,
+    "section": 13,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:45:39.579Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 323,
+  "fields": {
+    "student": 323,
+    "academic_year": 1,
+    "section": 13,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:45:39.687Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 324,
+  "fields": {
+    "student": 324,
+    "academic_year": 1,
+    "section": 13,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:45:39.787Z"
+  }
+},
+{
+  "model": "enrollment.enrollment",
+  "pk": 325,
+  "fields": {
+    "student": 325,
+    "academic_year": 1,
+    "section": 13,
+    "status": "active",
+    "enrolled_at": "2026-03-19T14:45:39.895Z"
+  }
+}
+]
