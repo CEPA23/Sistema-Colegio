@@ -114,14 +114,14 @@ WSGI_APPLICATION = 'core.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
-database_url = os.environ.get('postgresql://sanmarcos_sql_xre7_user:tzUDhDvG7zMX3NgsrDCdBrHA570DzNL2@dpg-d73jqq0gjchc73aoc2kg-a.oregon-postgres.render.com/sanmarcos_sql_xre7')
+database_url = os.environ.get("DATABASE_URL")
 
 if dj_database_url is not None and database_url:
     DATABASES = {
         'default': dj_database_url.parse(
             database_url,
             conn_max_age=600,
-            ssl_require=not DEBUG,
+            ssl_require=True,
         )
     }
 else:
@@ -131,7 +131,6 @@ else:
             'NAME': BASE_DIR / 'db.sqlite3',
         }
     }
-
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 
