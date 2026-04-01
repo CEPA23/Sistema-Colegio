@@ -8,6 +8,11 @@ from django.shortcuts import get_object_or_404, redirect, render
 
 from accounts.decorators import role_required
 from accounts.models import User
+from core.student_ordering import (
+    order_queryset_by_student_name,
+    resolve_student_order,
+    student_order_context,
+)
 from enrollment.models import Enrollment
 
 from .forms import CompetencyForm, CourseForm, GradeForm, GradeRecordForm, IndicatorForm, SectionForm
@@ -280,11 +285,12 @@ def section_management(request):
 
 @role_required('admin', 'director', 'teacher')
 def grade_list(request):
+    student_order = resolve_student_order(request)
     grades = GradeRecord.objects.select_related(
         'enrollment__student',
         'course',
         'period'
-    ).order_by('enrollment__student__last_name', 'course__name', 'period__name')
+    )
 
     if request.user.role == 'teacher' and not request.user.is_superuser:
         # Filter grades by courses assigned to the teacher
@@ -293,9 +299,18 @@ def grade_list(request):
         ).values_list('course_id', flat=True)
         grades = grades.filter(course_id__in=assigned_course_ids)
 
-    return render(request, 'academic/grade_list.html', {
-        'grades': grades
-    })
+    grades = order_queryset_by_student_name(
+        grades,
+        prefix='enrollment__student',
+        student_order=student_order,
+        extra_fields=['course__name', 'period__name', 'id'],
+    )
+
+    context = {
+        'grades': grades,
+    }
+    context.update(student_order_context(request, student_order))
+    return render(request, 'academic/grade_list.html', context)
 
 
 @role_required('admin', 'director', 'teacher')
@@ -456,11 +471,18 @@ def student_report(request, enrollment_id):
 def course_report(request):
     grade_id = _safe_int(request.GET.get('grade'))
     section_id = _safe_int(request.GET.get('section'))
-    report_data = _build_grade_section_report(request.user, grade_id=grade_id, section_id=section_id)
+    student_order = resolve_student_order(request)
+    report_data = _build_grade_section_report(
+        request.user,
+        grade_id=grade_id,
+        section_id=section_id,
+        student_order=student_order,
+    )
     if request.user.role == 'teacher' and not request.user.is_superuser:
         if not report_data.get('selected_section'):
             messages.error(request, "Solo las tutoras pueden ver el reporte de notas por grado y seccion.")
             return redirect('teacher_dashboard')
+    report_data.update(student_order_context(request, student_order))
     return render(request, 'academic/course_report.html', report_data)
 
 
@@ -604,7 +626,7 @@ def _build_competency_breakdown(enrollments, courses, academic_year=None):
     return periods, breakdown
 
 
-def _build_grade_section_report(user, grade_id=None, section_id=None):
+def _build_grade_section_report(user, grade_id=None, section_id=None, student_order='az'):
     is_teacher = user.role == 'teacher' and not user.is_superuser
     active_year = _active_year()
 
@@ -648,13 +670,12 @@ def _build_grade_section_report(user, grade_id=None, section_id=None):
         if is_teacher:
             enrollments = enrollments.filter(section=selected_section)
 
-        enrollments = list(
-            enrollments.order_by(
-                'section__grade__name',
-                'section__name',
-                'student__last_name',
-                'student__first_name',
-            )
+        enrollments = list(order_queryset_by_student_name(
+            enrollments,
+            prefix='student',
+            student_order=student_order,
+            extra_fields=['section__grade__name', 'section__name', 'id'],
+        )
         )
 
         course_ids = set(selected_grade.courses.values_list('id', flat=True))
@@ -700,7 +721,13 @@ def _build_grade_section_report(user, grade_id=None, section_id=None):
 def course_report_export_excel(request):
     grade_id = _safe_int(request.GET.get('grade'))
     section_id = _safe_int(request.GET.get('section'))
-    report_data = _build_grade_section_report(request.user, grade_id=grade_id, section_id=section_id)
+    student_order = resolve_student_order(request)
+    report_data = _build_grade_section_report(
+        request.user,
+        grade_id=grade_id,
+        section_id=section_id,
+        student_order=student_order,
+    )
     if request.user.role == 'teacher' and not request.user.is_superuser:
         if not report_data.get('selected_section'):
             messages.error(request, "Solo las tutoras pueden exportar el reporte por grado y seccion.")
@@ -814,6 +841,7 @@ def course_report_export_excel(request):
 
 @role_required('admin', 'director', 'teacher')
 def period_report(request):
+    student_order = resolve_student_order(request)
     periods = Period.objects.select_related('academic_year').order_by('-academic_year__year', 'start_date', 'name')
     selected_period = None
     grades = []
@@ -831,14 +859,20 @@ def period_report(request):
         if is_teacher:
             assigned_course_ids = TeacherCourseAssignment.objects.filter(teacher=request.user).values_list('course_id', flat=True)
             grades_query = grades_query.filter(course_id__in=assigned_course_ids)
-            
-        grades = grades_query
+
+        grades = order_queryset_by_student_name(
+            grades_query,
+            prefix='enrollment__student',
+            student_order=student_order,
+            extra_fields=['course__name', 'id'],
+        )
 
     context = {
         'periods': periods,
         'selected_period': selected_period,
         'grades': grades,
     }
+    context.update(student_order_context(request, student_order))
     return render(request, 'academic/period_report.html', context)
 
 
@@ -1100,6 +1134,7 @@ def _calculate_course_grade_from_indicators(enrollment, course, period):
 
 @role_required('admin', 'director', 'teacher')
 def teacher_competency_gradebook(request):
+    student_order = resolve_student_order(request)
     assignments = TeacherCourseAssignment.objects.select_related(
         'teacher',
         'course',
@@ -1152,9 +1187,11 @@ def teacher_competency_gradebook(request):
         elif selected_assignment.grade:
             enrollment_filters['section__grade'] = selected_assignment.grade
 
-        enrollments = Enrollment.objects.select_related('student').filter(
-            **enrollment_filters
-        ).order_by('student__last_name', 'student__first_name')
+        enrollments = order_queryset_by_student_name(
+            Enrollment.objects.select_related('student').filter(**enrollment_filters),
+            prefix='student',
+            student_order=student_order,
+        )
 
         all_indicator_ids = [indicator.id for block in competency_blocks for indicator in block['indicators']]
         score_values = {}
@@ -1181,7 +1218,10 @@ def teacher_competency_gradebook(request):
                 request.user.role in {'admin', 'director'} or request.user.is_superuser
             )
         )
-        lock_next_url = f"{request.path}?assignment={selected_assignment.id}&period={selected_period.id}"
+        lock_next_url = (
+            f"{request.path}?assignment={selected_assignment.id}"
+            f"&period={selected_period.id}&student_order={student_order}"
+        )
 
         if request.method == 'POST':
             if is_locked:
@@ -1302,6 +1342,7 @@ def teacher_competency_gradebook(request):
         'can_unlock_lock': can_unlock_lock,
         'lock_next_url': lock_next_url,
     }
+    context.update(student_order_context(request, student_order))
     return render(request, 'academic/teacher_gradebook.html', context)
 
 

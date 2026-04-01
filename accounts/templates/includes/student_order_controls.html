@@ -1,0 +1,24 @@
+<span style="display:inline-flex; align-items:center; gap:4px; margin-left:8px; vertical-align:middle;">
+    <a
+        href="?{{ student_order_query_prefix }}student_order=az"
+        title="Ordenar alfabeticamente de A a Z"
+        style="display:inline-flex; align-items:center; gap:3px; padding:2px 6px; border-radius:999px; text-decoration:none; border:1px solid {% if student_order == 'az' %}var(--primary){% else %}var(--line){% endif %}; background:{% if student_order == 'az' %}rgba(15, 95, 154, 0.08){% else %}transparent{% endif %}; color:var(--text);"
+    >
+        <span style="display:flex; flex-direction:column; line-height:0.78; font-size:0.68rem; font-weight:700;">
+            <span>A</span>
+            <span>Z</span>
+        </span>
+        <span style="font-size:0.95rem; line-height:1;">&#8595;</span>
+    </a>
+    <a
+        href="?{{ student_order_query_prefix }}student_order=za"
+        title="Ordenar alfabeticamente de Z a A"
+        style="display:inline-flex; align-items:center; gap:3px; padding:2px 6px; border-radius:999px; text-decoration:none; border:1px solid {% if student_order == 'za' %}var(--primary){% else %}var(--line){% endif %}; background:{% if student_order == 'za' %}rgba(15, 95, 154, 0.08){% else %}transparent{% endif %}; color:var(--text);"
+    >
+        <span style="display:flex; flex-direction:column; line-height:0.78; font-size:0.68rem; font-weight:700;">
+            <span>Z</span>
+            <span>A</span>
+        </span>
+        <span style="font-size:0.95rem; line-height:1;">&#8595;</span>
+    </a>
+</span>

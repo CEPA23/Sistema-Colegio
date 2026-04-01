@@ -38,7 +38,7 @@
             <button type="submit" class="btn btn-primary">Consultar</button>
             <a href="{% url 'course_report' %}" class="btn btn-subtle">Limpiar</a>
             {% if selected_grade and selected_section %}
-                <a href="{% url 'course_report_export_excel' %}?grade={{ selected_grade.id }}&section={{ selected_section.id }}" class="btn btn-subtle">Exportar Excel</a>
+                <a href="{% url 'course_report_export_excel' %}?grade={{ selected_grade.id }}&section={{ selected_section.id }}&student_order={{ student_order }}" class="btn btn-subtle">Exportar Excel</a>
             {% endif %}
         </div>
     </form>
@@ -60,7 +60,7 @@
         <table>
             <thead>
                 <tr>
-                    <th>Alumno</th>
+                    <th>Alumno {% include 'includes/student_order_controls.html' %}</th>
                     <th>Grado</th>
                     <th>Seccion</th>
                     {% for course in courses %}

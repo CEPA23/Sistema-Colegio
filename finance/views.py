@@ -10,6 +10,11 @@ from django.utils import timezone
 
 from accounts.decorators import role_required
 from academic.models import AcademicYear, Course, Grade, Section
+from core.student_ordering import (
+    order_queryset_by_student_name,
+    resolve_student_order,
+    student_order_context,
+)
 from enrollment.models import Enrollment
 from schools.models import School
 from students.models import Student
@@ -204,6 +209,7 @@ def _debtor_queryset(
     month='',
     concept='',
     debt_state='',
+    student_order='az',
 ):
     fees = Fee.objects.select_related(
         'enrollment__student',
@@ -240,7 +246,12 @@ def _debtor_queryset(
     elif debt_state == 'fraccionado':
         fees = fees.filter(paid_amount__gt=0)
 
-    return fees.order_by('enrollment__student__last_name', 'due_date')
+    return order_queryset_by_student_name(
+        fees,
+        prefix='enrollment__student',
+        student_order=student_order,
+        extra_fields=['due_date', 'id'],
+    )
 
 
 @role_required('admin', 'director')
@@ -277,17 +288,25 @@ def secretary_dashboard(request):
 
 @role_required('admin', 'director', 'parent')
 def account_status(request):
+    student_order = resolve_student_order(request)
     _ensure_active_enrollment_debts(target_month=timezone.localdate().month)
-    fees = Fee.objects.select_related(
+    fees = order_queryset_by_student_name(
+        Fee.objects.select_related(
         'enrollment__student',
         'enrollment__academic_year'
-    ).order_by('enrollment__student__last_name', 'due_date')
+        ),
+        prefix='enrollment__student',
+        student_order=student_order,
+        extra_fields=['due_date', 'id'],
+    )
 
     total_pending = sum(f.balance for f in fees)
-    return render(request, 'finance/account_status.html', {
+    context = {
         'fees': fees,
         'total_pending': total_pending,
-    })
+    }
+    context.update(student_order_context(request, student_order))
+    return render(request, 'finance/account_status.html', context)
 
 
 @role_required('admin', 'director', 'secretary')
@@ -527,15 +546,24 @@ def debtors_student_search(request):
 
 @role_required('admin', 'director', 'secretary', 'parent')
 def payment_history(request):
-    payments = Payment.objects.select_related(
+    student_order = resolve_student_order(request)
+    payments = order_queryset_by_student_name(
+        Payment.objects.select_related(
         'fee__enrollment__student'
-    ).order_by('-payment_date', '-id')
-    return render(request, 'finance/payment_history.html', {'payments': payments})
+        ),
+        prefix='fee__enrollment__student',
+        student_order=student_order,
+        extra_fields=['-payment_date', '-id'],
+    )
+    context = {'payments': payments}
+    context.update(student_order_context(request, student_order))
+    return render(request, 'finance/payment_history.html', context)
 
 
 @role_required('admin', 'director', 'secretary')
 def debtors_report(request):
     from academic.models import Section
+    student_order = resolve_student_order(request)
     student_query = request.GET.get('student', '').strip()
     student_id = request.GET.get('student_id', '').strip()
     grade_id = request.GET.get('grade', '').strip()
@@ -559,6 +587,7 @@ def debtors_report(request):
         month=month,
         concept=concept,
         debt_state=debt_state,
+        student_order=student_order,
     )
 
     sections = Section.objects.select_related('grade').order_by('grade__name', 'name')
@@ -580,14 +609,16 @@ def debtors_report(request):
         'concept_choices': Fee.CONCEPT_CHOICES,
         'debt_state_choices': DEBT_STATE_CHOICES,
         'total_pending': sum(item.balance_amount for item in debtors),
+        **student_order_context(request, student_order),
     }
     return render(request, 'finance/debtors_report.html', context)
 
 
 @role_required('admin', 'director')
 def monthly_report(request):
+    student_order = resolve_student_order(request)
     month = request.GET.get('month')
-    payments = Payment.objects.select_related('fee__enrollment__student').order_by('-payment_date')
+    payments = Payment.objects.select_related('fee__enrollment__student')
 
     if month:
         try:
@@ -599,20 +630,37 @@ def monthly_report(request):
         except ValueError:
             messages.error(request, "Formato de mes invalido.")
 
+    payments = order_queryset_by_student_name(
+        payments,
+        prefix='fee__enrollment__student',
+        student_order=student_order,
+        extra_fields=['-payment_date', '-id'],
+    )
     total = payments.aggregate(total=Sum('amount'))['total'] or 0
-    return render(request, 'finance/monthly_report.html', {'payments': payments, 'total': total, 'month': month})
+    context = {'payments': payments, 'total': total, 'month': month}
+    context.update(student_order_context(request, student_order))
+    return render(request, 'finance/monthly_report.html', context)
 
 
 @role_required('admin', 'director')
 def cash_report(request):
+    student_order = resolve_student_order(request)
     today = timezone.localdate()
-    payments = Payment.objects.select_related('fee__enrollment__student').filter(payment_date=today)
+    payments = order_queryset_by_student_name(
+        Payment.objects.select_related('fee__enrollment__student').filter(payment_date=today),
+        prefix='fee__enrollment__student',
+        student_order=student_order,
+        extra_fields=['-id'],
+    )
     total = payments.aggregate(total=Sum('amount'))['total'] or 0
-    return render(request, 'finance/cash_report.html', {'payments': payments, 'total': total, 'today': today})
+    context = {'payments': payments, 'total': total, 'today': today}
+    context.update(student_order_context(request, student_order))
+    return render(request, 'finance/cash_report.html', context)
 
 
 @role_required('admin', 'director', 'secretary')
 def debtors_export_csv(request):
+    student_order = resolve_student_order(request)
     student_query = request.GET.get('student', '').strip()
     student_id = request.GET.get('student_id', '').strip()
     grade_id = request.GET.get('grade', '').strip()
@@ -630,6 +678,7 @@ def debtors_export_csv(request):
         concept=concept,
         month=month,
         debt_state=debt_state,
+        student_order=student_order,
     )
 
     response = HttpResponse(content_type='text/csv')

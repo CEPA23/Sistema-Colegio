@@ -6,6 +6,11 @@ from django.db.models import Q
 
 from accounts.decorators import role_required
 from academic.models import Grade, Section
+from core.student_ordering import (
+    order_queryset_by_student_name,
+    resolve_student_order,
+    student_order_context,
+)
 from students.models import Student
 
 from .forms import EnrollmentForm, StudentBulkImportForm
@@ -25,6 +30,7 @@ def enrollment_dashboard(request):
 
 @role_required('admin', 'director', 'secretary')
 def enrollment_list(request):
+    student_order = resolve_student_order(request)
     enrollments = Enrollment.objects.select_related(
         'student',
         'section__grade',
@@ -48,7 +54,12 @@ def enrollment_list(request):
             | Q(student__dni__icontains=q)
         )
 
-    enrollments = enrollments.order_by('-enrolled_at')
+    enrollments = order_queryset_by_student_name(
+        enrollments,
+        prefix='student',
+        student_order=student_order,
+        extra_fields=['-enrolled_at'],
+    )
     filtered_total = enrollments.count()
     grades = Grade.objects.all().order_by('name')
     sections = Section.objects.select_related('grade').order_by('grade__name', 'name')
@@ -62,6 +73,7 @@ def enrollment_list(request):
         'selected_section': int(section_id) if section_id and str(section_id).isdigit() else None,
         'q': q,
         'filtered_total': filtered_total,
+        **student_order_context(request, student_order),
     })
 
 

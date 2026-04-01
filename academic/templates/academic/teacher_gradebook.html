@@ -83,6 +83,7 @@
             {% csrf_token %}
             <input type="hidden" name="assignment" value="{{ selected_assignment.id }}">
             <input type="hidden" name="period" value="{{ selected_period.id }}">
+            <input type="hidden" name="student_order" value="{{ student_order }}">
 
             <div class="table-wrap">
                 {% if is_locked %}
@@ -116,7 +117,7 @@
                 <table>
                     <thead>
                         <tr>
-                            <th rowspan="2">Alumno</th>
+                            <th rowspan="2">Alumno {% include 'includes/student_order_controls.html' %}</th>
                             {% for block in competency_blocks %}
                                 <th colspan="{{ block.indicators|length|add:1 }}">{{ block.competency.name }}</th>
                             {% endfor %}

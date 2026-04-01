@@ -3,6 +3,11 @@ from django.shortcuts import redirect
 from django.shortcuts import get_object_or_404, render
 
 from accounts.decorators import role_required
+from core.student_ordering import (
+    order_queryset_by_student_name,
+    resolve_student_order,
+    student_order_context,
+)
 from enrollment.models import Enrollment
 from finance.models import Fee
 
@@ -12,8 +17,16 @@ from .models import Student
 
 @role_required('admin', 'director', 'secretary', 'teacher')
 def student_list(request):
-    students = Student.objects.all().order_by('last_name', 'first_name')
-    return render(request, 'students/student_list.html', {'students': students})
+    student_order = resolve_student_order(request)
+    students = order_queryset_by_student_name(
+        Student.objects.all(),
+        student_order=student_order,
+    )
+    context = {
+        'students': students,
+    }
+    context.update(student_order_context(request, student_order))
+    return render(request, 'students/student_list.html', context)
 
 
 @role_required('admin', 'director', 'secretary', 'teacher')

@@ -77,12 +77,13 @@
         {% csrf_token %}
         <input type="hidden" name="section" value="{{ selected_section.id }}">
         <input type="hidden" name="date" value="{{ selected_date|date:'Y-m-d' }}">
+        <input type="hidden" name="student_order" value="{{ student_order }}">
 
         <div class="table-wrap attendance-table-wrap">
             <table class="attendance-sheet">
                 <thead>
                     <tr>
-                        <th style="min-width: 240px;">Alumno</th>
+                        <th style="min-width: 240px;">Alumno {% include 'includes/student_order_controls.html' %}</th>
                         <th style="width: 140px;">
                             Presente
                             {% if can_edit %}

@@ -139,7 +139,7 @@
         <div class="action-row filter-actions">
             <button type="submit" class="btn btn-primary">Filtrar</button>
             <a href="{% url 'debtors_report' %}" class="btn btn-subtle">Limpiar</a>
-            <a href="{% url 'debtors_export_csv' %}?student={{ student_query|urlencode }}&student_id={{ student_id|urlencode }}&grade={{ grade_id|urlencode }}&section={{ section_id|urlencode }}&concept={{ concept|urlencode }}&month={{ month|urlencode }}&debt_state={{ debt_state|urlencode }}" class="btn btn-subtle">
+            <a href="{% url 'debtors_export_csv' %}?student={{ student_query|urlencode }}&student_id={{ student_id|urlencode }}&grade={{ grade_id|urlencode }}&section={{ section_id|urlencode }}&concept={{ concept|urlencode }}&month={{ month|urlencode }}&debt_state={{ debt_state|urlencode }}&student_order={{ student_order|urlencode }}" class="btn btn-subtle">
                 Exportar Excel (CSV)
             </a>
         </div>
@@ -151,7 +151,7 @@
         <table>
             <thead>
                 <tr>
-                    <th>Alumno</th>
+                    <th>Alumno {% include 'includes/student_order_controls.html' %}</th>
                     <th>Grado</th>
                     <th>Seccion</th>
                     <th>Concepto</th>

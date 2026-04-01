@@ -45,7 +45,7 @@
             <button type="submit" class="btn btn-primary">Filtrar</button>
             <a href="{% url 'attendance_course_report' %}" class="btn btn-subtle">Limpiar</a>
             {% if rows %}
-                <a href="{% url 'attendance_export_csv' %}?section={{ selected_section.id }}&date={{ selected_date|date:'Y-m-d' }}" class="btn btn-subtle">Exportar CSV</a>
+                <a href="{% url 'attendance_export_csv' %}?section={{ selected_section.id }}&date={{ selected_date|date:'Y-m-d' }}&student_order={{ student_order }}" class="btn btn-subtle">Exportar CSV</a>
             {% endif %}
         </div>
     </form>
@@ -67,7 +67,7 @@
             <table class="attendance-sheet">
                 <thead>
                     <tr>
-                        <th style="min-width: 240px;">Alumno</th>
+                        <th style="min-width: 240px;">Alumno {% include 'includes/student_order_controls.html' %}</th>
                         <th style="width: 120px;">Presente</th>
                         <th style="width: 120px;">Falta</th>
                         <th style="width: 150px;">Justificado</th>

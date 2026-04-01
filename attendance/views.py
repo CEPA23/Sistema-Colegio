@@ -8,6 +8,11 @@ from django.utils import timezone
 
 from accounts.decorators import role_required
 from academic.models import AcademicYear, Section, TeacherCourseAssignment
+from core.student_ordering import (
+    order_queryset_by_student_name,
+    resolve_student_order,
+    student_order_context,
+)
 from enrollment.models import Enrollment
 
 from .forms import AttendanceSheetFilterForm
@@ -45,7 +50,7 @@ def _resolve_academic_year(selected_date):
     return AcademicYear.objects.filter(is_active=True).order_by('-year').first()
 
 
-def _active_enrollments_for_section(selected_section, selected_date):
+def _active_enrollments_for_section(selected_section, selected_date, student_order='az'):
     enrollment_filters = {
         'status': 'active',
         'section': selected_section,
@@ -53,9 +58,11 @@ def _active_enrollments_for_section(selected_section, selected_date):
     year_obj = _resolve_academic_year(selected_date)
     if year_obj:
         enrollment_filters['academic_year'] = year_obj
-    return Enrollment.objects.select_related('student').filter(
-        **enrollment_filters
-    ).order_by('student__last_name', 'student__first_name')
+    return order_queryset_by_student_name(
+        Enrollment.objects.select_related('student').filter(**enrollment_filters),
+        prefix='student',
+        student_order=student_order,
+    )
 
 
 def _build_rows(enrollments, records_by_enrollment, default_status='present'):
@@ -81,9 +88,9 @@ def _owner_name(owner_record):
     return full_name or owner_record.recorded_by.username
 
 
-def _redirect_to_filtered_sheet(path, selected_section, selected_date):
+def _redirect_to_filtered_sheet(path, selected_section, selected_date, student_order='az'):
     return redirect(
-        f"{path}?section={selected_section.id}&date={selected_date.isoformat()}"
+        f"{path}?section={selected_section.id}&date={selected_date.isoformat()}&student_order={student_order}"
     )
 
 
@@ -102,6 +109,7 @@ def attendance_dashboard(request):
 @role_required('admin', 'director', 'teacher')
 def attendance_take(request):
     today = timezone.localdate()
+    student_order = resolve_student_order(request)
     initial = {'date': request.GET.get('date') or today}
     is_teacher = request.user.role == 'teacher' and not request.user.is_superuser
     teacher_section_ids = _teacher_section_ids(request.user) if is_teacher else []
@@ -151,7 +159,7 @@ def attendance_take(request):
                 or attendance_owner_record.recorded_by_id == request.user.id
             )
 
-        enrollments = list(_active_enrollments_for_section(selected_section, selected_date))
+        enrollments = list(_active_enrollments_for_section(selected_section, selected_date, student_order=student_order))
 
         if request.method == 'POST':
             if section_records and not can_edit:
@@ -163,7 +171,12 @@ def attendance_take(request):
                         'Solo puedes visualizarla.'
                     ),
                 )
-                return _redirect_to_filtered_sheet(request.path, selected_section, selected_date)
+                return _redirect_to_filtered_sheet(
+                    request.path,
+                    selected_section,
+                    selected_date,
+                    student_order=student_order,
+                )
 
             try:
                 for enrollment in enrollments:
@@ -202,14 +215,24 @@ def attendance_take(request):
                         new_record.save()
             except ValidationError as exc:
                 messages.error(request, '; '.join(exc.messages))
-                return _redirect_to_filtered_sheet(request.path, selected_section, selected_date)
+                return _redirect_to_filtered_sheet(
+                    request.path,
+                    selected_section,
+                    selected_date,
+                    student_order=student_order,
+                )
 
             messages.success(request, 'Asistencia guardada correctamente.')
-            return _redirect_to_filtered_sheet(request.path, selected_section, selected_date)
+            return _redirect_to_filtered_sheet(
+                request.path,
+                selected_section,
+                selected_date,
+                student_order=student_order,
+            )
 
         rows = _build_rows(enrollments, existing_by_enrollment, default_status='present')
 
-    return render(request, 'attendance/attendance_form.html', {
+    context = {
         'filter_form': filter_form,
         'selected_section': selected_section,
         'selected_date': selected_date,
@@ -218,7 +241,9 @@ def attendance_take(request):
         'can_edit': can_edit,
         'attendance_owner': attendance_owner,
         'auto_section_mode': bool(auto_section_id),
-    })
+    }
+    context.update(student_order_context(request, student_order))
+    return render(request, 'attendance/attendance_form.html', context)
 
 
 @role_required('admin', 'director', 'teacher', 'parent')
@@ -238,6 +263,7 @@ def attendance_student_history(request, enrollment_id):
 @role_required('admin', 'director', 'teacher')
 def attendance_course_report(request):
     today = timezone.localdate()
+    student_order = resolve_student_order(request)
     is_teacher = request.user.role == 'teacher' and not request.user.is_superuser
     teacher_section_ids = _teacher_section_ids(request.user) if is_teacher else []
     auto_section_id = teacher_section_ids[0] if len(teacher_section_ids) == 1 else None
@@ -265,7 +291,7 @@ def attendance_course_report(request):
         selected_date = filter_form.cleaned_data['date']
         selected_section = filter_form.cleaned_data['section']
 
-        enrollments = list(_active_enrollments_for_section(selected_section, selected_date))
+        enrollments = list(_active_enrollments_for_section(selected_section, selected_date, student_order=student_order))
         records = AttendanceRecord.objects.filter(
             enrollment__in=enrollments,
             date=selected_date,
@@ -278,24 +304,27 @@ def attendance_course_report(request):
             if row['status'] in totals:
                 totals[row['status']] += 1
 
-    return render(request, 'attendance/course_report.html', {
+    context = {
         'filter_form': filter_form,
         'selected_section': selected_section,
         'selected_date': selected_date,
         'rows': rows,
         'totals': totals,
         'auto_section_mode': bool(auto_section_id),
-    })
+    }
+    context.update(student_order_context(request, student_order))
+    return render(request, 'attendance/course_report.html', context)
 
 
 @role_required('admin', 'director', 'teacher')
 def attendance_export_csv(request):
     is_teacher = request.user.role == 'teacher' and not request.user.is_superuser
+    student_order = resolve_student_order(request)
     records = AttendanceRecord.objects.select_related(
         'enrollment__student',
         'enrollment__section__grade',
         'recorded_by',
-    ).order_by('-date')
+    )
 
     if is_teacher:
         records = records.filter(enrollment__section_id__in=_teacher_section_ids(request.user))
@@ -307,6 +336,13 @@ def attendance_export_csv(request):
     date_value = request.GET.get('date')
     if date_value:
         records = records.filter(date=date_value)
+
+    records = order_queryset_by_student_name(
+        records,
+        prefix='enrollment__student',
+        student_order=student_order,
+        extra_fields=['-date', 'id'],
+    )
 
     response = HttpResponse(content_type='text/csv')
     response['Content-Disposition'] = 'attachment; filename="asistencias.csv"'
