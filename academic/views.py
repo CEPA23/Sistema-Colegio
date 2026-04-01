@@ -30,6 +30,7 @@ from .models import (
     calculate_mode_grade,
     GradeSubmissionLock,
 )
+from .sync import sync_teacher_course_assignments
 
 
 @role_required('admin', 'director')
@@ -193,6 +194,7 @@ def course_grade_matrix(request):
                     if f"cg_{course.id}_{grade.id}" in posted
                 ]
                 course.grades.set(selected_grade_ids)
+            sync_teacher_course_assignments()
 
         messages.success(request, "Cursos por grado actualizados correctamente.")
         return redirect('course_grade_matrix')
@@ -250,6 +252,8 @@ def section_management(request):
         if form.is_valid():
             section = form.save()
             tutor = section.tutor_teacher
+            teachers_to_sync = set()
+            stale_sections_by_teacher = {}
             if tutor:
                 # Sync tutor assignment with teacher classroom profile.
                 user_updates = {}
@@ -259,13 +263,22 @@ def section_management(request):
                     user_updates['teaching_section_id'] = section.id
                 if user_updates:
                     User.objects.filter(pk=tutor.pk).update(**user_updates)
+                teachers_to_sync.add(tutor.pk)
 
             if previous_tutor_id and previous_tutor_id != section.tutor_teacher_id:
                 # If previous tutor pointed to this section, clear stale profile section.
                 User.objects.filter(
                     pk=previous_tutor_id,
                     teaching_section_id=section.id,
-                ).update(teaching_section=None)
+                ).update(teaching_section=None, teaching_grade=None)
+                teachers_to_sync.add(previous_tutor_id)
+                stale_sections_by_teacher[previous_tutor_id] = [section.id]
+
+            if teachers_to_sync:
+                sync_teacher_course_assignments(
+                    teacher_ids=list(teachers_to_sync),
+                    extra_section_ids_by_teacher=stale_sections_by_teacher,
+                )
 
             if edit_section:
                 messages.success(request, f"Sección '{section.name}' actualizada.")

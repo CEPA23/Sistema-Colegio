@@ -1,6 +1,7 @@
 from django import forms
 
-from academic.models import AcademicYear, Course, Grade, Section, TeacherCourseAssignment
+from academic.models import AcademicYear, Course, Grade, Section
+from academic.sync import sync_teacher_course_assignments_for_teacher
 from schools.models import School
 
 from .models import User
@@ -191,28 +192,12 @@ class UserCreateForm(forms.ModelForm):
             self._sync_tutor_section(user, previous_section_id)
 
             active_year = AcademicYear.objects.filter(is_active=True).order_by('-year').first()
-            if user.role == 'teacher' and active_year:
-                if user.teaching_section_id:
-                    for course in Course.objects.order_by('name'):
-                        TeacherCourseAssignment.objects.get_or_create(
-                            teacher=user,
-                            course=course,
-                            section=user.teaching_section,
-                            academic_year=active_year,
-                            defaults={'grade': user.teaching_grade},
-                        )
-
-                if user.is_polyteacher:
-                    for course in user.teaching_courses.all():
-                        for section in user.teaching_sections.select_related('grade').all():
-                            TeacherCourseAssignment.objects.get_or_create(
-                                teacher=user,
-                                course=course,
-                                grade=section.grade,
-                                section=section,
-                                academic_year=active_year,
-                                defaults={},
-                            )
+            if active_year:
+                sync_teacher_course_assignments_for_teacher(
+                    user,
+                    active_year=active_year,
+                    extra_section_ids=[previous_section_id] if previous_section_id else None,
+                )
 
         return user
 
