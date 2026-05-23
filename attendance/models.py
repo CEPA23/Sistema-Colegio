@@ -9,6 +9,7 @@ class AttendanceRecord(models.Model):
     STATUS = (
         ('present', 'Asistio'),
         ('absent', 'Falto'),
+        ('tardy', 'Tardanza'),
         ('justified', 'Justificado'),
     )
 
@@ -27,13 +28,18 @@ class AttendanceRecord(models.Model):
         settings.AUTH_USER_MODEL,
         on_delete=models.SET_NULL,
         null=True,
-        blank=True
+        blank=True,
     )
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         unique_together = ('enrollment', 'date')
-        ordering = ('-date', 'enrollment__section__grade__name', 'enrollment__section__name', 'enrollment__student__last_name')
+        ordering = (
+            '-date',
+            'enrollment__section__grade__name',
+            'enrollment__section__name',
+            'enrollment__student__last_name',
+        )
 
     def __str__(self):
         return f"{self.enrollment} - {self.date} - {self.status}"
@@ -68,9 +74,10 @@ class AttendanceRecord(models.Model):
     @property
     def status_icon(self):
         return {
-            'present': '✔',
-            'absent': '❌',
-            'justified': '✔',
+            'present': '✓',
+            'absent': 'F',
+            'tardy': 'T',
+            'justified': 'J',
         }.get(self.status, '-')
 
     @property
@@ -78,5 +85,6 @@ class AttendanceRecord(models.Model):
         return {
             'present': 'attendance-present',
             'absent': 'attendance-absent',
+            'tardy': 'attendance-tardy',
             'justified': 'attendance-justified',
         }.get(self.status, '')

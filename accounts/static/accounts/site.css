@@ -486,8 +486,13 @@ thead th {
 }
 
 .attendance-justified {
-    color: #886300;
-    background: #fff4cf;
+    color: #345c7c;
+    background: #ddebf7;
+}
+
+.attendance-tardy {
+    color: #8a6b00;
+    background: #fff3cf;
 }
 
 .attendance-missing {
@@ -541,6 +546,11 @@ button.attendance-choice:disabled {
 }
 
 .attendance-choice-justified {
+    border-color: #5d7fa3;
+    color: #5d7fa3;
+}
+
+.attendance-choice-tardy {
     border-color: #d29d16;
     color: #d29d16;
 }
@@ -558,6 +568,12 @@ button.attendance-choice:disabled {
 }
 
 .attendance-choice-justified.is-active {
+    background: #5d7fa3;
+    border-color: #5d7fa3;
+    color: #fff;
+}
+
+.attendance-choice-tardy.is-active {
     background: #d29d16;
     border-color: #d29d16;
     color: #fff;
@@ -621,9 +637,11 @@ button.attendance-choice:disabled {
 .attendance-sheet th:nth-child(2),
 .attendance-sheet th:nth-child(3),
 .attendance-sheet th:nth-child(4),
+.attendance-sheet th:nth-child(5),
 .attendance-sheet td:nth-child(2),
 .attendance-sheet td:nth-child(3),
-.attendance-sheet td:nth-child(4) {
+.attendance-sheet td:nth-child(4),
+.attendance-sheet td:nth-child(5) {
     text-align: center;
 }
 

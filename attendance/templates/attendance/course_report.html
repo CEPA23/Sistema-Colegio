@@ -1,114 +1,420 @@
 {% extends 'base.html' %}
 
-{% block title %}Reporte de asistencia por seccion | Gestion Escolar{% endblock %}
+{% block title %}Reporte mensual de asistencia | Gestion Escolar{% endblock %}
 
 {% block content %}
-<section class="card">
-    <div class="section-head">
-        <h1>Reporte por seccion</h1>
-        <a href="{% url 'attendance_dashboard' %}" class="btn btn-subtle">Panel asistencia</a>
-    </div>
+<style>
+.attendance-report-shell { display: grid; gap: 18px; }
+.report-filter-card {
+    background: linear-gradient(135deg, #0f5f9a 0%, #1b4b72 52%, #24384b 100%);
+    color: #fff;
+    border-radius: 20px;
+    padding: 22px;
+    box-shadow: 0 18px 38px rgba(18, 53, 83, 0.24);
+}
+.report-filter-card h1 { font-size: clamp(1.45rem, 2.2vw, 2rem); margin-bottom: 6px; }
+.report-filter-card p { margin: 0; color: rgba(255, 255, 255, 0.78); }
+.report-filter-grid { display: grid; gap: 12px; margin-top: 18px; }
+.report-filter-grid label { color: #eef5fb; }
+.report-filter-grid input, .report-filter-grid select {
+    background: rgba(255, 255, 255, 0.96);
+    border-color: rgba(255, 255, 255, 0.25);
+}
+.report-header-card,
+.attendance-matrix-card {
+    background: #fff;
+    border: 1px solid #dce6f0;
+    border-radius: 20px;
+    box-shadow: 0 18px 36px rgba(28, 47, 74, 0.08);
+    overflow: hidden;
+}
+.report-header-top {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 18px;
+    padding: 24px;
+    border-bottom: 1px solid #e4edf6;
+    align-items: center;
+    background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+}
+.report-logo,
+.report-logo-placeholder {
+    width: 84px;
+    height: 84px;
+    border-radius: 18px;
+    border: 1px solid #d7e3ef;
+}
+.report-logo {
+    object-fit: contain;
+    background: #fff;
+    padding: 8px;
+}
+.report-logo-placeholder {
+    display: grid;
+    place-items: center;
+    background: linear-gradient(140deg, #d9e7f5, #edf4fb);
+    color: #315270;
+    font-weight: 800;
+    font-size: 1.7rem;
+}
+.report-school-name {
+    font-family: "Merriweather", serif;
+    font-size: clamp(1.2rem, 2vw, 1.7rem);
+    color: #23374a;
+}
+.report-subtitle {
+    margin-top: 4px;
+    color: #5e7287;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    font-size: 0.76rem;
+}
+.report-meta-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 14px;
+    padding: 20px 24px 24px;
+}
+.report-meta-box {
+    background: #f6f9fc;
+    border: 1px solid #dde7f1;
+    border-radius: 16px;
+    padding: 14px 16px;
+}
+.report-meta-box span {
+    display: block;
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #6c8196;
+    font-weight: 800;
+    margin-bottom: 6px;
+}
+.report-meta-box strong { display: block; color: #25394e; font-size: 1rem; line-height: 1.35; }
+.report-kpis {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 12px;
+}
+.report-kpi {
+    border-radius: 18px;
+    padding: 18px;
+    border: 1px solid #dde7f1;
+    background: #fff;
+    box-shadow: 0 10px 24px rgba(28, 47, 74, 0.08);
+}
+.report-kpi small {
+    display: block;
+    color: #6b7f93;
+    font-weight: 700;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+.report-kpi strong { font-size: 1.6rem; color: #22364a; }
+.attendance-legend { display: flex; flex-wrap: wrap; gap: 10px; }
+.attendance-legend-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    border-radius: 999px;
+    padding: 8px 12px;
+    border: 1px solid #dbe5ef;
+    background: #fff;
+    font-weight: 700;
+    color: #344a60;
+}
+.attendance-legend-mark {
+    width: 28px;
+    height: 28px;
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    border: 1px solid currentColor;
+}
+.attendance-matrix-head {
+    padding: 18px 22px;
+    border-bottom: 1px solid #e5edf5;
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+.attendance-matrix-head h2 { font-size: 1.2rem; color: #24384b; }
+.attendance-matrix-sub { color: #6d8092; font-weight: 700; font-size: 0.88rem; }
+.attendance-matrix-wrap { overflow: auto; max-height: 72vh; }
+.attendance-matrix {
+    border-collapse: separate;
+    border-spacing: 0;
+    min-width: 1320px;
+    width: max-content;
+}
+.attendance-matrix thead th {
+    position: sticky;
+    background: #edf3f9;
+    z-index: 4;
+    text-align: center;
+    border-right: 1px solid #d7e1ee;
+    border-bottom: 1px solid #d7e1ee;
+    color: #34495d;
+}
+.attendance-matrix thead tr:first-child th { top: 0; background: #d9e2f3; }
+.attendance-matrix thead tr:nth-child(2) th { top: 39px; }
+.attendance-matrix thead tr:nth-child(3) th { top: 77px; font-size: 0.72rem; }
+.attendance-matrix tbody td,
+.attendance-matrix tfoot td {
+    text-align: center;
+    border-right: 1px solid #e5edf5;
+    border-bottom: 1px solid #e8eef5;
+    padding: 10px 8px;
+    font-weight: 700;
+    color: #304659;
+    background: #fff;
+}
+.attendance-matrix tbody tr:nth-child(even) td { background: #fbfdff; }
+.attendance-matrix .sticky-col,
+.attendance-matrix .sticky-col-2 { position: sticky; z-index: 3; }
+.attendance-matrix .sticky-col { left: 0; }
+.attendance-matrix .sticky-col-2 { left: 72px; }
+.attendance-matrix thead .sticky-col,
+.attendance-matrix thead .sticky-col-2 { z-index: 6; }
+.attendance-matrix .col-number { width: 72px; min-width: 72px; }
+.attendance-matrix .col-student {
+    width: 280px;
+    min-width: 280px;
+    text-align: left;
+    font-weight: 800;
+    letter-spacing: 0.01em;
+}
+.attendance-matrix .col-day { width: 44px; min-width: 44px; }
+.attendance-matrix .col-summary { width: 96px; min-width: 96px; }
+.attendance-matrix .week-group { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; }
+.attendance-matrix .week-alt { background: #e7eef7 !important; }
+.attendance-matrix .day-divider { box-shadow: inset 2px 0 0 #c0cedc; }
+.attendance-matrix .is-present { background: #dff2e3 !important; color: #256b45; }
+.attendance-matrix .is-absent { background: #fbe3e0 !important; color: #8c2d2a; }
+.attendance-matrix .is-tardy { background: #fff3cf !important; color: #8a6b00; }
+.attendance-matrix .is-justified { background: #ddebf7 !important; color: #345c7c; }
+.attendance-matrix .is-missing { background: #f6f8fb !important; color: #9aa9b6; font-weight: 600; }
+.attendance-matrix .summary-cell { background: #f8fbfd !important; }
+.attendance-matrix tfoot td {
+    background: #d9e2f3;
+    color: #24384b;
+    font-weight: 800;
+    border-top: 1px solid #bfd0df;
+}
+.report-note { padding: 14px 22px 22px; color: #607588; font-size: 0.88rem; }
+@media (min-width: 900px) {
+    .report-filter-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: end; }
+}
+@media print {
+    @page { size: A4 landscape; margin: 10mm; }
+    .topbar, .sidebar, .report-filter-card, .btn, .action-row { display: none !important; }
+    .container { padding: 0; background: #fff; }
+    .report-header-card, .attendance-matrix-card { box-shadow: none; }
+    .attendance-matrix-wrap { max-height: none; overflow: visible; }
+}
+</style>
 
-    <form method="get" class="form-grid" style="margin-bottom: 14px;">
-        <div>
-            <label for="{{ filter_form.date.id_for_label }}">{{ filter_form.date.label }}</label>
-            {{ filter_form.date }}
-            {% if filter_form.date.errors %}
-                <div class="field-errors">
-                    {% for error in filter_form.date.errors %}
-                        <div>{{ error }}</div>
-                    {% endfor %}
-                </div>
-            {% endif %}
-        </div>
+<section class="attendance-report-shell">
+    <div class="report-filter-card">
+        <h1>Reporte mensual de asistencia</h1>
+        <p>Selecciona una fecha del mes que deseas analizar. El sistema genera automaticamente la matriz mensual con agrupacion semanal y formato institucional.</p>
 
-        {% if not auto_section_mode %}
+        <form method="get" class="report-filter-grid">
             <div>
-                <label for="{{ filter_form.section.id_for_label }}">{{ filter_form.section.label }}</label>
-                {{ filter_form.section }}
-                {% if filter_form.section.errors %}
+                <label for="{{ filter_form.date.id_for_label }}">{{ filter_form.date.label }}</label>
+                {{ filter_form.date }}
+                {% if filter_form.date.errors %}
                     <div class="field-errors">
-                        {% for error in filter_form.section.errors %}
+                        {% for error in filter_form.date.errors %}
                             <div>{{ error }}</div>
                         {% endfor %}
                     </div>
                 {% endif %}
             </div>
-        {% elif selected_section %}
-            <div>
-                <label>Grado / Seccion asignada</label>
-                <input type="text" value="{{ selected_section.grade.name }} {{ selected_section.name }}" readonly>
-            </div>
-        {% endif %}
 
-        <div class="action-row">
-            <button type="submit" class="btn btn-primary">Filtrar</button>
-            <a href="{% url 'attendance_course_report' %}" class="btn btn-subtle">Limpiar</a>
-            {% if rows %}
-                <a href="{% url 'attendance_export_csv' %}?section={{ selected_section.id }}&date={{ selected_date|date:'Y-m-d' }}&student_order={{ student_order }}" class="btn btn-subtle">Exportar CSV</a>
+            {% if not auto_section_mode %}
+                <div>
+                    <label for="{{ filter_form.section.id_for_label }}">{{ filter_form.section.label }}</label>
+                    {{ filter_form.section }}
+                    {% if filter_form.section.errors %}
+                        <div class="field-errors">
+                            {% for error in filter_form.section.errors %}
+                                <div>{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+            {% elif selected_section %}
+                <div>
+                    <label>Grado / Seccion asignada</label>
+                    <input type="text" value="{{ selected_section.grade.name }} {{ selected_section.name }}" readonly>
+                </div>
             {% endif %}
-        </div>
-    </form>
 
-    {% if selected_section %}
-        <div class="section-head" style="margin-top: 6px; margin-bottom: 10px;">
-            <h2>{{ selected_section.grade.name }} {{ selected_section.name }}</h2>
-            <span class="muted">{{ selected_date }}</span>
+            <div class="action-row">
+                <button type="submit" class="btn btn-primary">Generar reporte</button>
+                <a href="{% url 'attendance_course_report' %}" class="btn btn-subtle">Limpiar</a>
+                {% if report %}
+                    <a href="{% url 'attendance_export_excel' %}?section={{ selected_section.id }}&date={{ selected_date|date:'Y-m-d' }}&student_order={{ student_order }}" class="btn btn-subtle">Exportar Excel</a>
+                    <a href="{% url 'attendance_export_pdf' %}?section={{ selected_section.id }}&date={{ selected_date|date:'Y-m-d' }}&student_order={{ student_order }}" class="btn btn-subtle">Exportar PDF</a>
+                {% endif %}
+            </div>
+        </form>
+    </div>
+
+    {% if report %}
+        <div class="report-header-card">
+            <div class="report-header-top">
+                {% if report.logo_url %}
+                    <img src="{{ report.logo_url }}" alt="Logo institucional" class="report-logo">
+                {% else %}
+                    <div class="report-logo-placeholder">{{ report.school_name|first|upper }}</div>
+                {% endif %}
+
+                <div>
+                    <div class="report-school-name">{{ report.school_name }}</div>
+                    <div class="report-subtitle">Control institucional de asistencia mensual</div>
+                </div>
+            </div>
+
+            <div class="report-meta-grid">
+                <div class="report-meta-box">
+                    <span>Docente</span>
+                    <strong>{{ report.teacher_name }}</strong>
+                </div>
+                <div class="report-meta-box">
+                    <span>Grado y seccion</span>
+                    <strong>{{ report.grade_section }}</strong>
+                </div>
+                <div class="report-meta-box">
+                    <span>Mes y ano</span>
+                    <strong>{{ report.month_label }}</strong>
+                </div>
+            </div>
         </div>
 
-        <div class="action-row" style="margin-bottom: 12px; gap: 12px;">
-            <span class="status-pill attendance-present">&#10003; {{ totals.present }} presentes</span>
-            <span class="status-pill attendance-absent">&#10005; {{ totals.absent }} faltas</span>
-            <span class="status-pill attendance-justified">&#10003; {{ totals.justified }} justificados</span>
-            <span class="status-pill attendance-missing">- {{ totals.missing }} sin registro</span>
+        <div class="report-kpis">
+            <div class="report-kpi">
+                <small>Alumnos</small>
+                <strong>{{ report.student_count }}</strong>
+            </div>
+            <div class="report-kpi">
+                <small>% asistencia global</small>
+                <strong>{{ report.overall_attendance_pct }}%</strong>
+            </div>
+            <div class="report-kpi">
+                <small>Faltas</small>
+                <strong>{{ report.totals.absent }}</strong>
+            </div>
+            <div class="report-kpi">
+                <small>Tardanzas</small>
+                <strong>{{ report.totals.tardy }}</strong>
+            </div>
+            <div class="report-kpi">
+                <small>Justificaciones</small>
+                <strong>{{ report.totals.justified }}</strong>
+            </div>
+            <div class="report-kpi">
+                <small>Dias con registros</small>
+                <strong>{{ report.days_with_records }}</strong>
+            </div>
         </div>
 
-        <div class="table-wrap">
-            <table class="attendance-sheet">
-                <thead>
-                    <tr>
-                        <th style="min-width: 240px;">Alumno {% include 'includes/student_order_controls.html' %}</th>
-                        <th style="width: 120px;">Presente</th>
-                        <th style="width: 120px;">Falta</th>
-                        <th style="width: 150px;">Justificado</th>
-                        <th style="min-width: 320px;">Justificacion</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for row in rows %}
-                        <tr class="attendance-row">
-                            <td class="student-name">{{ row.enrollment.student }}</td>
-                            <td>
-                                <span class="attendance-choice attendance-choice-present {% if row.status == 'present' %}is-active{% endif %}" aria-hidden="true">
-                                    &#10003;
-                                </span>
-                            </td>
-                            <td>
-                                <span class="attendance-choice attendance-choice-absent {% if row.status == 'absent' %}is-active{% endif %}" aria-hidden="true">
-                                    &#10005;
-                                </span>
-                            </td>
-                            <td>
-                                <span class="attendance-choice attendance-choice-justified {% if row.status == 'justified' %}is-active{% endif %}" aria-hidden="true">
-                                    &#10003;
-                                </span>
-                            </td>
-                            <td>
-                                {% if row.note %}
-                                    <div class="attendance-note-text">{{ row.note }}</div>
-                                {% else %}
-                                    <span class="muted">-</span>
-                                {% endif %}
-                            </td>
+        <div class="attendance-legend">
+            {% for item in report.legend %}
+                <div class="attendance-legend-item">
+                    <span class="attendance-legend-mark {{ item.css_class }}">{{ item.short }}</span>
+                    <span>{{ item.label }}</span>
+                </div>
+            {% endfor %}
+        </div>
+
+        <div class="attendance-matrix-card">
+            <div class="attendance-matrix-head">
+                <div>
+                    <h2>Planilla mensual</h2>
+                    <div class="attendance-matrix-sub">Vista profesional optimizada para A4 horizontal, Excel y PDF</div>
+                </div>
+                <div class="attendance-matrix-sub">Generado el {{ report.generated_at|date:"d/m/Y H:i" }}</div>
+            </div>
+
+            <div class="attendance-matrix-wrap">
+                <table class="attendance-matrix">
+                    <thead>
+                        <tr>
+                            <th class="sticky-col col-number" rowspan="3">Nro</th>
+                            <th class="sticky-col-2 col-student" rowspan="3">Apellidos y nombres {% include 'includes/student_order_controls.html' %}</th>
+                            {% for week in report.weeks %}
+                                <th class="week-group {% if week.index|divisibleby:2 %}week-alt{% endif %}" colspan="{{ week.colspan }}">{{ week.label }}</th>
+                            {% endfor %}
+                            <th colspan="4">Resumen</th>
                         </tr>
-                    {% empty %}
-                        <tr><td colspan="5">No hay alumnos activos en esta seccion.</td></tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+                        <tr>
+                            {% for day in report.days %}
+                                <th class="col-day {% if day.starts_week %}day-divider{% endif %}">{{ day.day }}</th>
+                            {% endfor %}
+                            <th class="col-summary" rowspan="2">% Asist.</th>
+                            <th class="col-summary" rowspan="2">Faltas</th>
+                            <th class="col-summary" rowspan="2">Tard.</th>
+                            <th class="col-summary" rowspan="2">Justif.</th>
+                        </tr>
+                        <tr>
+                            {% for day in report.days %}
+                                <th class="col-day {% if day.starts_week %}day-divider{% endif %}">{{ day.weekday_short }}</th>
+                            {% endfor %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in report.rows %}
+                            <tr>
+                                <td class="sticky-col col-number">{{ row.number }}</td>
+                                <td class="sticky-col-2 col-student">{{ row.student_name }}</td>
+                                {% for cell in row.cells %}
+                                    <td class="col-day {{ cell.css_class }} {% if cell.starts_week %}day-divider{% endif %}">
+                                        {{ cell.short|default:"-" }}
+                                    </td>
+                                {% endfor %}
+                                <td class="summary-cell col-summary">{{ row.attendance_pct }}%</td>
+                                <td class="summary-cell col-summary">{{ row.counts.absent }}</td>
+                                <td class="summary-cell col-summary">{{ row.counts.tardy }}</td>
+                                <td class="summary-cell col-summary">{{ row.counts.justified }}</td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="40">No hay alumnos activos en esta seccion para el mes seleccionado.</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                    {% if report.rows %}
+                        <tfoot>
+                            <tr>
+                                <td class="sticky-col" colspan="2">Totales del mes</td>
+                                {% for day in report.days %}
+                                    <td></td>
+                                {% endfor %}
+                                <td>{{ report.overall_attendance_pct }}%</td>
+                                <td>{{ report.totals.absent }}</td>
+                                <td>{{ report.totals.tardy }}</td>
+                                <td>{{ report.totals.justified }}</td>
+                            </tr>
+                        </tfoot>
+                    {% endif %}
+                </table>
+            </div>
+
+            <div class="report-note">
+                El porcentaje de asistencia se calcula sobre los dias efectivamente registrados por alumno, considerando como asistencia valida: presente, tardanza y justificado.
+            </div>
         </div>
     {% else %}
-        <p class="muted">Selecciona fecha y grado/seccion para ver el detalle de asistencia.</p>
+        <section class="card">
+            <p class="muted">Selecciona una fecha y una seccion para generar la planilla mensual profesional de asistencia.</p>
+        </section>
     {% endif %}
 </section>
 {% endblock %}
