@@ -26,6 +26,7 @@ def attach_existing_units_to_first_period(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
+    atomic = False
 
     dependencies = [
         ('academic', '0019_unit_indicator_unit'),

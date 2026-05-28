@@ -29,6 +29,7 @@ def seed_units_and_attach_indicators(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
+    atomic = False
 
     dependencies = [
         ('academic', '0018_competency_assignment'),

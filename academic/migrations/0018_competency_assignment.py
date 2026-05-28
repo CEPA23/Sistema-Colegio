@@ -39,6 +39,7 @@ def copy_competencies_to_assignments(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
+    atomic = False
 
     dependencies = [
         ('academic', '0017_course_grades'),
