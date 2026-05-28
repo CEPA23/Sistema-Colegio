@@ -4,7 +4,17 @@ from django.urls import reverse
 from accounts.models import User
 from schools.models import School
 
-from .models import AcademicYear, Course, Grade, Section, TeacherCourseAssignment
+from .models import (
+    AcademicYear,
+    Competency,
+    Course,
+    Grade,
+    Indicator,
+    Period,
+    Section,
+    TeacherCourseAssignment,
+    Unit,
+)
 from .sync import sync_teacher_course_assignments_for_teacher
 
 
@@ -125,3 +135,67 @@ class CourseGradeMatrixSyncTests(TestCase):
                 section=self.section,
             ).exists()
         )
+
+    def test_polyteacher_gradebook_reuses_competencies_and_labels_sections(self):
+        section_b = Section.objects.create(name='B', grade=self.grade)
+        english = Course.objects.create(name='Inglés')
+        period = Period.objects.create(
+            name='Bimestre 1',
+            academic_year=self.active_year,
+            start_date='2026-03-01',
+            end_date='2026-05-31',
+            is_active=True,
+        )
+        poly_teacher = User.objects.create_user(
+            username='ingles',
+            password='secret123',
+            role='teacher',
+            is_polyteacher=True,
+        )
+        source_assignment = TeacherCourseAssignment.objects.create(
+            teacher=poly_teacher,
+            course=english,
+            grade=self.grade,
+            section=self.section,
+            academic_year=self.active_year,
+        )
+        target_assignment = TeacherCourseAssignment.objects.create(
+            teacher=poly_teacher,
+            course=english,
+            grade=self.grade,
+            section=section_b,
+            academic_year=self.active_year,
+        )
+        unit = Unit.objects.create(
+            assignment=source_assignment,
+            period=period,
+            name='Unidad 1',
+            order=1,
+        )
+        competency = Competency.objects.create(
+            assignment=source_assignment,
+            name='Se comunica oralmente en inglés',
+            order=1,
+        )
+        Indicator.objects.create(
+            competency=competency,
+            unit=unit,
+            name='Participa en diálogos breves',
+            order=1,
+        )
+
+        self.client.force_login(poly_teacher)
+        response = self.client.get(
+            reverse('teacher_competency_gradebook'),
+            data={
+                'assignment': target_assignment.id,
+                'period': period.id,
+                'unit': 1,
+            },
+        )
+
+        self.assertContains(response, 'Inglés - 3 grado A')
+        self.assertContains(response, 'Inglés - 3 grado B')
+        self.assertContains(response, 'Se comunica oralmente en inglés')
+        self.assertContains(response, 'Participa en diálogos breves')
+        self.assertEqual(response.context['competency_assignment'], source_assignment)

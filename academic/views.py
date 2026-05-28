@@ -34,6 +34,65 @@ from .models import (
 from .sync import sync_teacher_course_assignments
 
 
+POLY_COURSE_NAMES = {
+    'ingles',
+    'computacion',
+    'arte',
+    'educacion fisica',
+    'robotica',
+    'electronica',
+}
+
+
+def _normalize_course_name(name):
+    replacements = str.maketrans({
+        'á': 'a', 'é': 'e', 'í': 'i', 'ó': 'o', 'ú': 'u',
+        'Á': 'a', 'É': 'e', 'Í': 'i', 'Ó': 'o', 'Ú': 'u',
+    })
+    return (name or '').translate(replacements).strip().lower()
+
+
+def _is_poly_assignment(assignment):
+    if not assignment:
+        return False
+    return (
+        assignment.course.is_poly_course
+        or _normalize_course_name(assignment.course.name) in POLY_COURSE_NAMES
+    )
+
+
+def _assignment_classroom_label(assignment):
+    if assignment.section:
+        return f"{assignment.section.grade.name} {assignment.section.name}"
+    if assignment.grade:
+        return assignment.grade.name
+    return "Sin seccion"
+
+
+def _assignment_select_label(assignment):
+    if _is_poly_assignment(assignment):
+        return f"{assignment.course.name} - {_assignment_classroom_label(assignment)}"
+    return assignment.course.name
+
+
+def _competency_source_assignment(assignment):
+    if not _is_poly_assignment(assignment):
+        return assignment
+
+    sibling_assignments = TeacherCourseAssignment.objects.filter(
+        teacher=assignment.teacher,
+        course=assignment.course,
+        academic_year=assignment.academic_year,
+    )
+    source = (
+        sibling_assignments
+        .filter(competencies__isnull=False)
+        .order_by('section__grade__name', 'section__name', 'id')
+        .first()
+    )
+    return source or assignment
+
+
 @role_required('admin', 'director')
 def manage_grade_locks(request):
     """View for Director to see and toggle submission locks."""
@@ -1278,6 +1337,20 @@ def teacher_competency_gradebook(request):
     if request.user.role == 'teacher' and not request.user.is_superuser:
         assignments = assignments.filter(teacher=request.user)
 
+    assignments = assignments.order_by(
+        'course__name',
+        'section__grade__name',
+        'section__name',
+        'id',
+    )
+    assignment_options = [
+        {
+            'assignment': assignment,
+            'label': _assignment_select_label(assignment),
+        }
+        for assignment in assignments
+    ]
+
     active_year = AcademicYear.objects.filter(is_active=True).first()
     periods = (
         Period.objects.filter(academic_year=active_year).order_by('start_date', 'name')
@@ -1308,16 +1381,33 @@ def teacher_competency_gradebook(request):
     competencies = []
     competency_blocks = []
     rows = []
+    competency_assignment = selected_assignment
+    competency_unit = None
     is_locked = False
     can_edit = True
     can_unlock_lock = False
     lock_next_url = ''
 
     if selected_assignment and selected_period and selected_unit:
-        competencies = list(selected_assignment.competencies.all())
+        competency_assignment = _competency_source_assignment(selected_assignment)
+        if competency_assignment and competency_assignment.id != selected_assignment.id:
+            source_units = _ensure_assignment_units(competency_assignment, selected_period)
+            competency_unit = next(
+                (
+                    unit for unit in source_units
+                    if unit.order == selected_unit.order
+                    or unit.name == selected_unit.name
+                ),
+                None,
+            )
+        else:
+            competency_unit = selected_unit
+        competency_unit = competency_unit or selected_unit
+
+        competencies = list(competency_assignment.competencies.all())
         for competency in competencies:
             indicators = list(
-                competency.indicator_set.filter(unit=selected_unit).order_by('order', 'id')
+                competency.indicator_set.filter(unit=competency_unit).order_by('order', 'id')
             )
             competency_blocks.append({'competency': competency, 'indicators': indicators})
 
@@ -1409,7 +1499,7 @@ def teacher_competency_gradebook(request):
 
                 for enrollment in enrollments:
                     final_grade = _calculate_course_grade_from_indicators(
-                        enrollment, selected_assignment, selected_period
+                        enrollment, competency_assignment, selected_period
                     )
                     if final_grade:
                         GradeRecord.objects.update_or_create(
@@ -1474,8 +1564,10 @@ def teacher_competency_gradebook(request):
         has_competencies = any(block['indicators'] for block in competency_blocks)
 
     context = {
+        'assignment_options': assignment_options,
         'assignments': assignments,
         'selected_assignment': selected_assignment,
+        'competency_assignment': competency_assignment,
         'periods': periods,
         'selected_period': selected_period,
         'units': units,

@@ -14,9 +14,9 @@
             <label for="assignment">Curso</label>
             <select id="assignment" name="assignment">
                 <option value="">Selecciona</option>
-                {% for assignment in assignments %}
-                    <option value="{{ assignment.id }}" {% if selected_assignment and assignment.id == selected_assignment.id %}selected{% endif %}>
-                        {{ assignment.course.name }}
+                {% for option in assignment_options %}
+                    <option value="{{ option.assignment.id }}" {% if selected_assignment and option.assignment.id == selected_assignment.id %}selected{% endif %}>
+                        {{ option.label }}
                     </option>
                 {% endfor %}
             </select>
@@ -45,7 +45,7 @@
     <section class="card">
         <p class="muted">
             Esta unidad no tiene competencias/indicadores configurados. 
-            <a href="{% url 'manage_competencies' selected_assignment.id %}" class="btn btn-primary btn-sm" style="margin-top: 8px; display: inline-block;">
+            <a href="{% url 'manage_competencies' competency_assignment.id %}" class="btn btn-primary btn-sm" style="margin-top: 8px; display: inline-block;">
                 Configurar ahora
             </a>
         </p>
@@ -59,7 +59,7 @@
                 </h2>
                 <span class="muted">{{ selected_period.name }}</span>
             </div>
-            <a href="{% url 'manage_competencies' selected_assignment.id %}" class="btn btn-subtle">
+            <a href="{% url 'manage_competencies' competency_assignment.id %}" class="btn btn-subtle">
                 Gestionar Competencias
             </a>
         </div>
