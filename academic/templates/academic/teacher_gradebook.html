@@ -11,20 +11,12 @@
 
     <form method="get" class="form-grid">
         <div>
-            <label for="assignment">Curso / sección</label>
+            <label for="assignment">Curso</label>
             <select id="assignment" name="assignment">
                 <option value="">Selecciona</option>
                 {% for assignment in assignments %}
                     <option value="{{ assignment.id }}" {% if selected_assignment and assignment.id == selected_assignment.id %}selected{% endif %}>
-                        {{ assignment.course.name }} | 
-                        {% if assignment.section %}
-                            {{ assignment.section.grade.name }} {{ assignment.section.name }}
-                        {% elif assignment.grade %}
-                            {{ assignment.grade.name }} (Todo)
-                        {% else %}
-                            Sin sección
-                        {% endif %}
-                        ({{ assignment.academic_year.year }})
+                        {{ assignment.course.name }}
                     </option>
                 {% endfor %}
             </select>
@@ -48,12 +40,12 @@
     </form>
 </section>
 
-{% if selected_assignment and selected_period %}
+{% if selected_assignment and selected_period and selected_unit %}
     {% if not has_competencies %}
     <section class="card">
         <p class="muted">
-            Este curso no tiene competencias/indicadores configurados. 
-            <a href="{% url 'manage_competencies' selected_assignment.course.id %}" class="btn btn-primary btn-sm" style="margin-top: 8px; display: inline-block;">
+            Esta unidad no tiene competencias/indicadores configurados. 
+            <a href="{% url 'manage_competencies' selected_assignment.id %}" class="btn btn-primary btn-sm" style="margin-top: 8px; display: inline-block;">
                 Configurar ahora
             </a>
         </p>
@@ -63,26 +55,43 @@
         <div class="section-head">
             <div>
                 <h2>
-                    {{ selected_assignment.course.name }} - 
-                    {% if selected_assignment.section %}
-                        {{ selected_assignment.section.grade.name }} {{ selected_assignment.section.name }}
-                    {% elif selected_assignment.grade %}
-                        {{ selected_assignment.grade.name }} (Todo)
-                    {% else %}
-                        Sin sección
-                    {% endif %}
+                    {{ selected_assignment.course.name }}
                 </h2>
                 <span class="muted">{{ selected_period.name }}</span>
             </div>
-            <a href="{% url 'manage_competencies' selected_assignment.course.id %}" class="btn btn-subtle">
+            <a href="{% url 'manage_competencies' selected_assignment.id %}" class="btn btn-subtle">
                 Gestionar Competencias
             </a>
+        </div>
+
+        <p class="muted" style="margin-top: -8px; margin-bottom: 14px;">
+            Aula seleccionada:
+            {% if selected_assignment.section %}
+                {{ selected_assignment.section.grade.name }} {{ selected_assignment.section.name }}
+            {% elif selected_assignment.grade %}
+                {{ selected_assignment.grade.name }}
+            {% else %}
+                Sin sección
+            {% endif %}
+        </p>
+
+        <div class="unit-strip">
+            <span class="unit-strip-label">Unidad:</span>
+            {% for unit in units %}
+                <a
+                    href="?assignment={{ selected_assignment.id }}&period={{ selected_period.id }}&unit={{ unit.id }}&student_order={{ student_order }}"
+                    class="unit-chip {% if selected_unit and unit.id == selected_unit.id %}is-active{% endif %}"
+                >
+                    {{ unit.name }}
+                </a>
+            {% endfor %}
         </div>
 
         <form method="post" id="gradebook-form">
             {% csrf_token %}
             <input type="hidden" name="assignment" value="{{ selected_assignment.id }}">
             <input type="hidden" name="period" value="{{ selected_period.id }}">
+            <input type="hidden" name="unit" value="{{ selected_unit.id }}">
             <input type="hidden" name="student_order" value="{{ student_order }}">
 
             <div class="table-wrap">
@@ -214,6 +223,38 @@
         padding-bottom: 90px;
         max-height: 65vh;
         overflow: auto;
+    }
+    .unit-strip {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        align-items: center;
+        padding: 0 0 16px;
+        margin-top: -6px;
+    }
+    .unit-strip-label {
+        font-weight: 600;
+        color: var(--text);
+        margin-right: 4px;
+    }
+    .unit-chip {
+        padding: 8px 14px;
+        border-radius: 999px;
+        border: 1px solid var(--line);
+        background: #fff;
+        text-decoration: none;
+        color: var(--text);
+        font-size: 0.92rem;
+        transition: all 0.18s ease;
+    }
+    .unit-chip:hover {
+        border-color: var(--primary);
+        color: var(--primary);
+    }
+    .unit-chip.is-active {
+        background: var(--primary);
+        border-color: var(--primary);
+        color: #fff;
     }
     .container-action {
         width: 100%;

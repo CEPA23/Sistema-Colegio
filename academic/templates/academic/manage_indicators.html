@@ -7,20 +7,47 @@
     <div class="section-head">
         <div>
             <nav style="margin-bottom: 8px;">
-                <a href="{% url 'manage_competencies' course.id %}" class="muted" style="text-decoration: none;">&larr; Volver a Competencias</a>
+                <a href="{% url 'manage_competencies' assignment.id %}" class="muted" style="text-decoration: none;">&larr; Volver a Competencias</a>
             </nav>
             <h1>Indicadores para: {{ competency.name }}</h1>
-            <p class="muted">Curso: {{ course.name }}</p>
+            <p class="muted">Curso: {{ assignment.course.name }}</p>
+            <p class="muted">
+                {% if assignment.section %}
+                    Seccion: {{ assignment.section.grade.name }} {{ assignment.section.name }}
+                {% elif assignment.grade %}
+                    Grado: {{ assignment.grade.name }}
+                {% endif %}
+            </p>
         </div>
         <a href="{% url 'teacher_competency_gradebook' %}" class="btn btn-subtle">Volver al registro</a>
     </div>
 
-    <div class="grid" style="grid-template-columns: 1fr 2fr; gap: 24px;">
-        <!-- Formulario -->
+    <div class="period-strip">
+        <span class="strip-label">Bimestre:</span>
+        {% for period in periods %}
+            <a href="?period={{ period.id }}" class="chip {% if selected_period and period.id == selected_period.id %}is-active{% endif %}">
+                {{ period.name }}
+            </a>
+        {% endfor %}
+    </div>
+
+    <div class="unit-strip">
+        <span class="strip-label">Unidad:</span>
+        {% for unit in units %}
+            <a href="?period={{ selected_period.id }}&unit={{ unit.id }}" class="chip {% if selected_unit and unit.id == selected_unit.id %}is-active{% endif %}">
+                {{ unit.name }}
+            </a>
+        {% endfor %}
+    </div>
+
+    <div class="grid" style="grid-template-columns: 1fr 2fr; gap: 24px; margin-top: 20px;">
         <div class="card" style="padding: 20px; border: 1px solid #eee;">
-            <h3>Nuevo Indicador / Desempeño</h3>
+            <h3>Nuevo Indicador</h3>
+            <p class="muted" style="margin-bottom: 12px;">Se guardara en {{ selected_period.name }} / {{ selected_unit.name }}.</p>
             <form method="post" style="margin-top: 16px;">
                 {% csrf_token %}
+                <input type="hidden" name="period" value="{{ selected_period.id }}">
+                <input type="hidden" name="unit" value="{{ selected_unit.id }}">
                 <div class="form-group" style="margin-bottom: 16px;">
                     <label>Nombre del indicador</label>
                     {{ form.name }}
@@ -30,8 +57,11 @@
             </form>
         </div>
 
-        <!-- Lista -->
         <div>
+            <div class="card" style="padding: 16px; border: 1px solid #eee; margin-bottom: 16px;">
+                <strong>Bimestre activo:</strong> {{ selected_period.name }}<br>
+                <strong>Unidad activa:</strong> {{ selected_unit.name }}
+            </div>
             <div class="table-wrap">
                 <table>
                     <thead>
@@ -53,7 +83,7 @@
                         {% empty %}
                             <tr>
                                 <td colspan="2" style="text-align: center; padding: 40px;" class="muted">
-                                    No hay indicadores registrados para esta competencia.
+                                    No hay indicadores registrados para esta unidad.
                                 </td>
                             </tr>
                         {% endfor %}
@@ -69,5 +99,36 @@
     .form-group label { display: block; margin-bottom: 6px; font-weight: 500; }
     .form-group input { width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; }
     .error { color: #dc3545; font-size: 0.85em; margin-top: 4px; }
+    .period-strip, .unit-strip {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        align-items: center;
+        margin-bottom: 12px;
+    }
+    .strip-label {
+        font-weight: 600;
+        color: var(--text);
+        margin-right: 4px;
+    }
+    .chip {
+        padding: 8px 14px;
+        border-radius: 999px;
+        border: 1px solid var(--line);
+        background: #fff;
+        text-decoration: none;
+        color: var(--text);
+        font-size: 0.92rem;
+        transition: all 0.18s ease;
+    }
+    .chip:hover {
+        border-color: var(--primary);
+        color: var(--primary);
+    }
+    .chip.is-active {
+        background: var(--primary);
+        border-color: var(--primary);
+        color: #fff;
+    }
 </style>
 {% endblock %}

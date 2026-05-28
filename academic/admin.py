@@ -11,6 +11,7 @@ from .models import (
     IndicatorGrade,
     Period,
     Section,
+    Unit,
     TeacherCourseAssignment,
 )
 
@@ -42,10 +43,31 @@ class IndicatorInline(admin.TabularInline):
 
 @admin.register(Competency)
 class CompetencyAdmin(admin.ModelAdmin):
-    list_display = ('name', 'course', 'order')
-    list_filter = ('course',)
-    search_fields = ('name', 'course__name')
+    list_display = ('name', 'assignment', 'order')
+    list_filter = ('assignment__academic_year__year', 'assignment__course', 'assignment__section')
+    search_fields = (
+        'name',
+        'assignment__course__name',
+        'assignment__section__grade__name',
+        'assignment__section__name',
+        'assignment__teacher__username',
+        'assignment__teacher__first_name',
+        'assignment__teacher__last_name',
+    )
     inlines = [IndicatorInline]
+
+
+@admin.register(Unit)
+class UnitAdmin(admin.ModelAdmin):
+    list_display = ('name', 'assignment', 'period', 'order')
+    list_filter = ('assignment__academic_year__year', 'assignment__course', 'assignment__section', 'period')
+    search_fields = (
+        'name',
+        'assignment__course__name',
+        'assignment__section__grade__name',
+        'assignment__section__name',
+        'assignment__teacher__username',
+    )
 
 
 @admin.register(Course)
@@ -104,15 +126,27 @@ class GradeRecordAdmin(admin.ModelAdmin):
 
 @admin.register(Indicator)
 class IndicatorAdmin(admin.ModelAdmin):
-    list_display = ('name', 'competency', 'order')
-    list_filter = ('competency__course',)
-    search_fields = ('name', 'competency__name', 'competency__course__name')
+    list_display = ('name', 'competency', 'unit', 'order')
+    list_filter = (
+        'competency__assignment__academic_year__year',
+        'competency__assignment__course',
+        'competency__assignment__section',
+        'unit',
+    )
+    search_fields = (
+        'name',
+        'competency__name',
+        'competency__assignment__course__name',
+        'competency__assignment__section__grade__name',
+        'competency__assignment__section__name',
+        'unit__name',
+    )
 
 
 @admin.register(IndicatorGrade)
 class IndicatorGradeAdmin(admin.ModelAdmin):
     list_display = ('enrollment', 'indicator', 'period', 'grade')
-    list_filter = ('period', 'indicator__competency__course', 'grade')
+    list_filter = ('period', 'indicator__competency__assignment__course', 'grade')
     search_fields = (
         'enrollment__student__first_name',
         'enrollment__student__last_name',

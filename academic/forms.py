@@ -2,7 +2,7 @@ from django import forms
 
 from accounts.models import User
 
-from .models import Competency, Course, Grade, GradeRecord, Indicator, Section, TeacherCourseAssignment
+from .models import Competency, Course, Grade, GradeRecord, Indicator, Section, TeacherCourseAssignment, Unit
 
 
 class GradeRecordForm(forms.ModelForm):
@@ -89,4 +89,10 @@ class CompetencyForm(forms.ModelForm):
 class IndicatorForm(forms.ModelForm):
     class Meta:
         model = Indicator
+        fields = ['name']
+
+
+class UnitForm(forms.ModelForm):
+    class Meta:
+        model = Unit
         fields = ['name']

@@ -3,7 +3,7 @@ from collections import defaultdict
 
 from django.contrib import messages
 from django.db import models, transaction
-from django.http import HttpResponse
+from django.http import Http404, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 
 from accounts.decorators import role_required
@@ -26,6 +26,7 @@ from .models import (
     IndicatorGrade,
     Period,
     Section,
+    Unit,
     TeacherCourseAssignment,
     calculate_mode_grade,
     GradeSubmissionLock,
@@ -158,8 +159,6 @@ def delete_course(request, course_id):
         blockers.append('asignaciones de docentes')
     if course.graderecord_set.exists():
         blockers.append('registro de notas')
-    if course.competency_set.exists():
-        blockers.append('competencias')
     if course.gradesubmissionlock_set.exists():
         blockers.append('bloqueos de notas')
     if course.poly_teachers_assigned.exists() or course.poly_teachers.exists():
@@ -375,6 +374,42 @@ def _preferred_period(academic_year):
     return periods[0]
 
 
+def _default_unit_name():
+    return 'Unidad 1'
+
+
+def _ensure_assignment_units(assignment, period=None):
+    units_qs = assignment.units.select_related('period').order_by('period__start_date', 'order', 'id')
+    if period:
+        units_qs = units_qs.filter(period=period)
+    units = list(units_qs)
+    if not assignment.academic_year_id or not period:
+        return units
+
+    academic_periods = list(
+        Period.objects.filter(academic_year=assignment.academic_year).order_by('start_date', 'name')
+    )
+    try:
+        period_index = academic_periods.index(period)
+    except ValueError:
+        return units
+
+    expected_orders = [period_index * 2 + 1, period_index * 2 + 2]
+    existing_orders = {unit.order for unit in units}
+    for order in expected_orders:
+        if order not in existing_orders:
+            units.append(
+                Unit.objects.create(
+                    assignment=assignment,
+                    period=period,
+                    name=f'Unidad {order}',
+                    order=order,
+                )
+            )
+
+    return sorted(units, key=lambda unit: (unit.order, unit.id))
+
+
 def _is_section_tutor(user, section):
     return bool(
         user
@@ -534,6 +569,117 @@ def _mode_from_period_grade_map(period_grade_map, period_name_by_id):
     return calculate_mode_grade(bimestre_grades or all_grades) or '-'
 
 
+def _get_assignment_for_enrollment_and_course(enrollment, course, assignment_cache=None):
+    if not enrollment or not course or not enrollment.academic_year_id:
+        return None
+
+    cache_key = (enrollment.academic_year_id, enrollment.section_id, course.id)
+    if assignment_cache is not None and cache_key in assignment_cache:
+        return assignment_cache[cache_key]
+
+    base_qs = TeacherCourseAssignment.objects.select_related(
+        'teacher',
+        'course',
+        'section__grade',
+        'academic_year',
+    ).prefetch_related('competencies__indicator_set').filter(
+        course=course,
+        academic_year=enrollment.academic_year,
+    )
+
+    assignment = None
+    if enrollment.section_id:
+        assignment = base_qs.filter(section=enrollment.section).first()
+        if not assignment and enrollment.section.grade_id:
+            assignment = base_qs.filter(
+                section__isnull=True,
+                grade=enrollment.section.grade,
+            ).first()
+
+    if not assignment:
+        assignment = base_qs.filter(section__isnull=True).first()
+
+    if assignment_cache is not None:
+        assignment_cache[cache_key] = assignment
+
+    return assignment
+
+
+def _build_assignment_competency_breakdown(assignment, enrollments, periods, period_name_by_id, grade_record_map):
+    competencies = list(assignment.competencies.all()) if assignment else []
+    indicator_to_competency = {}
+    competency_name_by_id = {}
+    indicator_ids = []
+    for competency in competencies:
+        competency_name_by_id[competency.id] = competency.name
+        for indicator in competency.indicator_set.all():
+            indicator_to_competency[indicator.id] = competency.id
+            indicator_ids.append(indicator.id)
+
+    competency_period_raw = defaultdict(list)
+    if indicator_ids:
+        indicator_grades = IndicatorGrade.objects.filter(
+            enrollment__in=enrollments,
+            indicator_id__in=indicator_ids,
+        )
+        if periods:
+            indicator_grades = indicator_grades.filter(period_id__in=period_name_by_id.keys())
+        elif enrollments and enrollments[0].academic_year_id:
+            indicator_grades = indicator_grades.filter(period__academic_year_id=enrollments[0].academic_year_id)
+        for enrollment_id, indicator_id, period_id, grade in indicator_grades.values_list(
+            'enrollment_id', 'indicator_id', 'period_id', 'grade'
+        ):
+            competency_id = indicator_to_competency.get(indicator_id)
+            if competency_id:
+                competency_period_raw[(enrollment_id, competency_id, period_id)].append(grade)
+
+    competency_period_grade = {
+        key: calculate_mode_grade(values)
+        for key, values in competency_period_raw.items()
+    }
+
+    breakdown_by_enrollment = {}
+    for enrollment in enrollments:
+        competency_rows = []
+        per_period_competency_grades = defaultdict(list)
+
+        for competency in competencies:
+            period_grades = {}
+            for period in periods:
+                grade = competency_period_grade.get((enrollment.id, competency.id, period.id))
+                if grade:
+                    period_grades[period.id] = grade
+                    per_period_competency_grades[period.id].append(grade)
+
+            competency_rows.append({
+                'name': competency_name_by_id.get(competency.id, '-'),
+                'period_grades': period_grades,
+                'final_grade': _mode_from_period_grade_map(period_grades, period_name_by_id),
+            })
+
+        period_finals = {}
+        for period in periods:
+            comp_grades = per_period_competency_grades.get(period.id, [])
+            period_finals[period.id] = (
+                calculate_mode_grade(comp_grades)
+                or grade_record_map.get((enrollment.id, assignment.course_id, period.id))
+                or '-'
+            )
+
+        course_final = _mode_from_period_grade_map(
+            {period_id: grade for period_id, grade in period_finals.items() if grade != '-'},
+            period_name_by_id,
+        )
+
+        breakdown_by_enrollment[enrollment.id] = {
+            'competencies': competency_rows,
+            'period_finals': period_finals,
+            'course_final': course_final,
+        }
+
+    return breakdown_by_enrollment
+
+
 def _build_competency_breakdown(enrollments, courses, academic_year=None):
     enrollments = list(enrollments)
     courses = list(courses)
@@ -545,37 +691,6 @@ def _build_competency_breakdown(enrollments, courses, academic_year=None):
         periods_qs = periods_qs.filter(academic_year=academic_year)
     periods = list(periods_qs.order_by('start_date', 'name'))
     period_name_by_id = {period.id: period.name for period in periods}
-
-    competencies = list(
-        Competency.objects.filter(course__in=courses).order_by('order', 'id').prefetch_related('indicator_set')
-    )
-    competency_ids_by_course = defaultdict(list)
-    competency_name_by_id = {}
-    indicator_to_competency = {}
-    for competency in competencies:
-        competency_ids_by_course[competency.course_id].append(competency.id)
-        competency_name_by_id[competency.id] = competency.name
-        for indicator_id in competency.indicator_set.values_list('id', flat=True):
-            indicator_to_competency[indicator_id] = competency.id
-
-    indicator_ids = list(indicator_to_competency.keys())
-    competency_period_raw = defaultdict(list)
-    if indicator_ids:
-        indicator_grades = IndicatorGrade.objects.filter(
-            enrollment__in=enrollments,
-            indicator_id__in=indicator_ids,
-        )
-        if periods:
-            indicator_grades = indicator_grades.filter(period_id__in=period_name_by_id.keys())
-        elif academic_year:
-            indicator_grades = indicator_grades.filter(period__academic_year=academic_year)
-
-        for enrollment_id, indicator_id, period_id, grade in indicator_grades.values_list(
-            'enrollment_id', 'indicator_id', 'period_id', 'grade'
-        ):
-            competency_id = indicator_to_competency.get(indicator_id)
-            if competency_id:
-                competency_period_raw[(enrollment_id, competency_id, period_id)].append(grade)
 
     grade_record_map = {}
     grade_records = GradeRecord.objects.filter(
@@ -591,49 +706,55 @@ def _build_competency_breakdown(enrollments, courses, academic_year=None):
     ):
         grade_record_map[(enrollment_id, course_id, period_id)] = grade
 
-    competency_period_grade = {
-        key: calculate_mode_grade(values)
-        for key, values in competency_period_raw.items()
-    }
-
+    assignment_cache = {}
+    assignment_breakdown_cache = {}
     breakdown = {}
     for enrollment in enrollments:
         for course in courses:
-            competency_rows = []
-            per_period_competency_grades = defaultdict(list)
-
-            for competency_id in competency_ids_by_course.get(course.id, []):
-                period_grades = {}
-                for period in periods:
-                    grade = competency_period_grade.get((enrollment.id, competency_id, period.id))
-                    if grade:
-                        period_grades[period.id] = grade
-                        per_period_competency_grades[period.id].append(grade)
-
-                competency_rows.append({
-                    'name': competency_name_by_id.get(competency_id, '-'),
-                    'period_grades': period_grades,
-                    'final_grade': _mode_from_period_grade_map(period_grades, period_name_by_id),
+            assignment = _get_assignment_for_enrollment_and_course(enrollment, course, assignment_cache)
+            if assignment:
+                assignment_breakdown = assignment_breakdown_cache.get(assignment.id)
+                if assignment_breakdown is None:
+                    assignment_breakdown = _build_assignment_competency_breakdown(
+                        assignment,
+                        enrollments,
+                        periods,
+                        period_name_by_id,
+                        grade_record_map,
+                    )
+                    assignment_breakdown_cache[assignment.id] = assignment_breakdown
+                breakdown[(enrollment.id, course.id)] = assignment_breakdown.get(enrollment.id, {
+                    'competencies': [],
+                    'period_finals': {
+                        period.id: grade_record_map.get((enrollment.id, course.id, period.id), '-')
+                        for period in periods
+                    },
+                    'course_final': _mode_from_period_grade_map(
+                        {
+                            period.id: grade_record_map.get((enrollment.id, course.id, period.id))
+                            for period in periods
+                            if grade_record_map.get((enrollment.id, course.id, period.id))
+                        },
+                        period_name_by_id,
+                    ),
                 })
+                continue
 
-            period_finals = {}
-            for period in periods:
-                comp_grades = per_period_competency_grades.get(period.id, [])
-                period_finals[period.id] = (
-                    calculate_mode_grade(comp_grades)
-                    or grade_record_map.get((enrollment.id, course.id, period.id))
-                    or '-'
-                )
-
-            course_final = _mode_from_period_grade_map(
-                {period_id: grade for period_id, grade in period_finals.items() if grade != '-'},
-                period_name_by_id,
-            )
-
+            period_finals = {
+                period.id: grade_record_map.get((enrollment.id, course.id, period.id), '-')
+                for period in periods
+            }
             breakdown[(enrollment.id, course.id)] = {
-                'competencies': competency_rows,
+                'competencies': [],
                 'period_finals': period_finals,
-                'course_final': course_final,
+                'course_final': _mode_from_period_grade_map(
+                    {
+                        period_id: grade
+                        for period_id, grade in period_finals.items()
+                        if grade != '-'
+                    },
+                    period_name_by_id,
+                ),
             }
 
     return periods, breakdown
@@ -1126,8 +1247,8 @@ def student_report_pdf(request, enrollment_id):
     return response
 
 
-def _calculate_course_grade_from_indicators(enrollment, course, period):
-    competencies = Competency.objects.filter(course=course).prefetch_related('indicator_set')
+def _calculate_course_grade_from_indicators(enrollment, assignment, period):
+    competencies = list(assignment.competencies.prefetch_related('indicator_set').all()) if assignment else []
     competency_grades = []
     for competency in competencies:
         indicator_ids = list(competency.indicator_set.values_list('id', flat=True))
@@ -1173,7 +1294,16 @@ def teacher_competency_gradebook(request):
             periods = Period.objects.filter(
                 academic_year=selected_assignment.academic_year
             ).order_by('start_date', 'name')
-        selected_period = periods.filter(id=period_id).first() if period_id else None
+        selected_period = periods.filter(id=period_id).first() if period_id else _preferred_period(selected_assignment.academic_year)
+
+    units = []
+    selected_unit = None
+    unit_id = request.POST.get('unit') if request.method == 'POST' else request.GET.get('unit')
+    if selected_assignment:
+        units = _ensure_assignment_units(selected_assignment, selected_period)
+        selected_unit = next((unit for unit in units if str(unit.id) == str(unit_id)), None) if unit_id else units[0]
+        if not selected_unit and units:
+            selected_unit = units[0]
 
     competencies = []
     competency_blocks = []
@@ -1183,12 +1313,12 @@ def teacher_competency_gradebook(request):
     can_unlock_lock = False
     lock_next_url = ''
 
-    if selected_assignment and selected_period:
-        competencies = list(
-            Competency.objects.filter(course=selected_assignment.course).prefetch_related('indicator_set')
-        )
+    if selected_assignment and selected_period and selected_unit:
+        competencies = list(selected_assignment.competencies.all())
         for competency in competencies:
-            indicators = list(competency.indicator_set.all())
+            indicators = list(
+                competency.indicator_set.filter(unit=selected_unit).order_by('order', 'id')
+            )
             competency_blocks.append({'competency': competency, 'indicators': indicators})
 
         enrollment_filters = {
@@ -1233,7 +1363,7 @@ def teacher_competency_gradebook(request):
         )
         lock_next_url = (
             f"{request.path}?assignment={selected_assignment.id}"
-            f"&period={selected_period.id}&student_order={student_order}"
+            f"&period={selected_period.id}&unit={selected_unit.id}&student_order={student_order}"
         )
 
         if request.method == 'POST':
@@ -1279,7 +1409,7 @@ def teacher_competency_gradebook(request):
 
                 for enrollment in enrollments:
                     final_grade = _calculate_course_grade_from_indicators(
-                        enrollment, selected_assignment.course, selected_period
+                        enrollment, selected_assignment, selected_period
                     )
                     if final_grade:
                         GradeRecord.objects.update_or_create(
@@ -1341,15 +1471,19 @@ def teacher_competency_gradebook(request):
                 'course_grade': calculate_mode_grade(competency_grades) or '-',
             })
 
+        has_competencies = any(block['indicators'] for block in competency_blocks)
+
     context = {
         'assignments': assignments,
         'selected_assignment': selected_assignment,
         'periods': periods,
         'selected_period': selected_period,
+        'units': units,
+        'selected_unit': selected_unit,
         'competency_blocks': competency_blocks,
         'rows': rows,
         'grade_options': GradeRecord.GRADE_SCALE,
-        'has_competencies': bool(competencies),
+        'has_competencies': has_competencies if selected_assignment and selected_period and selected_unit else False,
         'is_locked': is_locked,
         'can_edit': can_edit,
         'can_unlock_lock': can_unlock_lock,
@@ -1360,23 +1494,37 @@ def teacher_competency_gradebook(request):
 
 
 @role_required('admin', 'director', 'teacher')
-def manage_competencies(request, course_id):
-    course = get_object_or_404(Course, id=course_id)
+def manage_competencies(request, assignment_id):
+    assignment_qs = TeacherCourseAssignment.objects.select_related('teacher', 'course', 'section__grade', 'academic_year')
+    assignment = assignment_qs.filter(id=assignment_id).first()
+    if not assignment:
+        course = Course.objects.filter(id=assignment_id).first()
+        if course:
+            assignment_qs = assignment_qs.filter(course=course)
+            if request.user.role == 'teacher' and not request.user.is_superuser:
+                assignment_qs = assignment_qs.filter(teacher=request.user)
+            assignment = assignment_qs.order_by('-academic_year__year', 'section__grade__name', 'section__name', 'id').first()
+            if assignment:
+                messages.warning(
+                    request,
+                    "Ese enlace apuntaba al curso. Se abrió la asignacion correcta para gestionar las competencias.",
+                )
+    if not assignment:
+        raise Http404("No TeacherCourseAssignment matches the given query.")
     
-    # Security check: if teacher, must be assigned to this course
+    # Security check: if teacher, must own this assignment.
     if request.user.role == 'teacher' and not request.user.is_superuser:
-        has_assignment = TeacherCourseAssignment.objects.filter(teacher=request.user, course=course).exists()
-        if not has_assignment:
-            messages.error(request, "No tienes permiso para gestionar este curso.")
+        if assignment.teacher_id != request.user.id:
+            messages.error(request, "No tienes permiso para gestionar esta seccion.")
             return redirect('teacher_dashboard')
 
     if request.method == 'POST':
         form = CompetencyForm(request.POST)
         if form.is_valid():
             competency = form.save(commit=False)
-            competency.course = course
+            competency.assignment = assignment
             last_order = (
-                Competency.objects.filter(course=course)
+                Competency.objects.filter(assignment=assignment)
                 .aggregate(max_order=models.Max('order'))
                 .get('max_order')
                 or 0
@@ -1384,13 +1532,13 @@ def manage_competencies(request, course_id):
             competency.order = last_order + 1
             competency.save()
             messages.success(request, f"Competencia '{competency.name}' agregada.")
-            return redirect('manage_competencies', course_id=course.id)
+            return redirect('manage_competencies', assignment_id=assignment.id)
     else:
         form = CompetencyForm()
 
-    competencies = Competency.objects.filter(course=course).prefetch_related('indicator_set')
+    competencies = Competency.objects.filter(assignment=assignment).prefetch_related('indicator_set')
     return render(request, 'academic/manage_competencies.html', {
-        'course': course,
+        'assignment': assignment,
         'competencies': competencies,
         'form': form
     })
@@ -1399,28 +1547,36 @@ def manage_competencies(request, course_id):
 @role_required('admin', 'director', 'teacher')
 def delete_competency(request, competency_id):
     competency = get_object_or_404(Competency, id=competency_id)
-    course_id = competency.course_id
+    assignment_id = competency.assignment_id
     
     # Security check
     if request.user.role == 'teacher' and not request.user.is_superuser:
-        has_assignment = TeacherCourseAssignment.objects.filter(teacher=request.user, course=competency.course).exists()
-        if not has_assignment:
+        if competency.assignment.teacher_id != request.user.id:
             return HttpResponse("Unauthorized", status=401)
 
     competency.delete()
     messages.success(request, "Competencia eliminada.")
-    return redirect('manage_competencies', course_id=course_id)
+    return redirect('manage_competencies', assignment_id=assignment_id)
 
 
 @role_required('admin', 'director', 'teacher')
 def manage_indicators(request, competency_id):
     competency = get_object_or_404(Competency, id=competency_id)
-    course = competency.course
+    assignment = competency.assignment
+    period_id = request.POST.get('period') if request.method == 'POST' else request.GET.get('period')
+    selected_period = Period.objects.filter(academic_year=assignment.academic_year, id=period_id).first()
+    if not selected_period:
+        selected_period = _preferred_period(assignment.academic_year)
+
+    units = _ensure_assignment_units(assignment, selected_period)
+    unit_id = request.POST.get('unit') if request.method == 'POST' else request.GET.get('unit')
+    selected_unit = next((unit for unit in units if str(unit.id) == str(unit_id)), None) if unit_id else units[0]
+    if not selected_unit and units:
+        selected_unit = units[0]
     
     # Security check
     if request.user.role == 'teacher' and not request.user.is_superuser:
-        has_assignment = TeacherCourseAssignment.objects.filter(teacher=request.user, course=course).exists()
-        if not has_assignment:
+        if assignment.teacher_id != request.user.id:
             messages.error(request, "No tienes permiso para gestionar esto.")
             return redirect('teacher_dashboard')
 
@@ -1429,8 +1585,9 @@ def manage_indicators(request, competency_id):
         if form.is_valid():
             indicator = form.save(commit=False)
             indicator.competency = competency
+            indicator.unit = selected_unit
             last_order = (
-                Indicator.objects.filter(competency=competency)
+                Indicator.objects.filter(competency=competency, unit=selected_unit)
                 .aggregate(max_order=models.Max('order'))
                 .get('max_order')
                 or 0
@@ -1438,14 +1595,18 @@ def manage_indicators(request, competency_id):
             indicator.order = last_order + 1
             indicator.save()
             messages.success(request, f"Indicador '{indicator.name}' agregado.")
-            return redirect('manage_indicators', competency_id=competency.id)
+            return redirect(f"{request.path}?period={selected_period.id}&unit={selected_unit.id}")
     else:
         form = IndicatorForm()
 
-    indicators = Indicator.objects.filter(competency=competency)
+    indicators = Indicator.objects.filter(competency=competency, unit=selected_unit)
     return render(request, 'academic/manage_indicators.html', {
         'competency': competency,
-        'course': course,
+        'assignment': assignment,
+        'periods': Period.objects.filter(academic_year=assignment.academic_year).order_by('start_date', 'name'),
+        'selected_period': selected_period,
+        'units': units,
+        'selected_unit': selected_unit,
         'indicators': indicators,
         'form': form
     })
@@ -1458,8 +1619,7 @@ def delete_indicator(request, indicator_id):
     
     # Security check
     if request.user.role == 'teacher' and not request.user.is_superuser:
-        has_assignment = TeacherCourseAssignment.objects.filter(teacher=request.user, course=indicator.competency.course).exists()
-        if not has_assignment:
+        if indicator.competency.assignment.teacher_id != request.user.id:
             return HttpResponse("Unauthorized", status=401)
 
     indicator.delete()

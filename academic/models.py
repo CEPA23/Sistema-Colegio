@@ -94,6 +94,28 @@ class TeacherCourseAssignment(models.Model):
         super().save(*args, **kwargs)
 
 
+class Unit(models.Model):
+    assignment = models.ForeignKey(
+        TeacherCourseAssignment,
+        on_delete=models.CASCADE,
+        related_name='units',
+    )
+    period = models.ForeignKey(
+        'Period',
+        on_delete=models.CASCADE,
+        related_name='units',
+    )
+    name = models.CharField(max_length=100)
+    order = models.PositiveIntegerField(default=1)
+
+    class Meta:
+        ordering = ('order', 'id')
+        unique_together = ('assignment', 'period', 'order')
+
+    def __str__(self):
+        return f"{self.assignment} - {self.name}"
+
+
 class Period(models.Model):
     name = models.CharField(max_length=50)  # Ej: Bimestre 1
     academic_year = models.ForeignKey(AcademicYear, on_delete=models.CASCADE)
@@ -194,7 +216,11 @@ class GradeRecord(models.Model):
 
 
 class Competency(models.Model):
-    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    assignment = models.ForeignKey(
+        TeacherCourseAssignment,
+        on_delete=models.CASCADE,
+        related_name='competencies',
+    )
     name = models.CharField(max_length=150)
     order = models.PositiveIntegerField(default=1)
 
@@ -202,11 +228,18 @@ class Competency(models.Model):
         ordering = ('order', 'id')
 
     def __str__(self):
-        return f"{self.course} - {self.name}"
+        return f"{self.assignment} - {self.name}"
 
 
 class Indicator(models.Model):
     competency = models.ForeignKey(Competency, on_delete=models.CASCADE)
+    unit = models.ForeignKey(
+        Unit,
+        on_delete=models.CASCADE,
+        related_name='indicators',
+        null=True,
+        blank=True,
+    )
     name = models.CharField(max_length=150)
     order = models.PositiveIntegerField(default=1)
 
