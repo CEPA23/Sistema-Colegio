@@ -55,6 +55,16 @@
                 </div>
                 <button type="submit" class="btn btn-primary w-full">Agregar Indicador</button>
             </form>
+            {% if previous_unit %}
+            <form method="post" style="margin-top: 12px;">
+                {% csrf_token %}
+                <input type="hidden" name="period" value="{{ selected_period.id }}">
+                <input type="hidden" name="unit" value="{{ selected_unit.id }}">
+                <button type="submit" name="replicate_previous_unit" value="1" class="btn btn-subtle w-full">
+                    Replicar indicadores desde {{ previous_unit.name }}
+                </button>
+            </form>
+            {% endif %}
         </div>
 
         <div>

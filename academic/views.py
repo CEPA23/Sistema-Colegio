@@ -1325,6 +1325,36 @@ def _calculate_course_grade_from_indicators(enrollment, assignment, period):
     return calculate_mode_grade(competency_grades)
 
 
+def _replicate_indicators_to_unit(competency, source_unit, target_unit):
+    if not competency or not source_unit or not target_unit:
+        return 0
+
+    created_count = 0
+    source_indicators = Indicator.objects.filter(
+        competency=competency,
+        unit=source_unit,
+    ).order_by('order', 'id')
+
+    for source_indicator in source_indicators:
+        exists = Indicator.objects.filter(
+            competency=competency,
+            unit=target_unit,
+            name=source_indicator.name,
+        ).exists()
+        if exists:
+            continue
+
+        Indicator.objects.create(
+            competency=competency,
+            unit=target_unit,
+            name=source_indicator.name,
+            order=source_indicator.order,
+        )
+        created_count += 1
+
+    return created_count
+
+
 @role_required('admin', 'director', 'teacher')
 def teacher_competency_gradebook(request):
     student_order = resolve_student_order(request)
@@ -1586,6 +1616,320 @@ def teacher_competency_gradebook(request):
 
 
 @role_required('admin', 'director', 'teacher')
+def teacher_competency_gradebook_export_excel(request):
+    student_order = resolve_student_order(request)
+    assignments = TeacherCourseAssignment.objects.select_related(
+        'teacher',
+        'course',
+        'section__grade',
+        'academic_year'
+    )
+    if request.user.role == 'teacher' and not request.user.is_superuser:
+        assignments = assignments.filter(teacher=request.user)
+
+    assignment_id = request.POST.get('assignment') if request.method == 'POST' else request.GET.get('assignment')
+    selected_assignment = assignments.filter(id=assignment_id).first() if assignment_id else None
+    if not selected_assignment:
+        messages.error(request, 'Selecciona un curso antes de exportar.')
+        return redirect('teacher_competency_gradebook')
+
+    active_year = AcademicYear.objects.filter(is_active=True).first()
+    periods = (
+        Period.objects.filter(academic_year=active_year).order_by('start_date', 'name')
+        if active_year else Period.objects.none()
+    )
+
+    period_id = request.POST.get('period') if request.method == 'POST' else request.GET.get('period')
+    if active_year != selected_assignment.academic_year:
+        periods = Period.objects.filter(
+            academic_year=selected_assignment.academic_year
+        ).order_by('start_date', 'name')
+    selected_period = periods.filter(id=period_id).first() if period_id else _preferred_period(selected_assignment.academic_year)
+    if not selected_period:
+        messages.error(request, 'Selecciona un periodo valido antes de exportar.')
+        return redirect('teacher_competency_gradebook')
+
+    units = _ensure_assignment_units(selected_assignment, selected_period)
+    unit_id = request.POST.get('unit') if request.method == 'POST' else request.GET.get('unit')
+    selected_unit = next((unit for unit in units if str(unit.id) == str(unit_id)), None) if unit_id else units[0]
+    if not selected_unit and units:
+        selected_unit = units[0]
+    if not selected_unit:
+        messages.error(request, 'Selecciona una unidad valida antes de exportar.')
+        return redirect('teacher_competency_gradebook')
+
+    competency_assignment = _competency_source_assignment(selected_assignment)
+    if competency_assignment and competency_assignment.id != selected_assignment.id:
+        source_units = _ensure_assignment_units(competency_assignment, selected_period)
+        competency_unit = next(
+            (
+                unit for unit in source_units
+                if unit.order == selected_unit.order
+                or unit.name == selected_unit.name
+            ),
+            None,
+        )
+    else:
+        competency_unit = selected_unit
+    competency_unit = competency_unit or selected_unit
+
+    competency_blocks = []
+    competencies = list(competency_assignment.competencies.all())
+    for competency in competencies:
+        indicators = list(
+            competency.indicator_set.filter(unit=competency_unit).order_by('order', 'id')
+        )
+        competency_blocks.append({'competency': competency, 'indicators': indicators})
+
+    enrollment_filters = {
+        'academic_year': selected_assignment.academic_year,
+        'status': 'active'
+    }
+    if selected_assignment.section:
+        enrollment_filters['section'] = selected_assignment.section
+    elif selected_assignment.grade:
+        enrollment_filters['section__grade'] = selected_assignment.grade
+
+    enrollments = order_queryset_by_student_name(
+        Enrollment.objects.select_related('student', 'section__grade').filter(**enrollment_filters),
+        prefix='student',
+        student_order=student_order,
+    )
+
+    all_indicator_ids = [indicator.id for block in competency_blocks for indicator in block['indicators']]
+    score_values = {}
+    posted_score_values = {
+        key.removeprefix('score_'): (value or '').strip().upper()
+        for key, value in request.POST.items()
+        if key.startswith('score_') and (value or '').strip().upper() in {'AD', 'A', 'B', 'C'}
+    }
+    if posted_score_values:
+        score_values = posted_score_values
+    elif all_indicator_ids:
+        score_values = {
+            f"{score.enrollment_id}_{score.indicator_id}": score.grade
+            for score in IndicatorGrade.objects.filter(
+                enrollment__in=enrollments,
+                period=selected_period,
+                indicator_id__in=all_indicator_ids
+            )
+        }
+
+    rows = []
+    for enrollment in enrollments:
+        blocks = []
+        competency_grades = []
+        for block in competency_blocks:
+            cells = []
+            indicator_grades = []
+            for indicator in block['indicators']:
+                score_key = f"{enrollment.id}_{indicator.id}"
+                value = score_values.get(score_key, '')
+                if value:
+                    indicator_grades.append(value)
+                cells.append({
+                    'indicator': indicator,
+                    'field_name': f"score_{score_key}",
+                    'value': value,
+                })
+            competency_grade = calculate_mode_grade(indicator_grades) or '-'
+            if competency_grade != '-':
+                competency_grades.append(competency_grade)
+            blocks.append({
+                'competency': block['competency'],
+                'cells': cells,
+                'competency_grade': competency_grade,
+            })
+
+        rows.append({
+            'enrollment': enrollment,
+            'blocks': blocks,
+            'course_grade': calculate_mode_grade(competency_grades) or '-',
+        })
+
+    from openpyxl import Workbook
+    from openpyxl.styles import Alignment, Border, Font, PatternFill, Side
+    from openpyxl.utils import get_column_letter
+    from django.utils.text import slugify
+
+    wb = Workbook()
+    ws = wb.active
+    ws.title = 'Notas'
+    ws.freeze_panes = 'C7'
+    ws.sheet_view.showGridLines = False
+    ws.page_setup.orientation = 'landscape'
+    ws.page_setup.fitToWidth = 1
+    ws.page_setup.fitToHeight = 0
+    ws.page_margins.left = 0.2
+    ws.page_margins.right = 0.2
+    ws.page_margins.top = 0.35
+    ws.page_margins.bottom = 0.35
+
+    last_column = 2 + sum(len(block['indicators']) + 1 for block in competency_blocks) + 1
+    last_column_letter = ws.cell(row=1, column=last_column).column_letter
+    header_font = Font(name='Arial', bold=True, size=11, color='000000')
+    title_font = Font(name='Arial', bold=True, size=12, color='000000')
+    center = Alignment(horizontal='center', vertical='center', wrap_text=True)
+    vertical = Alignment(horizontal='center', vertical='center', textRotation=90, wrap_text=True)
+    thin_side = Side(style='thin', color='000000')
+    thin_border = Border(left=thin_side, right=thin_side, top=thin_side, bottom=thin_side)
+    fills = [
+        PatternFill('solid', fgColor='FFF2CC'),
+        PatternFill('solid', fgColor='E2F0D9'),
+        PatternFill('solid', fgColor='D9E2F3'),
+        PatternFill('solid', fgColor='FCE4D6'),
+    ]
+
+    school_name = (
+        getattr(getattr(selected_assignment.academic_year, 'school', None), 'name', None)
+        or 'SISTEMA ESCOLAR'
+    )
+    classroom_name = (
+        f"{selected_assignment.section.grade.name} {selected_assignment.section.name}"
+        if selected_assignment.section else (selected_assignment.grade.name if selected_assignment.grade else 'Sin seccion')
+    )
+    area_name = f"AREA DE {selected_assignment.course.name.upper()}"
+    subtitle = f"{selected_period.name} - {selected_unit.name}"
+
+    ws.merge_cells(f"A1:{last_column_letter}1")
+    ws['A1'] = school_name
+    ws['A1'].font = title_font
+    ws['A1'].alignment = center
+
+    ws.merge_cells(f"A2:{last_column_letter}2")
+    ws['A2'] = 'REGISTRO AUXILIAR'
+    ws['A2'].font = title_font
+    ws['A2'].alignment = center
+
+    ws.merge_cells(f"A3:{last_column_letter}3")
+    ws['A3'] = subtitle
+    ws['A3'].font = header_font
+    ws['A3'].alignment = center
+
+    ws.merge_cells(f"A4:{last_column_letter}4")
+    ws['A4'] = f"{area_name} - {classroom_name}"
+    ws['A4'].font = header_font
+    ws['A4'].alignment = center
+
+    ws.merge_cells('A5:A6')
+    ws['A5'] = 'N'
+    ws['A5'].font = header_font
+    ws['A5'].alignment = center
+
+    ws.merge_cells('B5:B6')
+    ws['B5'] = 'NOMBRES Y APELLIDOS'
+    ws['B5'].font = header_font
+    ws['B5'].alignment = center
+
+    current_column = 3
+    for block_index, block in enumerate(competency_blocks):
+        block_start = current_column
+        block_end = current_column + len(block['indicators'])
+        fill = fills[block_index % len(fills)]
+        ws.merge_cells(start_row=5, start_column=block_start, end_row=5, end_column=block_end)
+        top_cell = ws.cell(row=5, column=block_start)
+        top_cell.value = block['competency'].name
+        top_cell.font = header_font
+        top_cell.alignment = center
+        for column in range(block_start, block_end + 1):
+            ws.cell(row=5, column=column).fill = fill
+            ws.cell(row=6, column=column).fill = fill
+
+        for offset, indicator in enumerate(block['indicators']):
+            indicator_cell = ws.cell(row=6, column=current_column + offset)
+            indicator_cell.value = indicator.name
+            indicator_cell.font = header_font
+            indicator_cell.alignment = vertical
+            indicator_cell.border = thin_border
+
+        promedio_cell = ws.cell(row=6, column=block_end)
+        promedio_cell.value = 'PROMEDIO'
+        promedio_cell.font = header_font
+        promedio_cell.alignment = vertical
+        promedio_cell.border = thin_border
+        current_column = block_end + 1
+
+    course_cell = ws.cell(row=5, column=current_column)
+    course_cell.value = 'NOTA CURSO'
+    course_cell.font = header_font
+    course_cell.alignment = center
+    ws.merge_cells(start_row=5, start_column=current_column, end_row=6, end_column=current_column)
+    ws.cell(row=5, column=current_column).fill = PatternFill('solid', fgColor='D9EAD3')
+    ws.cell(row=6, column=current_column).fill = PatternFill('solid', fgColor='D9EAD3')
+
+    for row_index, row in enumerate(rows, start=7):
+        ws.cell(row=row_index, column=1, value=row_index - 6)
+        ws.cell(row=row_index, column=2, value=str(row['enrollment'].student))
+        ws.cell(row=row_index, column=1).alignment = center
+        ws.cell(row=row_index, column=2).alignment = Alignment(vertical='center')
+        ws.cell(row=row_index, column=1).border = thin_border
+        ws.cell(row=row_index, column=2).border = thin_border
+
+        column_index = 3
+        for block in row['blocks']:
+            for cell in block['cells']:
+                excel_cell = ws.cell(row=row_index, column=column_index, value=cell['value'] or None)
+                excel_cell.alignment = center
+                excel_cell.border = thin_border
+                column_index += 1
+
+            avg_cell = ws.cell(row=row_index, column=column_index, value=block['competency_grade'] or '-')
+            avg_cell.alignment = center
+            avg_cell.border = thin_border
+            column_index += 1
+
+        course_grade_cell = ws.cell(row=row_index, column=column_index, value=row['course_grade'] or '-')
+        course_grade_cell.alignment = center
+        course_grade_cell.border = thin_border
+
+    for row in ws.iter_rows(min_row=1, max_row=max(len(rows) + 6, 6), min_col=1, max_col=last_column):
+        for cell in row:
+            cell.border = thin_border
+
+    ws.row_dimensions[1].height = 24
+    ws.row_dimensions[2].height = 22
+    ws.row_dimensions[3].height = 20
+    ws.row_dimensions[4].height = 22
+    ws.row_dimensions[5].height = 50
+    ws.row_dimensions[6].height = 100
+    for row_index in range(7, 7 + len(rows)):
+        ws.row_dimensions[row_index].height = 20
+
+    ws.column_dimensions['A'].width = 6
+    ws.column_dimensions['B'].width = 30
+    current_column = 3
+    for block in competency_blocks:
+        for _indicator in block['indicators']:
+            ws.column_dimensions[get_column_letter(current_column)].width = 10
+            current_column += 1
+        ws.column_dimensions[get_column_letter(current_column)].width = 11
+        current_column += 1
+    ws.column_dimensions[get_column_letter(current_column)].width = 12
+
+    from io import BytesIO
+
+    buffer = BytesIO()
+    wb.save(buffer)
+    buffer.seek(0)
+
+    grade_slug = slugify(
+        selected_assignment.section.grade.name if selected_assignment.section else (selected_assignment.grade.name if selected_assignment.grade else 'sin_grado')
+    ) or 'sin_grado'
+    section_slug = slugify(selected_assignment.section.name) if selected_assignment.section else 'todas_secciones'
+    period_slug = slugify(selected_period.name) or 'periodo'
+    unit_slug = slugify(selected_unit.name) or 'unidad'
+    course_slug = slugify(selected_assignment.course.name) or 'curso'
+    filename = f"notas_{course_slug}_{grade_slug}_{section_slug}_{period_slug}_{unit_slug}.xlsx"
+
+    response = HttpResponse(
+        buffer.getvalue(),
+        content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    )
+    response['Content-Disposition'] = f'attachment; filename="{filename}"'
+    return response
+
+
+@role_required('admin', 'director', 'teacher')
 def manage_competencies(request, assignment_id):
     assignment_qs = TeacherCourseAssignment.objects.select_related('teacher', 'course', 'section__grade', 'academic_year')
     assignment = assignment_qs.filter(id=assignment_id).first()
@@ -1665,6 +2009,7 @@ def manage_indicators(request, competency_id):
     selected_unit = next((unit for unit in units if str(unit.id) == str(unit_id)), None) if unit_id else units[0]
     if not selected_unit and units:
         selected_unit = units[0]
+    previous_unit = next((unit for unit in units if unit.order == selected_unit.order - 1), None) if selected_unit else None
     
     # Security check
     if request.user.role == 'teacher' and not request.user.is_superuser:
@@ -1673,6 +2018,15 @@ def manage_indicators(request, competency_id):
             return redirect('teacher_dashboard')
 
     if request.method == 'POST':
+        if request.POST.get('replicate_previous_unit'):
+            if not previous_unit:
+                messages.error(request, 'No hay una unidad anterior para replicar.')
+                return redirect(f"{request.path}?period={selected_period.id}&unit={selected_unit.id}")
+
+            created = _replicate_indicators_to_unit(competency, previous_unit, selected_unit)
+            messages.success(request, f'Se replicaron {created} indicadores a {selected_unit.name}.')
+            return redirect(f"{request.path}?period={selected_period.id}&unit={selected_unit.id}")
+
         form = IndicatorForm(request.POST)
         if form.is_valid():
             indicator = form.save(commit=False)
@@ -1699,6 +2053,7 @@ def manage_indicators(request, competency_id):
         'selected_period': selected_period,
         'units': units,
         'selected_unit': selected_unit,
+        'previous_unit': previous_unit,
         'indicators': indicators,
         'form': form
     })

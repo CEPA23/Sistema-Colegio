@@ -59,9 +59,20 @@
                 </h2>
                 <span class="muted">{{ selected_period.name }}</span>
             </div>
-            <a href="{% url 'manage_competencies' competency_assignment.id %}" class="btn btn-subtle">
-                Gestionar Competencias
-            </a>
+            <div class="action-row" style="gap: 10px; flex-wrap: wrap;">
+                <button
+                    type="submit"
+                    form="gradebook-form"
+                    formaction="{% url 'teacher_competency_gradebook_export_excel' %}"
+                    formmethod="post"
+                    class="btn btn-subtle"
+                >
+                    Exportar Excel
+                </button>
+                <a href="{% url 'manage_competencies' competency_assignment.id %}" class="btn btn-subtle">
+                    Gestionar Competencias
+                </a>
+            </div>
         </div>
 
         <p class="muted" style="margin-top: -8px; margin-bottom: 14px;">
@@ -120,6 +131,14 @@
                             Habilitar edicion (Admin/Director)
                         </button>
                     {% endif %}
+                </div>
+                {% endif %}
+
+                {% if can_edit %}
+                <div class="action-row" style="justify-content: flex-start; gap: 10px; margin-bottom: 14px; flex-wrap: wrap;">
+                    <button type="button" class="btn btn-subtle bulk-fill-btn" data-grade="A">Poner todos A</button>
+                    <button type="button" class="btn btn-subtle bulk-fill-btn" data-grade="B">Poner todos B</button>
+                    <button type="button" class="btn btn-subtle bulk-fill-btn" data-grade="C">Poner todos C</button>
                 </div>
                 {% endif %}
 
@@ -313,6 +332,7 @@
         const modal = document.getElementById('finalize-modal');
         const confirmFinalizeBtn = document.getElementById('confirm-finalize');
         const cancelFinalizeBtn = document.getElementById('cancel-finalize');
+        const bulkFillButtons = document.querySelectorAll('.bulk-fill-btn');
 
         const gradePriority = { 'C': 1, 'B': 2, 'A': 3, 'AD': 4 };
 
@@ -386,6 +406,16 @@
                 if (!enrollmentId || !competencyId) return;
                 recomputeCompetency(enrollmentId, competencyId);
                 recomputeCourse(enrollmentId);
+            });
+        });
+
+        bulkFillButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const grade = this.dataset.grade || '';
+                inputs.forEach(input => {
+                    input.value = grade;
+                    input.dispatchEvent(new Event('change', { bubbles: true }));
+                });
             });
         });
 

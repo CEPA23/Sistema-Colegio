@@ -1,15 +1,23 @@
+from io import BytesIO
+
 from django.test import Client, TestCase
 from django.urls import reverse
 
+from openpyxl import load_workbook
+
 from accounts.models import User
+from enrollment.models import Enrollment
 from schools.models import School
+from students.models import Student
 
 from .models import (
     AcademicYear,
     Competency,
     Course,
     Grade,
+    GradeRecord,
     Indicator,
+    IndicatorGrade,
     Period,
     Section,
     TeacherCourseAssignment,
@@ -199,3 +207,124 @@ class CourseGradeMatrixSyncTests(TestCase):
         self.assertContains(response, 'Se comunica oralmente en inglés')
         self.assertContains(response, 'Participa en diálogos breves')
         self.assertEqual(response.context['competency_assignment'], source_assignment)
+
+    def test_teacher_gradebook_export_generates_excel_workbook(self):
+        period = Period.objects.create(
+            name='Bimestre 1',
+            academic_year=self.active_year,
+            start_date='2026-03-01',
+            end_date='2026-05-31',
+            is_active=True,
+        )
+        assignment = TeacherCourseAssignment.objects.create(
+            teacher=self.teacher,
+            course=self.course_math,
+            grade=self.grade,
+            section=self.section,
+            academic_year=self.active_year,
+        )
+        unit = Unit.objects.create(
+            assignment=assignment,
+            period=period,
+            name='Unidad 1',
+            order=1,
+        )
+        competency = Competency.objects.create(
+            assignment=assignment,
+            name='Resuelve problemas',
+            order=1,
+        )
+        indicator = Indicator.objects.create(
+            competency=competency,
+            unit=unit,
+            name='Aplica estrategias',
+            order=1,
+        )
+        student = Student.objects.create(
+            dni='12345678',
+            first_name='Ana',
+            last_name='Perez',
+        )
+        enrollment = Enrollment.objects.create(
+            student=student,
+            academic_year=self.active_year,
+            section=self.section,
+        )
+        self.client.force_login(self.teacher)
+        response = self.client.post(
+            reverse('teacher_competency_gradebook_export_excel'),
+            data={
+                'assignment': assignment.id,
+                'period': period.id,
+                'unit': unit.id,
+                f'score_{enrollment.id}_{indicator.id}': 'A',
+            },
+        )
+
+        self.assertEqual(response.status_code, 200)
+        workbook = load_workbook(filename=BytesIO(response.content))
+        sheet = workbook['Notas']
+        self.assertEqual(sheet['A1'].value, 'Colegio Demo')
+        self.assertEqual(sheet['A2'].value, 'REGISTRO AUXILIAR')
+        self.assertEqual(sheet['C6'].value, 'Aplica estrategias')
+        self.assertEqual(sheet['D6'].value, 'PROMEDIO')
+        self.assertEqual(sheet['E5'].value, 'NOTA CURSO')
+        self.assertEqual(sheet['C7'].value, 'A')
+
+    def test_manage_indicators_can_replicate_previous_unit(self):
+        period = Period.objects.create(
+            name='Bimestre 1',
+            academic_year=self.active_year,
+            start_date='2026-03-01',
+            end_date='2026-05-31',
+            is_active=True,
+        )
+        assignment = TeacherCourseAssignment.objects.create(
+            teacher=self.teacher,
+            course=self.course_math,
+            grade=self.grade,
+            section=self.section,
+            academic_year=self.active_year,
+        )
+        unit_one = Unit.objects.create(
+            assignment=assignment,
+            period=period,
+            name='Unidad 1',
+            order=1,
+        )
+        unit_two = Unit.objects.create(
+            assignment=assignment,
+            period=period,
+            name='Unidad 2',
+            order=2,
+        )
+        competency = Competency.objects.create(
+            assignment=assignment,
+            name='Resuelve problemas',
+            order=1,
+        )
+        Indicator.objects.create(
+            competency=competency,
+            unit=unit_one,
+            name='Aplica estrategias',
+            order=1,
+        )
+
+        self.client.force_login(self.teacher)
+        response = self.client.post(
+            reverse('manage_indicators', args=[competency.id]),
+            data={
+                'period': period.id,
+                'unit': unit_two.id,
+                'replicate_previous_unit': '1',
+            },
+        )
+
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(
+            Indicator.objects.filter(
+                competency=competency,
+                unit=unit_two,
+                name='Aplica estrategias',
+            ).exists()
+        )
