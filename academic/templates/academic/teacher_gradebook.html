@@ -336,17 +336,17 @@
 
         const gradePriority = { 'C': 1, 'B': 2, 'A': 3, 'AD': 4 };
 
-        const computeModeGrade = function(values) {
+        const computeAverageGrade = function(values) {
             const valid = values.filter(v => v && gradePriority[v] !== undefined);
             if (!valid.length) return null;
 
-            const counts = {};
-            valid.forEach(v => { counts[v] = (counts[v] || 0) + 1; });
-            const topFrequency = Math.max(...Object.values(counts));
-            const candidates = Object.keys(counts).filter(k => counts[k] === topFrequency);
-            return candidates.reduce((best, current) => (
-                gradePriority[current] > gradePriority[best] ? current : best
-            ), candidates[0]);
+            const total = valid.reduce((sum, grade) => sum + gradePriority[grade], 0);
+            const average = total / valid.length;
+
+            if (average >= 3.5) return 'AD';
+            if (average >= 2.5) return 'A';
+            if (average >= 1.5) return 'B';
+            return 'C';
         };
 
         const setBadge = function(badge, grade) {
@@ -366,7 +366,7 @@
                 `.grade-select[data-enrollment="${enrollmentId}"][data-competency="${competencyId}"]`
             );
             const grades = Array.from(selects).map(s => s.value).filter(Boolean);
-            const mode = computeModeGrade(grades);
+            const mode = computeAverageGrade(grades);
             const badge = document.querySelector(
                 `[data-competency-grade][data-enrollment="${enrollmentId}"][data-competency="${competencyId}"]`
             );
@@ -380,7 +380,7 @@
             const grades = Array.from(competencyBadges)
                 .map(b => b.dataset.grade || '')
                 .filter(Boolean);
-            const mode = computeModeGrade(grades);
+            const mode = computeAverageGrade(grades);
             const badge = document.querySelector(
                 `[data-course-grade][data-enrollment="${enrollmentId}"]`
             );

@@ -1,7 +1,6 @@
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import Q
-from collections import Counter
 from schools.models import School
 
 
@@ -147,6 +146,10 @@ class Period(models.Model):
 
 def calculate_final_grade(grades):
     """Calculate a final qualitative grade from multiple period grades."""
+    return _calculate_average_qualitative_grade(grades)
+
+
+def _calculate_average_qualitative_grade(grades):
     if not grades:
         return None
 
@@ -167,15 +170,7 @@ def calculate_final_grade(grades):
 
 
 def calculate_mode_grade(grades):
-    valid = [grade for grade in grades if grade in {'AD', 'A', 'B', 'C'}]
-    if not valid:
-        return None
-
-    counts = Counter(valid)
-    top_frequency = max(counts.values())
-    candidates = [grade for grade, frequency in counts.items() if frequency == top_frequency]
-    priority = {'C': 1, 'B': 2, 'A': 3, 'AD': 4}
-    return max(candidates, key=lambda grade: priority[grade])
+    return _calculate_average_qualitative_grade(grades)
 
 
 class GradeRecord(models.Model):

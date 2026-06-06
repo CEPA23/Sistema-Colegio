@@ -22,8 +22,45 @@ from .models import (
     Section,
     TeacherCourseAssignment,
     Unit,
+    calculate_mode_grade,
 )
 from .sync import sync_teacher_course_assignments_for_teacher
+
+
+class GradeCalculationTests(TestCase):
+    def test_competency_average_conversion_for_all_pair_combinations(self):
+        expected_results = {
+            ('AD', 'AD'): 'AD',
+            ('AD', 'A'): 'AD',
+            ('AD', 'B'): 'A',
+            ('AD', 'C'): 'A',
+            ('A', 'A'): 'A',
+            ('A', 'B'): 'A',
+            ('A', 'C'): 'B',
+            ('B', 'B'): 'B',
+            ('B', 'C'): 'B',
+            ('C', 'C'): 'C',
+        }
+
+        for grades, expected in expected_results.items():
+            with self.subTest(grades=grades):
+                self.assertEqual(calculate_mode_grade(list(grades)), expected)
+
+    def test_competency_average_conversion_for_multiple_values(self):
+        cases = [
+            (['A', 'C'], 'B'),
+            (['A', 'B'], 'A'),
+            (['AD', 'AD', 'C', 'C'], 'A'),
+            (['B', 'B', 'B', 'B'], 'B'),
+            (['AD', 'AD', 'AD', 'C'], 'A'),
+            (['AD', 'AD', 'AD', 'AD'], 'AD'),
+            (['AD', 'B', 'B', 'C'], 'B'),
+            (['A', 'A', 'C', 'C'], 'B'),
+        ]
+
+        for grades, expected in cases:
+            with self.subTest(grades=grades):
+                self.assertEqual(calculate_mode_grade(grades), expected)
 
 
 class CourseGradeMatrixSyncTests(TestCase):
