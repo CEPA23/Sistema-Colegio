@@ -7,7 +7,7 @@ class ProductForm(forms.ModelForm):
         model = Product
         fields = ['code', 'name', 'category', 'description', 'price', 'stock', 'stock_min', 'stock_max', 'is_active']
         widgets = {
-            'code': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ej: LIB-001'}),
+            'code': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Se autogenera si lo dejas vacío'}),
             'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nombre del producto'}),
             'category': forms.Select(attrs={'class': 'form-select'}),
             'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Descripción opcional'}),
@@ -28,6 +28,13 @@ class ProductForm(forms.ModelForm):
             'stock_max': 'Stock máximo',
             'is_active': '¿Producto activo?',
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['code'].required = False
+
+    def clean_code(self):
+        return (self.cleaned_data.get('code') or '').strip()
 
 
 class StockAdjustmentForm(forms.Form):

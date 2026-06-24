@@ -47,7 +47,7 @@
             <div class="form-group">
                 <label for="{{ form.code.id_for_label }}">{{ form.code.label }}</label>
                 {{ form.code }}
-                <span class="form-hint">Identificador único. Ej: LIB-001, UNIF-M-01</span>
+                <span class="form-hint">Se autogenera por categoría si lo dejas vacío. También puedes editarlo manualmente si hace falta.</span>
                 {% if form.code.errors %}<span class="error-text">{{ form.code.errors|join:", " }}</span>{% endif %}
             </div>
             <div class="form-group">

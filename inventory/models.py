@@ -1,4 +1,5 @@
 from decimal import Decimal
+import re
 
 from django.core.exceptions import ValidationError
 from django.db import models
@@ -36,35 +37,62 @@ class Product(models.Model):
         verbose_name = 'Producto'
         verbose_name_plural = 'Productos'
 
+    CODE_PREFIXES = {
+        CATEGORY_BOOK: 'LIB',
+        CATEGORY_BAND_UNIFORM: 'UNB',
+        CATEGORY_SCHOOL_UNIFORM: 'UNC',
+        CATEGORY_OTHER: 'PRO',
+    }
+
     def __str__(self):
         return f'[{self.code}] {self.name}'
+
+    def _code_prefix(self):
+        return self.CODE_PREFIXES.get(self.category, 'PRO')
+
+    def _generate_code(self):
+        prefix = self._code_prefix()
+        pattern = re.compile(rf'^{re.escape(prefix)}-(\d+)$')
+        last_number = 0
+        for existing_code in Product.objects.filter(code__startswith=f'{prefix}-').values_list('code', flat=True):
+            match = pattern.match(existing_code or '')
+            if match:
+                last_number = max(last_number, int(match.group(1)))
+        return f'{prefix}-{last_number + 1:03d}'
 
     def save(self, *args, **kwargs):
         # Si ya existe el objeto, verificamos si el código cambió
         if self.pk:
             old_instance = Product.objects.get(pk=self.pk)
+            if not self.code:
+                self.code = old_instance.code
             code_changed = old_instance.code != self.code
         else:
+            if not self.code:
+                self.code = self._generate_code()
             code_changed = True
 
         if code_changed or not self.barcode:
-            import barcode
-            from barcode.writer import ImageWriter
-            from io import BytesIO
-            from django.core.files import File
-            
             try:
+                import barcode
+                from barcode.writer import ImageWriter
+                from io import BytesIO
+                from django.core.files import File
+
                 # Usar Code128 para mayor compatibilidad con cualquier texto
                 CODE128 = barcode.get_barcode_class('code128')
                 code_obj = CODE128(str(self.code), writer=ImageWriter())
                 buffer = BytesIO()
                 code_obj.write(buffer)
-                
+
                 # Nombre del archivo
                 filename = f'barcode_{self.code}.png'
-                
+
                 # Importante: save=False para evitar recursión infinita
                 self.barcode.save(filename, File(buffer), save=False)
+            except ImportError:
+                # La app debe seguir funcionando aunque la librería opcional no esté instalada.
+                pass
             except Exception as e:
                 # Si falla (ej: caracteres no soportados), loguear y continuar
                 print(f"Error generando código de barras para {self.code}: {e}")
