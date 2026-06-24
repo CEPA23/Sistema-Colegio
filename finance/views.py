@@ -1,10 +1,11 @@
-import csv
+﻿import csv
 from decimal import Decimal
 from datetime import date
 
 from django.contrib import messages
+from django.db import transaction
 from django.db.models import F, Q, Sum
-from django.http import HttpResponse, JsonResponse, FileResponse
+from django.http import HttpResponse, JsonResponse, FileResponse, Http404
 from django.shortcuts import redirect, render, get_object_or_404
 from django.utils import timezone
 
@@ -33,6 +34,10 @@ def _month_label(month_value):
     except (TypeError, ValueError):
         return '-'
     return dict(Fee.MONTH_CHOICES).get(month_int, '-')
+
+
+def _month_labels(month_values):
+    return [_month_label(month) for month in month_values]
 
 
 def _apply_student_name_filter(queryset, student_query):
@@ -68,6 +73,15 @@ def _safe_month(month_value, default=None):
     except (TypeError, ValueError):
         return default
     return month_int if 1 <= month_int <= 12 else default
+
+
+def _normalize_month_list(month_values):
+    normalized = []
+    for month_value in month_values or []:
+        month_int = _safe_month(month_value)
+        if month_int and month_int not in normalized:
+            normalized.append(month_int)
+    return sorted(normalized)
 
 
 def _active_academic_year():
@@ -186,6 +200,23 @@ def _ensure_debts_for_enrollment(enrollment, target_month=None, selected_product
             due_date=timezone.localdate(),
             inventory_product=selected_product,
         )
+
+
+def _ensure_pension_debts_for_months(enrollment, pension_months, pension_price):
+    prices = _school_prices()
+    debt_year = enrollment.academic_year.year
+    debts = []
+    for month_value in _normalize_month_list(pension_months):
+        debt = _ensure_debt(
+            enrollment=enrollment,
+            concept=Fee.CONCEPT_PENSION,
+            amount_total=pension_price if pension_price is not None else prices['pension'],
+            due_date=date(debt_year, month_value, 1),
+            pension_month=month_value,
+        )
+        if debt:
+            debts.append(debt)
+    return debts
 
 
 def _ensure_active_enrollment_debts(target_month=None):
@@ -319,83 +350,172 @@ def payment_create(request):
         if form.is_valid():
             enrollment = form.cleaned_data['enrollment']
             concept = form.cleaned_data['concept']
-            pension_month = form.cleaned_data['pension_month']
+            pension_price = form.cleaned_data.get('pension_price')
+            pension_months = _normalize_month_list(form.cleaned_data.get('pension_months'))
             inventory_product = form.cleaned_data.get('inventory_product')
             amount = form.cleaned_data['amount']
             method = form.cleaned_data['method']
             proof_image = form.cleaned_data['proof_image']
             comment = form.cleaned_data['comment']
-            month_int = int(pension_month) if pension_month else None
 
-            _ensure_debts_for_enrollment(
-                enrollment=enrollment,
-                target_month=month_int or today.month,
-                selected_product=inventory_product,
-                concept=concept,
-            )
-
-            fee_qs = Fee.objects.filter(enrollment=enrollment, concept=concept)
             if concept == Fee.CONCEPT_PENSION:
-                fee_qs = fee_qs.filter(pension_month=month_int)
-            elif concept == Fee.CONCEPT_BOOK:
-                fee_qs = fee_qs.filter(inventory_product=inventory_product)
-            elif concept in [Fee.CONCEPT_BAND_UNIFORM, Fee.CONCEPT_SCHOOL_UNIFORM, Fee.CONCEPT_PRODUCT]:
-                fee_qs = fee_qs.filter(inventory_product=inventory_product)
-            else:
-                fee_qs = fee_qs.filter(pension_month__isnull=True, course__isnull=True, inventory_product__isnull=True)
-
-            fee = None
-            candidates = list(fee_qs.order_by('due_date', 'id'))
-            for candidate in candidates:
-                if candidate.balance > Decimal('0.00'):
-                    fee = candidate
-                    break
-            if fee is None and candidates:
-                fee = candidates[0]
-            if not fee:
-                form.add_error(
-                    None,
-                    "No existe una deuda registrada para ese alumno y concepto. "
-                    "Primero debe existir la deuda y luego registrar el pago.",
-                )
-            elif fee.balance <= Decimal('0.00'):
-                form.add_error(None, "Esa deuda ya se encuentra pagada.")
-
-            if fee and amount > fee.balance:
-                form.add_error('amount', f"El saldo de esta deuda es S/ {fee.balance}.")
-            elif fee:
-                payment = Payment.objects.create(
-                    fee=fee,
-                    amount=amount,
-                    method=method,
-                    proof_image=proof_image,
-                    comment=comment,
-                )
-                # ── Descontar stock de inventario si el concepto es de inventario ──
-                is_inv_concept = concept in [Fee.CONCEPT_PRODUCT, Fee.CONCEPT_BOOK, Fee.CONCEPT_BAND_UNIFORM, Fee.CONCEPT_SCHOOL_UNIFORM]
-                if is_inv_concept and fee.inventory_product:
-                    from inventory.views import _discount_stock
-                    try:
-                        _discount_stock(
-                            product=fee.inventory_product,
-                            quantity=fee.inventory_quantity,
-                            reference=f'Pago #{payment.id} – {fee.enrollment.student}',
-                            payment=payment,
-                            user=request.user,
+                if not pension_months:
+                    form.add_error('pension_months', 'Debes seleccionar al menos un mes para una pension.')
+                if pension_price is None:
+                    form.add_error('pension_price', 'Debes indicar el costo de la pension.')
+                if not form.errors:
+                    _ensure_pension_debts_for_months(enrollment, pension_months, pension_price)
+                    fee_map = {
+                        fee.pension_month: fee
+                        for fee in Fee.objects.filter(
+                            enrollment=enrollment,
+                            concept=Fee.CONCEPT_PENSION,
+                            pension_month__in=pension_months,
                         )
-                    except ValueError as stock_err:
-                        messages.warning(request, f'Pago registrado, pero no se pudo descontar stock: {stock_err}')
-                from django.utils.safestring import mark_safe
-                from django.urls import reverse
-                receipt_url = reverse('payment_receipt_pdf', args=[payment.id])
-                messages.success(
-                    request,
-                    mark_safe(f"Pago registrado para {payment.fee.enrollment.student}. <a href='{receipt_url}' target='_blank' class='btn btn-subtle' style='margin-left:10px;'>Imprimir Boleta 🖨️</a>")
+                    }
+                    selected_fees = []
+                    missing_months = []
+                    already_paid_months = []
+                    partial_months = []
+                    for month_value in pension_months:
+                        fee = fee_map.get(month_value)
+                        if not fee:
+                            missing_months.append(_month_label(month_value))
+                            continue
+                        if fee.balance <= Decimal('0.00'):
+                            already_paid_months.append(_month_label(month_value))
+                            continue
+                        if fee.balance != fee.amount:
+                            partial_months.append(_month_label(month_value))
+                            continue
+                        selected_fees.append(fee)
+
+                    if missing_months:
+                        form.add_error(None, f"No se pudieron encontrar las deudas de: {', '.join(missing_months)}.")
+                    if already_paid_months:
+                        form.add_error(None, f"Los meses {', '.join(already_paid_months)} ya se encuentran pagados.")
+                    if partial_months:
+                        form.add_error(None, f"Los meses {', '.join(partial_months)} tienen pagos parciales y deben cobrarse individualmente.")
+
+                    expected_total = (pension_price or Decimal('0.00')) * Decimal(len(selected_fees))
+                    if selected_fees and amount != expected_total:
+                        form.add_error('amount', f"El total para {len(selected_fees)} mes(es) es S/ {expected_total:.2f}.")
+
+                    if not form.errors:
+                        month_names = _month_labels(pension_months)
+                        batch_comment = f"Pago multiple de pension: {', '.join(month_names)}"
+                        if comment:
+                            batch_comment = f"{batch_comment}. {comment}"
+
+                        payment_ids = []
+                        with transaction.atomic():
+                            for fee in selected_fees:
+                                payment = Payment.objects.create(
+                                    fee=fee,
+                                    amount=pension_price,
+                                    method=method,
+                                    proof_image=proof_image,
+                                    comment=batch_comment,
+                                )
+                                payment_ids.append(payment.id)
+
+                        from django.utils.safestring import mark_safe
+                        from django.urls import reverse
+                        receipt_url = reverse('payment_receipt_pdf', args=[payment_ids[0]])
+                        if len(payment_ids) > 1:
+                            receipt_url = f"{receipt_url}?payment_ids={','.join(str(pid) for pid in payment_ids)}"
+                        receipt_label = "Imprimir boleta"
+                        if len(payment_ids) > 1:
+                            receipt_label = "Imprimir boleta unica"
+
+                        if len(payment_ids) == 1:
+                            messages.success(
+                                request,
+                                mark_safe(
+                                    f"Pago registrado para {enrollment.student}. "
+                                    f"<a href='{receipt_url}' target='_blank' class='btn btn-subtle' style='margin-left:10px;'>{receipt_label}</a>"
+                                )
+                            )
+                        else:
+                            total_paid = expected_total
+                            messages.success(
+                                request,
+                                mark_safe(
+                                    f"Pago registrado para {enrollment.student}. "
+                                    f"Se cobraron {len(selected_fees)} meses ({', '.join(month_names)}) por S/ {total_paid:.2f}. "
+                                    f"<a href='{receipt_url}' target='_blank' class='btn btn-subtle' style='margin-left:10px;'>{receipt_label}</a>"
+                                )
+                            )
+                        return redirect('payment_history')
+            else:
+                _ensure_debts_for_enrollment(
+                    enrollment=enrollment,
+                    target_month=today.month,
+                    selected_product=inventory_product,
+                    concept=concept,
                 )
-                return redirect('payment_history')
+
+                fee_qs = Fee.objects.filter(enrollment=enrollment, concept=concept)
+                if concept == Fee.CONCEPT_BOOK:
+                    fee_qs = fee_qs.filter(inventory_product=inventory_product)
+                elif concept in [Fee.CONCEPT_BAND_UNIFORM, Fee.CONCEPT_SCHOOL_UNIFORM, Fee.CONCEPT_PRODUCT]:
+                    fee_qs = fee_qs.filter(inventory_product=inventory_product)
+                else:
+                    fee_qs = fee_qs.filter(pension_month__isnull=True, course__isnull=True, inventory_product__isnull=True)
+
+                fee = None
+                candidates = list(fee_qs.order_by('due_date', 'id'))
+                for candidate in candidates:
+                    if candidate.balance > Decimal('0.00'):
+                        fee = candidate
+                        break
+                if fee is None and candidates:
+                    fee = candidates[0]
+                if not fee:
+                    form.add_error(
+                        None,
+                        "No existe una deuda registrada para ese alumno y concepto. "
+                        "Primero debe existir la deuda y luego registrar el pago.",
+                    )
+                elif fee.balance <= Decimal('0.00'):
+                    form.add_error(None, "Esa deuda ya se encuentra pagada.")
+
+                if fee and amount > fee.balance:
+                    form.add_error('amount', f"El saldo de esta deuda es S/ {fee.balance}.")
+                elif fee:
+                    payment = Payment.objects.create(
+                        fee=fee,
+                        amount=amount,
+                        method=method,
+                        proof_image=proof_image,
+                        comment=comment,
+                    )
+                    is_inv_concept = concept in [Fee.CONCEPT_PRODUCT, Fee.CONCEPT_BOOK, Fee.CONCEPT_BAND_UNIFORM, Fee.CONCEPT_SCHOOL_UNIFORM]
+                    if is_inv_concept and fee.inventory_product:
+                        from inventory.views import _discount_stock
+                        try:
+                            _discount_stock(
+                                product=fee.inventory_product,
+                                quantity=fee.inventory_quantity,
+                                reference=f'Pago #{payment.id} - {fee.enrollment.student}',
+                                payment=payment,
+                                user=request.user,
+                            )
+                        except ValueError as stock_err:
+                            messages.warning(request, f'Pago registrado, pero no se pudo descontar stock: {stock_err}')
+                    from django.utils.safestring import mark_safe
+                    from django.urls import reverse
+                    receipt_url = reverse('payment_receipt_pdf', args=[payment.id])
+                    messages.success(
+                        request,
+                        mark_safe(
+                            f"Pago registrado para {payment.fee.enrollment.student}. "
+                            f"<a href='{receipt_url}' target='_blank' class='btn btn-subtle' style='margin-left:10px;'>Imprimir Boleta</a>"
+                        )
+                    )
+                    return redirect('payment_history')
     else:
         form = PaymentRegistrationForm()
-
     school = School.objects.first()
     grades = Grade.objects.order_by('name')
     sections = Section.objects.select_related('grade').order_by('grade__name', 'name')
@@ -547,15 +667,22 @@ def debtors_student_search(request):
 @role_required('admin', 'director', 'secretary', 'parent')
 def payment_history(request):
     student_order = resolve_student_order(request)
+    query = request.GET.get('q', '').strip()
+    payments = Payment.objects.select_related(
+        'fee__enrollment__student',
+        'fee__enrollment__section__grade',
+    )
+    payments = _apply_payment_search_filter(payments, query)
     payments = order_queryset_by_student_name(
-        Payment.objects.select_related(
-        'fee__enrollment__student'
-        ),
+        payments,
         prefix='fee__enrollment__student',
         student_order=student_order,
         extra_fields=['-payment_date', '-id'],
     )
-    context = {'payments': payments}
+    context = {
+        'payments': payments,
+        'payment_query': query,
+    }
     context.update(student_order_context(request, student_order))
     return render(request, 'finance/payment_history.html', context)
 
@@ -715,17 +842,83 @@ def debtors_export_csv(request):
     return response
 
 
+def _load_receipt_payments(request, payment_id):
+    payment_ids_raw = request.GET.get('payment_ids', '').strip()
+    if not payment_ids_raw:
+        payment = get_object_or_404(Payment, id=payment_id)
+        return payment, [payment]
+
+    payment_ids = []
+    for chunk in payment_ids_raw.split(','):
+        chunk = chunk.strip()
+        if chunk.isdigit():
+            payment_ids.append(int(chunk))
+    if payment_id not in payment_ids:
+        payment_ids.insert(0, payment_id)
+
+    payments = list(
+        Payment.objects.select_related(
+            'fee__enrollment__student',
+            'fee__enrollment__academic_year__school',
+            'fee__course',
+        ).filter(id__in=payment_ids).order_by('payment_date', 'id')
+    )
+    if not payments:
+        raise Http404("No se encontraron pagos para la boleta solicitada.")
+    return payments[0], payments
+
+
+def _apply_payment_search_filter(queryset, query):
+    if not query:
+        return queryset
+
+    normalized = query.strip()
+    q_lower = normalized.lower()
+    filters = (
+        Q(fee__enrollment__student__first_name__icontains=normalized)
+        | Q(fee__enrollment__student__last_name__icontains=normalized)
+        | Q(fee__enrollment__student__dni__icontains=normalized)
+        | Q(comment__icontains=normalized)
+    )
+
+    concept_map = {
+        'matricula': Fee.CONCEPT_ENROLLMENT,
+        'pension': Fee.CONCEPT_PENSION,
+        'mensualidad': Fee.CONCEPT_PENSION,
+        'material': Fee.CONCEPT_SCHOOL_SUPPLIES,
+        'libro': Fee.CONCEPT_BOOK,
+        'uniforme': Fee.CONCEPT_SCHOOL_UNIFORM,
+        'banda': Fee.CONCEPT_BAND_UNIFORM,
+        'inventario': Fee.CONCEPT_PRODUCT,
+        'cash': Payment.METHOD_CASH,
+        'efectivo': Payment.METHOD_CASH,
+        'transferencia': Payment.METHOD_TRANSFER,
+        'yape': Payment.METHOD_YAPE_PLIN,
+        'plin': Payment.METHOD_YAPE_PLIN,
+    }
+
+    concept = concept_map.get(q_lower)
+    if concept:
+        filters |= Q(fee__concept=concept)
+
+    if normalized.isdigit():
+        filters |= Q(amount=normalized)
+
+    return queryset.filter(filters)
+
+
 @role_required('admin', 'director', 'secretary', 'parent')
 def payment_receipt_pdf(request, payment_id):
     from .utils import generate_payment_receipt
-    payment = get_object_or_404(Payment, id=payment_id)
-    
+    payment, payments = _load_receipt_payments(request, payment_id)
+
     # Seguridad básica: El padre solo ve sus pagos
     if request.user.role == 'parent':
-        if payment.fee.enrollment.student.parent_email != request.user.email: # Ajustar según modelo
-             pass # Por ahora dejamos que lo vea si tiene el ID, mejorar si hay datos sensibles
+        if payment.fee.enrollment.student.parent_email != request.user.email:  # Ajustar según modelo
+            pass  # Por ahora dejamos que lo vea si tiene el ID, mejorar si hay datos sensibles
 
-    buffer = generate_payment_receipt(payment)
-    filename = f"recibo_{payment.id}.pdf"
-    
+    buffer = generate_payment_receipt(payments)
+    filename = f"recibo_{payment.id}_lote.pdf" if len(payments) > 1 else f"recibo_{payment.id}.pdf"
+
     return FileResponse(buffer, as_attachment=False, filename=filename)
+

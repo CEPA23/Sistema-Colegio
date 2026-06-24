@@ -232,6 +232,44 @@
     }
     .logout-btn:hover { color: #ef4444; background: rgba(239,68,68,.1); }
 
+    .sidebar-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(15, 23, 42, 0.46);
+        backdrop-filter: blur(2px);
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity .2s ease;
+        z-index: 180;
+    }
+    .sidebar-overlay.open {
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    .sidebar-toggle {
+        display: none;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        border: 1px solid #d7e1ee;
+        border-radius: 10px;
+        background: #fff;
+        color: #1e293b;
+        font-size: 1.05rem;
+        font-weight: 800;
+        cursor: pointer;
+        flex-shrink: 0;
+    }
+
+    .topbar-left {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        min-width: 0;
+    }
+
     /* ── Workspace ── */
     .workspace {
         margin-left: var(--sidebar-w);
@@ -263,10 +301,33 @@
 
     /* ── Responsive ── */
     @media (max-width: 768px) {
-        :root { --sidebar-w: 0px; }
-        .sidebar { transform: translateX(-240px); width: 240px; transition: transform .25s; }
+        :root { --sidebar-w: 240px; }
+        .sidebar {
+            transform: translateX(-102%);
+            width: 240px;
+            transition: transform .25s ease;
+            box-shadow: 0 18px 42px rgba(15, 23, 42, 0.26);
+        }
         .sidebar.open { transform: translateX(0); }
         .workspace { margin-left: 0; }
+        .sidebar-toggle { display: inline-flex; }
+        .topbar {
+            padding: 0 14px;
+            height: auto;
+            min-height: 54px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .topbar-left {
+            flex: 1;
+            min-width: 0;
+        }
+        .topbar .school-meta {
+            max-width: 100%;
+        }
+        .topbar .btn-subtle {
+            flex-shrink: 0;
+        }
     }
     </style>
 </head>
@@ -483,8 +544,13 @@
             </div>
         </aside>
 
+        <div class="sidebar-overlay" id="sidebar-overlay" aria-hidden="true"></div>
+
         <section class="workspace">
             <header class="topbar">
+                <button type="button" class="sidebar-toggle" id="sidebar-toggle" aria-controls="sidebar" aria-expanded="false" aria-label="Abrir menú">
+                    ☰
+                </button>
                 {% if system_school %}
                     <div class="school-meta">
                         <strong>{{ system_school.name }}</strong>
@@ -536,6 +602,65 @@
 
         // Open the correct sidebar group using exact URL-name matching
         document.addEventListener('DOMContentLoaded', () => {
+            const sidebar = document.getElementById('sidebar');
+            const sidebarOverlay = document.getElementById('sidebar-overlay');
+            const sidebarToggle = document.getElementById('sidebar-toggle');
+            const mobileQuery = window.matchMedia('(max-width: 768px)');
+
+            const openSidebar = () => {
+                if (!sidebar || !sidebarOverlay || !sidebarToggle) return;
+                sidebar.classList.add('open');
+                sidebarOverlay.classList.add('open');
+                document.body.classList.add('sidebar-open');
+                sidebarToggle.setAttribute('aria-expanded', 'true');
+            };
+
+            const closeSidebar = () => {
+                if (!sidebar || !sidebarOverlay || !sidebarToggle) return;
+                sidebar.classList.remove('open');
+                sidebarOverlay.classList.remove('open');
+                document.body.classList.remove('sidebar-open');
+                sidebarToggle.setAttribute('aria-expanded', 'false');
+            };
+
+            if (sidebarToggle) {
+                sidebarToggle.addEventListener('click', () => {
+                    if (sidebar && sidebar.classList.contains('open')) {
+                        closeSidebar();
+                    } else {
+                        openSidebar();
+                    }
+                });
+            }
+
+            if (sidebarOverlay) {
+                sidebarOverlay.addEventListener('click', closeSidebar);
+            }
+
+            if (sidebar) {
+                sidebar.querySelectorAll('a').forEach(link => {
+                    link.addEventListener('click', () => {
+                        if (mobileQuery.matches) {
+                            closeSidebar();
+                        }
+                    });
+                });
+            }
+
+            document.addEventListener('keydown', event => {
+                if (event.key === 'Escape') {
+                    closeSidebar();
+                }
+            });
+
+            if (mobileQuery.addEventListener) {
+                mobileQuery.addEventListener('change', event => {
+                    if (!event.matches) {
+                        closeSidebar();
+                    }
+                });
+            }
+
             // Django injects the current url_name as a data attribute on body
             const currentUrlName = document.body.dataset.urlName || '';
             const currentPath    = window.location.pathname;

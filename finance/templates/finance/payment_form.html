@@ -68,6 +68,20 @@
             grid-column: 1 / -1;
         }
     }
+    .pension-months-grid select {
+        width: 100%;
+        min-height: 220px;
+        border: 1px solid #d9e3ef;
+        border-radius: 10px;
+        padding: 10px;
+        background: #f8fbff;
+        font-size: .98rem;
+    }
+    .pension-months-grid select:focus {
+        outline: none;
+        border-color: #7aa7df;
+        box-shadow: 0 0 0 3px rgba(122, 167, 223, .18);
+    }
 </style>
 <section class="card">
     <div class="section-head">
@@ -121,12 +135,28 @@
             {% endif %}
         </div>
 
-        <div id="pension_month_wrap" style="display:none;">
-            <label for="{{ form.pension_month.id_for_label }}">{{ form.pension_month.label }}</label>
-            {{ form.pension_month }}
-            {% if form.pension_month.errors %}
+        <div id="pension_price_wrap" style="display:none;">
+            <label for="{{ form.pension_price.id_for_label }}">{{ form.pension_price.label }}</label>
+            {{ form.pension_price }}
+            <p class="muted">Usa el valor de configuraciÃ³n por defecto o ajustalo si este alumno tiene una pensiÃ³n especial.</p>
+            {% if form.pension_price.errors %}
                 <div class="field-errors">
-                    {% for error in form.pension_month.errors %}
+                    {% for error in form.pension_price.errors %}
+                        <div>{{ error }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+
+        <div id="pension_months_wrap" style="display:none; grid-column: 1 / -1;">
+            <label>{{ form.pension_months.label }}</label>
+            <div class="pension-months-grid">
+                {{ form.pension_months }}
+            </div>
+            <p class="muted" id="pension_months_help">MantÃ©n presionado Ctrl o Shift para seleccionar varios meses.</p>
+            {% if form.pension_months.errors %}
+                <div class="field-errors">
+                    {% for error in form.pension_months.errors %}
                         <div>{{ error }}</div>
                     {% endfor %}
                 </div>
@@ -150,6 +180,7 @@
         <div>
             <label for="{{ form.amount.id_for_label }}">{{ form.amount.label }}</label>
             {{ form.amount }}
+            <p class="muted" id="pension_total_hint" style="display:none;">El total se calcula como costo de pensión x cantidad de meses.</p>
             {% if form.amount.errors %}
                 <div class="field-errors">
                     {% for error in form.amount.errors %}
@@ -298,14 +329,17 @@
     (function () {
         const conceptField = document.getElementById('{{ form.concept.id_for_label }}');
         const methodField = document.getElementById('{{ form.method.id_for_label }}');
-        const monthWrap = document.getElementById('pension_month_wrap');
+        const monthWrap = document.getElementById('pension_months_wrap');
 
         const invProductWrap = document.getElementById('inventory_product_wrap');
 
         const invProductField = document.getElementById('{{ form.inventory_product.id_for_label }}');
+        const pensionPriceWrap = document.getElementById('pension_price_wrap');
+        const pensionPriceField = document.getElementById('{{ form.pension_price.id_for_label }}');
         const amountField = document.getElementById('{{ form.amount.id_for_label }}');
         const proofWrap = document.getElementById('proof_wrap');
         const paymentForm = document.getElementById('payment-form');
+        const pensionTotalHint = document.getElementById('pension_total_hint');
 
         const studentField = document.getElementById('{{ form.student_name.id_for_label }}');
         const enrollmentIdField = document.getElementById('{{ form.enrollment_id.id_for_label }}');
@@ -328,13 +362,41 @@
         const suggestedPrices = JSON.parse(document.getElementById('suggested-prices-data').textContent);
         // Precios desde el inventario (inyectados por la vista)
         const inventoryByCategory = JSON.parse(document.getElementById('inventory-by-category-data').textContent);
+        const pensionMonthSelect = document.querySelector('select[name="pension_months"]');
+
+        function getSelectedPensionMonths() {
+            if (!pensionMonthSelect) return [];
+            return Array.from(pensionMonthSelect.selectedOptions);
+        }
+
+        function getPensionPrice() {
+            const raw = pensionPriceField ? parseFloat(pensionPriceField.value) : NaN;
+            return Number.isFinite(raw) ? raw : 0;
+        }
+
+        function updatePensionAmount() {
+            if (!conceptField || !amountField || conceptField.value !== 'pension') return;
+
+            const selectedMonths = getSelectedPensionMonths();
+            const unitPrice = getPensionPrice();
+            const total = (selectedMonths.length * unitPrice).toFixed(2);
+            amountField.value = total;
+            if (pensionTotalHint) {
+                pensionTotalHint.style.display = 'block';
+                pensionTotalHint.textContent = selectedMonths.length
+                    ? `Costo unitario S/ ${unitPrice.toFixed(2)} x ${selectedMonths.length} mes(es) = S/ ${total}.`
+                    : 'Selecciona uno o varios meses para calcular el total automaticamente.';
+            }
+        }
 
         function updateSuggestedAmount() {
             const concept = conceptField.value;
             let price = null;
-            
-            if (concept === 'pension') price = suggestedPrices.pension;
-            else if (concept === 'matricula') price = suggestedPrices.matricula;
+
+            if (concept === 'pension') {
+                updatePensionAmount();
+                return;
+            } else if (concept === 'matricula') price = suggestedPrices.matricula;
             else if (concept === 'material_escolar') price = suggestedPrices.material_escolar;
             else {
                 // Para productos de inventario (incluyendo libros y uniformes), buscar el precio seleccionado
@@ -358,9 +420,12 @@
         function toggleFields() {
             if (!conceptField) return;
             const concept = conceptField.value;
-            
+
             if (monthWrap) monthWrap.style.display = concept === 'pension' ? 'block' : 'none';
-            
+            if (pensionPriceWrap) pensionPriceWrap.style.display = concept === 'pension' ? 'block' : 'none';
+            if (amountField) amountField.readOnly = concept === 'pension';
+            if (pensionTotalHint) pensionTotalHint.style.display = concept === 'pension' ? 'block' : 'none';
+
             const isInventoryConcept = ['libro', 'uniforme_banda', 'uniforme_colegio', 'producto_inventario'].includes(concept);
             if (invProductWrap) invProductWrap.style.display = isInventoryConcept ? 'block' : 'none';
             
@@ -381,7 +446,7 @@
                 // Limpiar el select
                 invProductField.innerHTML = '';
                 
-                // Añadir placeholder
+                // AÃ±adir placeholder
                 const emptyOpt = document.createElement('option');
                 emptyOpt.value = '';
                 emptyOpt.textContent = placeholderText;
@@ -390,7 +455,7 @@
                 // Obtener productos a mostrar
                 let productsToShow = [];
                 if (targetCat === 'otro') {
-                    // Para Producto de Inventario, mostrar todo lo que no esté en las categorias principales?
+                    // Para Producto de Inventario, mostrar todo lo que no estÃ© en las categorias principales?
                     // O simplemente mostrar todo. Hagamos que muestre todo lo que NO es libro/uniforme para ser especificos.
                     for (const cat in inventoryByCategory) {
                         if (cat === 'otro') {
@@ -415,6 +480,9 @@
             }
 
             updateSuggestedAmount();
+            if (concept !== 'pension' && pensionTotalHint) {
+                pensionTotalHint.textContent = 'El total se calcula como costo de pensión x cantidad de meses.';
+            }
         }
 
         function toggleProof() {
@@ -496,6 +564,13 @@
         }
         if (invProductField) {
             invProductField.addEventListener('change', updateSuggestedAmount);
+        }
+        if (pensionPriceField) {
+            pensionPriceField.addEventListener('input', updatePensionAmount);
+            pensionPriceField.addEventListener('change', updatePensionAmount);
+        }
+        if (pensionMonthSelect) {
+            pensionMonthSelect.addEventListener('change', updatePensionAmount);
         }
         if (methodField) {
             methodField.addEventListener('change', toggleProof);
@@ -592,6 +667,7 @@
 
         toggleFields();
         toggleProof();
+        updatePensionAmount();
     })();
 </script>
 {% endblock %}

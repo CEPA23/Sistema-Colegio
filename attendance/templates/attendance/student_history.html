@@ -3,30 +3,212 @@
 {% block title %}Historial de asistencia | Gestion Escolar{% endblock %}
 
 {% block content %}
+<style>
+.report-kpis {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 12px;
+}
+.report-kpi {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 14px 16px;
+}
+.report-kpi small {
+    display: block;
+    color: #64748b;
+    margin-bottom: 4px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+.report-kpi strong {
+    font-size: 1.5rem;
+    color: #1e293b;
+}
+.student-search-wrap {
+    position: relative;
+}
+.student-results {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: calc(100% + 6px);
+    z-index: 20;
+    background: #fff;
+    border: 1px solid #d7e1ee;
+    border-radius: 12px;
+    box-shadow: 0 16px 34px rgba(28, 47, 74, 0.12);
+    overflow: hidden;
+    max-height: 260px;
+    overflow-y: auto;
+}
+.student-result {
+    width: 100%;
+    display: block;
+    border: 0;
+    border-bottom: 1px solid #edf3fa;
+    background: #fff;
+    padding: 10px 12px;
+    text-align: left;
+    font: inherit;
+    cursor: pointer;
+}
+.student-result:last-child {
+    border-bottom: 0;
+}
+.student-result:hover,
+.student-result.is-active {
+    background: #eef5ff;
+}
+.student-result strong {
+    display: block;
+    color: #1e293b;
+}
+.student-result small {
+    display: block;
+    color: #64748b;
+    margin-top: 2px;
+}
+.student-hint {
+    margin-top: 6px;
+    color: #64748b;
+    font-size: 0.82rem;
+}
+
+@media (max-width: 768px) {
+    .report-kpis {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .student-results {
+        max-height: 210px;
+    }
+}
+
+@media (max-width: 520px) {
+    .report-kpis {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+
 <section class="card">
     <div class="section-head">
-        <h1>Historial de asistencia</h1>
-        <a href="{% url 'student_profile' enrollment.student.id %}" class="btn btn-subtle">Perfil alumno</a>
+        <h1>Reporte de asistencia por alumno</h1>
+        {% if enrollment %}
+            <a href="{% url 'student_profile' enrollment.student.id %}" class="btn btn-subtle">Perfil alumno</a>
+        {% endif %}
     </div>
-    <p class="muted">Alumno: {{ enrollment.student }}</p>
+
+    {% if selected_enrollment %}
+        <p class="muted">Alumno: {{ selected_enrollment.student }} | {{ selected_enrollment.section.grade.name }} {{ selected_enrollment.section.name }}</p>
+    {% else %}
+        <p class="muted">Selecciona grado y sección, luego escribe el nombre del alumno para ver su reporte.</p>
+    {% endif %}
+
+    <form method="get" class="form-grid attendance-filter" style="margin: 18px 0;">
+        <div>
+            <label for="grade">Grado</label>
+            <select id="grade" name="grade">
+                <option value="">Selecciona grado</option>
+                {% for grade in grade_options %}
+                    <option value="{{ grade.id }}" {% if selected_grade_id and selected_grade_id|stringformat:'s' == grade.id|stringformat:'s' %}selected{% endif %}>
+                        {{ grade.name }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div>
+            <label for="section">Sección</label>
+            <select id="section" name="section" {% if not section_options %}disabled{% endif %}>
+                <option value="">Selecciona sección</option>
+                {% for section in section_options %}
+                    <option value="{{ section.id }}" {% if selected_section_id and selected_section_id|stringformat:'s' == section.id|stringformat:'s' %}selected{% endif %}>
+                        {{ section.grade.name }} {{ section.name }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="student-search-wrap">
+            <label for="student-search">Alumno</label>
+            <input
+                type="text"
+                id="student-search"
+                name="student_name"
+                placeholder="Escribe el nombre..."
+                {% if not selected_section_id %}disabled{% endif %}
+                value="{{ selected_student_label|default:'' }}"
+                autocomplete="off"
+                aria-autocomplete="list"
+                aria-expanded="false"
+                aria-controls="student-results"
+            >
+            <input type="hidden" id="student" name="student" value="{{ selected_student_id|default:'' }}">
+            <div id="student-results" class="student-results is-hidden" role="listbox" aria-label="Sugerencias de alumnos"></div>
+            <div class="student-hint">Las sugerencias aparecen mientras escribes, sin usar el botón de búsqueda.</div>
+        </div>
+
+        <div>
+            <label for="month">Mes</label>
+            <input
+                type="month"
+                id="month"
+                name="month"
+                value="{% if selected_month %}{{ selected_month|date:'Y-m' }}{% endif %}"
+            >
+        </div>
+
+        <div style="align-self:end;">
+            <button type="submit" class="btn btn-primary">Ver reporte</button>
+            {% if enrollment %}
+                <a href="{% url 'attendance_student_history' enrollment.id %}" class="btn btn-subtle">Limpiar</a>
+            {% else %}
+                <a href="{% url 'attendance_student_report' %}" class="btn btn-subtle">Limpiar</a>
+            {% endif %}
+        </div>
+    </form>
+
+    {% if selected_enrollment or enrollment %}
+        <div class="report-kpis" style="margin-bottom: 18px;">
+            <div class="report-kpi">
+                <small>Presentes</small>
+                <strong>{{ summary.present }}</strong>
+            </div>
+            <div class="report-kpi">
+                <small>Faltas</small>
+                <strong>{{ summary.absent }}</strong>
+            </div>
+            <div class="report-kpi">
+                <small>Tardanzas</small>
+                <strong>{{ summary.tardy }}</strong>
+            </div>
+            <div class="report-kpi">
+                <small>Justificados</small>
+                <strong>{{ summary.justified }}</strong>
+            </div>
+        </div>
+    {% endif %}
+
     <div class="table-wrap">
         <table>
             <thead>
                 <tr>
                     <th>Fecha</th>
-                    <th>Seccion</th>
+                    <th>Sección</th>
                     <th>Registrado por</th>
                     <th>Estado</th>
-                    <th>Observacion</th>
+                    <th>Observación</th>
                 </tr>
             </thead>
             <tbody>
                 {% for record in records %}
                     <tr>
                         <td>{{ record.date }}</td>
-                        <td>
-                            {{ record.enrollment.section.grade.name }} {{ record.enrollment.section.name }}
-                        </td>
+                        <td>{{ record.enrollment.section.grade.name }} {{ record.enrollment.section.name }}</td>
                         <td>
                             {% if record.recorded_by %}
                                 {{ record.recorded_by.get_full_name|default:record.recorded_by.username }}
@@ -48,4 +230,175 @@
         </table>
     </div>
 </section>
+
+{{ grade_section_map|json_script:"grade-section-data" }}
+{{ section_student_map|json_script:"section-student-data" }}
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const gradeSelect = document.getElementById('grade');
+    const sectionSelect = document.getElementById('section');
+    const studentSearch = document.getElementById('student-search');
+    const studentHidden = document.getElementById('student');
+    const studentResults = document.getElementById('student-results');
+    const gradeDataElement = document.getElementById('grade-section-data');
+    const sectionDataElement = document.getElementById('section-student-data');
+
+    if (!gradeSelect || !sectionSelect || !studentSearch || !studentHidden || !studentResults || !gradeDataElement || !sectionDataElement) {
+        return;
+    }
+
+    const gradeSectionMap = JSON.parse(gradeDataElement.textContent || '{}');
+    const sectionStudentMap = JSON.parse(sectionDataElement.textContent || '{}');
+
+    const normalize = value => (value || '').trim().toLowerCase();
+
+    const currentStudents = () => sectionStudentMap[String(sectionSelect.value)] || [];
+
+    const closeSuggestions = () => {
+        studentResults.classList.add('is-hidden');
+        studentResults.innerHTML = '';
+        studentSearch.setAttribute('aria-expanded', 'false');
+    };
+
+    const selectStudent = student => {
+        studentSearch.value = student.name;
+        studentHidden.value = student.enrollment_id;
+        closeSuggestions();
+    };
+
+    const syncExactMatch = () => {
+        const typed = normalize(studentSearch.value);
+        if (!typed) {
+            studentHidden.value = '';
+            closeSuggestions();
+            return;
+        }
+
+        const students = currentStudents();
+        const exact = students.find(student => normalize(student.name) === typed);
+        studentHidden.value = exact ? exact.enrollment_id : '';
+    };
+
+    const renderSuggestions = () => {
+        const typed = normalize(studentSearch.value);
+        const students = currentStudents();
+        const filtered = typed
+            ? students.filter(student => normalize(student.name).includes(typed))
+            : students;
+
+        studentResults.innerHTML = '';
+        if (!sectionSelect.value || !typed || filtered.length === 0) {
+            studentResults.classList.add('is-hidden');
+            studentSearch.setAttribute('aria-expanded', 'false');
+            return;
+        }
+
+        filtered.slice(0, 8).forEach(student => {
+            const item = document.createElement('button');
+            item.type = 'button';
+            item.className = 'student-result';
+            item.setAttribute('role', 'option');
+            const title = document.createElement('strong');
+            title.textContent = student.name;
+            item.appendChild(title);
+            item.addEventListener('mousedown', event => {
+                event.preventDefault();
+                selectStudent(student);
+            });
+            studentResults.appendChild(item);
+        });
+
+        studentResults.classList.remove('is-hidden');
+        studentSearch.setAttribute('aria-expanded', 'true');
+    };
+
+    const renderSections = (gradeId, keepSelected = true) => {
+        const previousSection = keepSelected ? sectionSelect.value : '';
+        const sections = gradeSectionMap[String(gradeId)] || [];
+
+        sectionSelect.innerHTML = '<option value="">Selecciona sección</option>';
+        sections.forEach(section => {
+            const option = document.createElement('option');
+            option.value = section.id;
+            option.textContent = section.label;
+            sectionSelect.appendChild(option);
+        });
+
+        sectionSelect.disabled = sections.length === 0;
+        if (previousSection && sections.some(section => String(section.id) === String(previousSection))) {
+            sectionSelect.value = previousSection;
+        }
+        studentSearch.value = '';
+        studentHidden.value = '';
+        closeSuggestions();
+    };
+
+    const renderStudents = () => {
+        studentSearch.value = '';
+        studentHidden.value = '';
+        closeSuggestions();
+        studentSearch.disabled = !sectionSelect.value;
+    };
+
+    gradeSelect.addEventListener('change', () => {
+        renderSections(gradeSelect.value, false);
+        renderStudents();
+    });
+
+    sectionSelect.addEventListener('change', () => {
+        renderStudents();
+    });
+
+    studentSearch.addEventListener('input', () => {
+        syncExactMatch();
+        renderSuggestions();
+    });
+
+    studentSearch.addEventListener('focus', () => {
+        renderSuggestions();
+    });
+
+    studentSearch.addEventListener('keydown', event => {
+        if (event.key === 'Escape') {
+            closeSuggestions();
+        }
+    });
+
+    document.addEventListener('click', event => {
+        if (!event.target.closest('.student-search-wrap')) {
+            closeSuggestions();
+        }
+    });
+
+    if (studentSearch.form) {
+        studentSearch.form.addEventListener('submit', () => {
+            if (studentHidden.value) {
+                return;
+            }
+            const typed = normalize(studentSearch.value);
+            const students = currentStudents();
+            const exact = students.find(student => normalize(student.name) === typed);
+            if (exact) {
+                studentHidden.value = exact.enrollment_id;
+                studentSearch.value = exact.name;
+                return;
+            }
+            const matches = students.filter(student => normalize(student.name).includes(typed));
+            if (matches.length === 1) {
+                studentHidden.value = matches[0].enrollment_id;
+                studentSearch.value = matches[0].name;
+            }
+        });
+    }
+
+    const currentGrade = gradeSelect.value;
+    if (currentGrade) {
+        renderSections(currentGrade, true);
+    }
+    if (sectionSelect.value) {
+        studentSearch.disabled = false;
+    }
+    syncExactMatch();
+});
+</script>
 {% endblock %}

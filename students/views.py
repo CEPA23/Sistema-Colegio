@@ -8,6 +8,7 @@ from core.student_ordering import (
     resolve_student_order,
     student_order_context,
 )
+from core.teacher_access import teacher_tutor_enrollments
 from enrollment.models import Enrollment
 from finance.models import Fee
 
@@ -18,10 +19,18 @@ from .models import Student
 @role_required('admin', 'director', 'secretary', 'teacher')
 def student_list(request):
     student_order = resolve_student_order(request)
-    students = order_queryset_by_student_name(
-        Student.objects.all(),
-        student_order=student_order,
-    )
+    if request.user.role == 'teacher' and not request.user.is_superuser:
+        students = order_queryset_by_student_name(
+            Student.objects.filter(
+                enrollment__in=teacher_tutor_enrollments(request.user).filter(academic_year__is_active=True),
+            ).distinct(),
+            student_order=student_order,
+        )
+    else:
+        students = order_queryset_by_student_name(
+            Student.objects.all(),
+            student_order=student_order,
+        )
     context = {
         'students': students,
     }
@@ -59,6 +68,15 @@ def student_profile(request, student_id):
         'section__grade',
         'academic_year'
     ).filter(student=student).order_by('-enrolled_at')
+    if request.user.role == 'teacher' and not request.user.is_superuser:
+        accessible_enrollments = teacher_tutor_enrollments(request.user).filter(
+            academic_year__is_active=True,
+            student=student,
+        )
+        enrollments = enrollments.filter(id__in=accessible_enrollments.values_list('id', flat=True))
+        if not enrollments.exists():
+            messages.error(request, "Solo puedes ver alumnos de tus secciones asignadas.")
+            return redirect('student_list')
     fees = Fee.objects.select_related('enrollment').filter(enrollment__student=student)
     total_debt = sum(fee.balance for fee in fees)
 

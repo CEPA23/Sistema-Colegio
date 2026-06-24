@@ -25,6 +25,10 @@ body {
     background: radial-gradient(circle at 84% 12%, rgba(229, 143, 13, 0.18), transparent 38%), radial-gradient(circle at 20% 10%, rgba(15, 95, 154, 0.18), transparent 45%), var(--bg);
 }
 
+body.sidebar-open {
+    overflow: hidden;
+}
+
 h1,
 h2,
 h3 {
@@ -977,5 +981,79 @@ textarea:focus {
 
     .container {
         padding: 16px;
+    }
+}
+
+@media (max-width: 768px) {
+    .section-head,
+    .attendance-toolbar,
+    .action-row {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .topbar {
+        flex-wrap: wrap;
+        min-height: 56px;
+        height: auto;
+    }
+
+    .topbar .btn-subtle {
+        width: auto;
+    }
+
+    .section-head .btn,
+    .attendance-toolbar .btn,
+    .action-row .btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .stats-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+    }
+
+    .form-grid {
+        grid-template-columns: 1fr !important;
+    }
+
+    .stack {
+        gap: 12px;
+    }
+
+    .card {
+        padding: 16px;
+        border-radius: 14px;
+    }
+
+    .container {
+        padding: 14px;
+    }
+
+    .table-wrap {
+        border-radius: 12px;
+    }
+
+    .table-wrap table {
+        min-width: 620px;
+    }
+}
+
+@media (max-width: 520px) {
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .btn,
+    .btn-primary,
+    .btn-subtle,
+    .btn-danger {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .school-meta {
+        max-width: 100%;
     }
 }

@@ -11,6 +11,7 @@ from core.student_ordering import (
     resolve_student_order,
     student_order_context,
 )
+from core.teacher_access import teacher_tutor_section_ids
 from students.models import Student
 
 from .forms import EnrollmentForm, StudentBulkImportForm
@@ -551,6 +552,8 @@ def enrollment_history(request, student_id):
         'section__grade',
         'academic_year'
     ).filter(student=student).order_by('-enrolled_at')
+    if request.user.role == 'teacher' and not request.user.is_superuser:
+        history = history.filter(section_id__in=teacher_tutor_section_ids(request.user))
     return render(request, 'enrollment/enrollment_history.html', {'student': student, 'history': history})
 
 

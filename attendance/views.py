@@ -1,4 +1,6 @@
 import csv
+import calendar
+from datetime import date as date_class
 
 from django.contrib import messages
 from django.core.exceptions import ValidationError
@@ -7,13 +9,16 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 
 from accounts.decorators import role_required
-from academic.models import AcademicYear, Section, TeacherCourseAssignment
+from academic.models import AcademicYear
+from academic.models import Grade, Section
 from core.student_ordering import (
     order_queryset_by_student_name,
     resolve_student_order,
     student_order_context,
 )
+from core.teacher_access import teacher_section_ids, teacher_tutor_section_ids
 from enrollment.models import Enrollment
+from students.models import Student
 
 from .forms import AttendanceSheetFilterForm
 from .models import AttendanceRecord
@@ -34,21 +39,6 @@ STATUS_UI = {
     'missing': {'label': 'Sin registro', 'icon': '-', 'css': 'attendance-missing'},
 }
 VALID_STATUSES = {status for status, _ in AttendanceRecord.STATUS}
-
-
-def _teacher_section_ids(user):
-    assignment_section_ids = TeacherCourseAssignment.objects.filter(
-        teacher=user,
-        section__isnull=False,
-    ).values_list('section_id', flat=True).distinct()
-    tutor_section_ids = Section.objects.filter(
-        tutor_teacher=user,
-    ).values_list('id', flat=True)
-    profile_section_ids = []
-    if user.teaching_section_id:
-        profile_section_ids.append(user.teaching_section_id)
-    profile_section_ids.extend(user.teaching_sections.values_list('id', flat=True))
-    return sorted(set(assignment_section_ids).union(tutor_section_ids, profile_section_ids))
 
 
 def _resolve_academic_year(selected_date):
@@ -96,6 +86,164 @@ def _owner_name(owner_record):
     return full_name or owner_record.recorded_by.username
 
 
+def _student_report_students(user):
+    students = Student.objects.filter(enrollment__isnull=False).distinct()
+    if user.role == 'teacher' and not user.is_superuser:
+        students = students.filter(
+            enrollment__section_id__in=teacher_tutor_section_ids(user),
+        ).distinct()
+    return students.order_by('last_name', 'first_name', 'dni')
+
+
+def _student_report_grades(user):
+    grades = Grade.objects.filter(section__isnull=False).distinct()
+    if user.role == 'teacher' and not user.is_superuser:
+        grades = grades.filter(section__id__in=teacher_tutor_section_ids(user)).distinct()
+    return grades.order_by('name')
+
+
+def _student_report_sections(user, grade_id=None):
+    sections = Section.objects.select_related('grade').order_by('grade__name', 'name')
+    if user.role == 'teacher' and not user.is_superuser:
+        sections = sections.filter(id__in=teacher_tutor_section_ids(user))
+    if grade_id and str(grade_id).isdigit():
+        sections = sections.filter(grade_id=int(grade_id))
+    return sections
+
+
+def _student_report_all_sections(user):
+    sections = Section.objects.select_related('grade').order_by('grade__name', 'name')
+    if user.role == 'teacher' and not user.is_superuser:
+        sections = sections.filter(id__in=teacher_tutor_section_ids(user))
+    return sections
+
+
+def _student_report_maps(user):
+    all_sections = list(_student_report_all_sections(user))
+    grade_section_map = {}
+    section_student_map = {}
+
+    for section in all_sections:
+        grade_section_map.setdefault(str(section.grade_id), []).append({
+            'id': section.id,
+            'label': section.name,
+        })
+        section_student_map[str(section.id)] = _student_report_students_by_section(user, section.id)
+
+    return all_sections, grade_section_map, section_student_map
+
+
+def _student_report_students_by_section(user, section_id):
+    enrollments = Enrollment.objects.select_related(
+        'student',
+        'section__grade',
+        'academic_year',
+    ).filter(section_id=section_id)
+    if user.role == 'teacher' and not user.is_superuser:
+        enrollments = enrollments.filter(section_id__in=teacher_tutor_section_ids(user))
+    enrollments = enrollments.order_by('student__last_name', 'student__first_name', 'student__dni')
+    return [
+        {
+            'id': enrollment.student_id,
+            'name': str(enrollment.student),
+            'enrollment_id': enrollment.id,
+        }
+        for enrollment in enrollments
+    ]
+
+
+def _student_report_enrollment(user, student, section_id=None):
+    enrollments = Enrollment.objects.select_related(
+        'student',
+        'section__grade',
+        'academic_year',
+    ).filter(student=student).order_by('-enrolled_at', '-id')
+
+    if user.role == 'teacher' and not user.is_superuser:
+        enrollments = enrollments.filter(section_id__in=teacher_tutor_section_ids(user))
+    if section_id and str(section_id).isdigit():
+        enrollments = enrollments.filter(section_id=int(section_id))
+
+    return enrollments.first()
+
+
+def _student_report_context(request, selected_student=None, selected_month=None, selected_grade_id=None, selected_section_id=None):
+    if not selected_grade_id and request.user.role == 'teacher' and not request.user.is_superuser:
+        accessible_sections = list(_student_report_all_sections(request.user))
+        if len(accessible_sections) == 1:
+            selected_grade_id = str(accessible_sections[0].grade_id)
+            selected_section_id = str(accessible_sections[0].id)
+
+    grades = _student_report_grades(request.user)
+    sections = _student_report_sections(request.user, selected_grade_id)
+    student_options = _student_report_students_by_section(request.user, selected_section_id) if selected_section_id else []
+    all_sections, grade_section_map, section_student_map = _student_report_maps(request.user)
+    selected_enrollment = None
+    records = AttendanceRecord.objects.none()
+    summary = {
+        'present': 0,
+        'absent': 0,
+        'tardy': 0,
+        'justified': 0,
+    }
+
+    if selected_student is not None:
+        selected_enrollment = _student_report_enrollment(request.user, selected_student, selected_section_id)
+        if not selected_enrollment:
+            messages.error(request, "No tienes permiso para ver el reporte de este alumno.")
+            return {
+                'grade_options': grades,
+                'section_options': sections,
+                'student_options': student_options,
+                'all_section_options': all_sections,
+                'grade_section_map': grade_section_map,
+                'section_student_map': section_student_map,
+                'selected_student': None,
+                'selected_enrollment': None,
+                'records': records,
+                'summary': summary,
+                'selected_month': selected_month,
+                'selected_grade_id': selected_grade_id,
+                'selected_section_id': selected_section_id,
+                'selected_student_id': None,
+            }
+
+        records = AttendanceRecord.objects.select_related(
+            'enrollment__section__grade',
+            'recorded_by',
+        ).filter(enrollment=selected_enrollment)
+
+        if selected_month:
+            month_end_day = calendar.monthrange(selected_month.year, selected_month.month)[1]
+            records = records.filter(
+                date__gte=selected_month,
+                date__lte=date_class(selected_month.year, selected_month.month, month_end_day),
+            )
+
+        records = records.order_by('-date', '-id')
+        for record in records:
+            if record.status in summary:
+                summary[record.status] += 1
+
+    return {
+        'grade_options': grades,
+        'section_options': sections,
+        'student_options': student_options,
+        'all_section_options': all_sections,
+        'grade_section_map': grade_section_map,
+        'section_student_map': section_student_map,
+        'selected_student': selected_student,
+        'selected_student_label': str(selected_student) if selected_student else '',
+        'selected_enrollment': selected_enrollment,
+        'records': records,
+        'summary': summary,
+        'selected_month': selected_month,
+        'selected_grade_id': selected_grade_id,
+        'selected_section_id': selected_section_id,
+        'selected_student_id': selected_student.id if selected_student else None,
+    }
+
+
 def _redirect_to_filtered_sheet(path, selected_section, selected_date, student_order='az'):
     return redirect(
         f"{path}?section={selected_section.id}&date={selected_date.isoformat()}&student_order={student_order}"
@@ -105,8 +253,8 @@ def _redirect_to_filtered_sheet(path, selected_section, selected_date, student_o
 def _filter_form_for_request(request, today):
     student_order = resolve_student_order(request)
     is_teacher = request.user.role == 'teacher' and not request.user.is_superuser
-    teacher_section_ids = _teacher_section_ids(request.user) if is_teacher else []
-    auto_section_id = teacher_section_ids[0] if len(teacher_section_ids) == 1 else None
+    section_ids = teacher_section_ids(request.user) if is_teacher else []
+    auto_section_id = section_ids[0] if len(section_ids) == 1 else None
 
     initial = {'date': request.GET.get('date') or today}
     form_data = request.GET.copy()
@@ -163,8 +311,8 @@ def attendance_take(request):
     student_order = resolve_student_order(request)
     initial = {'date': request.GET.get('date') or today}
     is_teacher = request.user.role == 'teacher' and not request.user.is_superuser
-    teacher_section_ids = _teacher_section_ids(request.user) if is_teacher else []
-    auto_section_id = teacher_section_ids[0] if len(teacher_section_ids) == 1 else None
+    section_ids = teacher_section_ids(request.user) if is_teacher else []
+    auto_section_id = section_ids[0] if len(section_ids) == 1 else None
 
     if request.method == 'POST':
         form_data = request.POST.copy()
@@ -306,15 +454,94 @@ def attendance_take(request):
 @role_required('admin', 'director', 'teacher', 'parent')
 def attendance_student_history(request, enrollment_id):
     enrollment = get_object_or_404(Enrollment.objects.select_related('student'), id=enrollment_id)
+    if request.user.role == 'teacher' and not request.user.is_superuser:
+        if enrollment.section_id not in set(teacher_tutor_section_ids(request.user)):
+            messages.error(request, "No tienes permiso para ver el reporte de este alumno.")
+            return redirect('student_list')
+
+    month_value = (request.GET.get('month') or '').strip()
+    selected_month = None
+    if month_value:
+        try:
+            selected_month = date_class.fromisoformat(f'{month_value}-01')
+        except ValueError:
+            selected_month = None
+
     records = AttendanceRecord.objects.select_related(
         'enrollment__section__grade',
         'recorded_by',
     ).filter(enrollment=enrollment)
-    return render(request, 'attendance/student_history.html', {
+    if selected_month:
+        month_end_day = calendar.monthrange(selected_month.year, selected_month.month)[1]
+        records = records.filter(
+            date__gte=selected_month,
+            date__lte=date_class(selected_month.year, selected_month.month, month_end_day),
+        )
+    records = records.order_by('-date', '-id')
+    summary = {
+        'present': 0,
+        'absent': 0,
+        'tardy': 0,
+        'justified': 0,
+    }
+    for record in records:
+        if record.status in summary:
+            summary[record.status] += 1
+
+    all_sections, grade_section_map, section_student_map = _student_report_maps(request.user)
+    context = {
         'enrollment': enrollment,
+        'selected_enrollment': enrollment,
+        'selected_student': enrollment.student,
+        'selected_student_id': enrollment.student_id,
+        'selected_student_label': str(enrollment.student),
         'records': records,
+        'summary': summary,
+        'selected_month': selected_month,
         'status_ui': STATUS_UI,
-    })
+        'grade_options': _student_report_grades(request.user),
+        'section_options': _student_report_sections(request.user, enrollment.section.grade_id),
+        'student_options': _student_report_students_by_section(request.user, enrollment.section_id),
+        'all_section_options': all_sections,
+        'grade_section_map': grade_section_map,
+        'section_student_map': section_student_map,
+        'selected_grade_id': enrollment.section.grade_id,
+        'selected_section_id': enrollment.section_id,
+    }
+    return render(request, 'attendance/student_history.html', context)
+
+
+@role_required('admin', 'director', 'teacher')
+def attendance_student_report(request):
+    month_value = (request.GET.get('month') or '').strip()
+    selected_month = None
+    if month_value:
+        try:
+            selected_month = date_class.fromisoformat(f'{month_value}-01')
+        except ValueError:
+            selected_month = None
+
+    selected_grade_id = request.GET.get('grade')
+    selected_section_id = request.GET.get('section')
+    selected_student = None
+    student_id = request.GET.get('student')
+    if student_id and str(student_id).isdigit():
+        student_queryset = _student_report_students(request.user)
+        selected_student = student_queryset.filter(id=int(student_id)).first()
+        if not selected_student:
+            messages.error(request, "No tienes permiso para ver ese alumno.")
+
+    context = _student_report_context(
+        request,
+        selected_student,
+        selected_month,
+        selected_grade_id=selected_grade_id,
+        selected_section_id=selected_section_id,
+    )
+    if context['selected_enrollment']:
+        context['enrollment'] = context['selected_enrollment']
+    context['status_ui'] = STATUS_UI
+    return render(request, 'attendance/student_history.html', context)
 
 
 @role_required('admin', 'director', 'teacher')
@@ -372,7 +599,7 @@ def attendance_export_csv(request):
     )
 
     if is_teacher:
-        records = records.filter(enrollment__section_id__in=_teacher_section_ids(request.user))
+        records = records.filter(enrollment__section_id__in=teacher_section_ids(request.user))
 
     section_id = request.GET.get('section')
     if section_id:

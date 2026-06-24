@@ -67,9 +67,8 @@ def _resolve_academic_year(selected_date):
     return AcademicYear.objects.filter(is_active=True).order_by('-year').first()
 
 
-def _active_enrollments_for_section(section, selected_date, student_order='az'):
+def _report_enrollments_for_section(section, selected_date, student_order='az'):
     filters = {
-        'status': 'active',
         'section': section,
     }
     year_obj = _resolve_academic_year(selected_date)
@@ -163,13 +162,12 @@ def build_attendance_report_data(section, selected_date, student_order='az', req
     del request_user
     month_start = selected_date.replace(day=1)
     month_end = selected_date.replace(day=calendar.monthrange(selected_date.year, selected_date.month)[1])
-    enrollments = list(_active_enrollments_for_section(section, selected_date, student_order=student_order))
+    enrollments = list(_report_enrollments_for_section(section, selected_date, student_order=student_order))
     records = AttendanceRecord.objects.select_related(
         'enrollment__student',
     ).filter(
         enrollment__in=enrollments,
         date__range=(month_start, month_end),
-        date__week_day__in=[2, 3, 4, 5, 6],
     )
     records_by_key = {(record.enrollment_id, record.date): record for record in records}
     days, weeks = _build_month_days(selected_date)

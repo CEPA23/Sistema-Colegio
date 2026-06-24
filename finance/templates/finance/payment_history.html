@@ -8,6 +8,25 @@
         <h1>Historial de pagos</h1>
         <a href="{% url 'payment_create' %}" class="btn btn-primary">Nuevo pago</a>
     </div>
+    <form method="get" class="form-grid" style="margin-bottom: 16px; align-items: end;">
+        <div style="grid-column: 1 / -1;">
+            <label for="payment-search">Buscar pago</label>
+            <input
+                type="text"
+                id="payment-search"
+                name="q"
+                value="{{ payment_query|default:'' }}"
+                placeholder="Alumno, DNI, comentario, concepto o metodo"
+            >
+            <p class="muted">Puedes buscar por nombre del alumno, DNI, comentario, concepto o metodo de pago.</p>
+        </div>
+        <div class="action-row" style="grid-column: 1 / -1;">
+            <button type="submit" class="btn btn-primary">Buscar</button>
+            {% if payment_query %}
+                <a href="{% url 'payment_history' %}" class="btn btn-subtle">Limpiar</a>
+            {% endif %}
+        </div>
+    </form>
     <div class="table-wrap">
         <table>
             <thead>
@@ -47,7 +66,7 @@
                         </td>
                     </tr>
                 {% empty %}
-                    <tr><td colspan="8">No hay pagos registrados.</td></tr>
+                    <tr><td colspan="9">No hay pagos registrados.</td></tr>
                 {% endfor %}
             </tbody>
         </table>

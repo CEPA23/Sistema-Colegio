@@ -1,5 +1,6 @@
 from django import forms
 from django.db.models import Q
+from decimal import Decimal
 
 from academic.models import Course, Grade, Section
 from enrollment.models import Enrollment
@@ -16,10 +17,18 @@ class PaymentRegistrationForm(forms.Form):
     )
     enrollment_id = forms.IntegerField(required=False, widget=forms.HiddenInput())
     concept = forms.ChoiceField(choices=Fee.CONCEPT_CHOICES, label='Concepto')
-    pension_month = forms.ChoiceField(
+    pension_price = forms.DecimalField(
         required=False,
-        choices=[('', 'Selecciona un mes')] + [(str(k), v) for k, v in Fee.MONTH_CHOICES],
-        label='Mes de pension'
+        max_digits=10,
+        decimal_places=2,
+        min_value=Decimal('0.01'),
+        label='Costo de pension',
+    )
+    pension_months = forms.MultipleChoiceField(
+        required=False,
+        choices=[(str(k), v) for k, v in Fee.MONTH_CHOICES],
+        label='Meses de pension',
+        widget=forms.SelectMultiple(attrs={'size': 6, 'class': 'month-select'}),
     )
 
     inventory_product = forms.ModelChoiceField(
@@ -41,13 +50,20 @@ class PaymentRegistrationForm(forms.Form):
         super().__init__(*args, **kwargs)
 
         self.fields['inventory_product'].queryset = Product.objects.filter(is_active=True).order_by('name')
+        self.fields['pension_price'].widget.attrs.update({'class': 'currency-input', 'step': '0.01'})
+        self.fields['amount'].widget.attrs.update({'step': '0.01'})
+        from schools.models import School
+        school = School.objects.first()
+        if school:
+            self.fields['pension_price'].initial = school.pension_price
 
     def clean(self):
         cleaned_data = super().clean()
         student_name = cleaned_data.get('student_name')
         enrollment_id = cleaned_data.get('enrollment_id')
         concept = cleaned_data.get('concept')
-        pension_month = cleaned_data.get('pension_month')
+        pension_price = cleaned_data.get('pension_price')
+        pension_months = cleaned_data.get('pension_months') or []
         method = cleaned_data.get('method')
         proof_image = cleaned_data.get('proof_image')
 
@@ -70,11 +86,14 @@ class PaymentRegistrationForm(forms.Form):
         else:
             cleaned_data['enrollment'] = enrollment
 
-        if concept == Fee.CONCEPT_PENSION and not pension_month:
-            self.add_error('pension_month', 'Debes seleccionar el mes para una pension.')
+        if concept == Fee.CONCEPT_PENSION and not pension_months:
+            self.add_error('pension_months', 'Debes seleccionar al menos un mes para una pension.')
+        if concept == Fee.CONCEPT_PENSION and pension_price is None:
+            self.add_error('pension_price', 'Debes indicar el costo de la pension.')
 
         if concept != Fee.CONCEPT_PENSION:
-            cleaned_data['pension_month'] = None
+            cleaned_data['pension_months'] = []
+            cleaned_data['pension_price'] = None
 
         if method in (Payment.METHOD_TRANSFER, Payment.METHOD_YAPE_PLIN) and not proof_image:
             self.add_error('proof_image', 'Debes adjuntar la captura del pago.')

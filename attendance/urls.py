@@ -7,6 +7,7 @@ from .views import (
     attendance_export_pdf,
     attendance_export_csv,
     attendance_student_history,
+    attendance_student_report,
     attendance_take,
 )
 
@@ -14,6 +15,7 @@ from .views import (
 urlpatterns = [
     path('dashboard/', attendance_dashboard, name='attendance_dashboard'),
     path('take/', attendance_take, name='attendance_take'),
+    path('student/', attendance_student_report, name='attendance_student_report'),
     path('student/<int:enrollment_id>/', attendance_student_history, name='attendance_student_history'),
     path('report-course/', attendance_course_report, name='attendance_course_report'),
     path('export/excel/', attendance_export_excel, name='attendance_export_excel'),
